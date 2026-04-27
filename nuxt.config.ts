@@ -9,6 +9,8 @@ export default defineNuxtConfig({
     '@nuxt/icon',
   ],
 
+  css: ['~/assets/css/main.css'],
+
   image: {
     directus: {
       baseURL: process.env.DIRECTUS_URL + '/assets/',

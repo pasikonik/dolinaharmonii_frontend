@@ -38,6 +38,7 @@ export function useDirectus() {
         '*',
         'category.*',
         'instructors.instructors_id.*',
+        'gallery.directus_files_id',
       ].join(','),
       filter: {
         slug: { _eq: slug },

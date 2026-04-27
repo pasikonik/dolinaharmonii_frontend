@@ -1,6 +1,5 @@
 <script setup lang="ts">
-definePageMeta({ layout: false })
-
+// Page-specific setup logic
 useSeoMeta({
   title: 'Warsztaty — Dolina Harmonii',
   description: 'Kameralne, kilkudniowe warsztaty od maja do października w Dolinie Harmonii. Mindfulness, joga, natura, rękodzieło.',
@@ -143,24 +142,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="dh-root">
-
-    <!-- ─── NAV ──────────────────────────────────────────────────── -->
-    <nav class="nav-pill">
-      <NuxtLink class="brand" to="/">
-        <DhIcon name="seed" :size="22" :stroke="1.4" />
-        Dolina Harmonii
-      </NuxtLink>
-      <ul>
-        <li><NuxtLink to="/#dolina">Dolina</NuxtLink></li>
-        <li><NuxtLink to="/warsztaty">Warsztaty</NuxtLink></li>
-        <li><NuxtLink to="/#noclegi">Noclegi</NuxtLink></li>
-        <li><NuxtLink to="/#izery">Magiczne Izery</NuxtLink></li>
-        <li><NuxtLink to="/#galeria">Galeria</NuxtLink></li>
-      </ul>
-      <NuxtLink class="nav-cta" to="/#rezerwacja">Zarezerwuj</NuxtLink>
-    </nav>
-
+  <div class="workshops-page">
     <!-- ─── HERO ──────────────────────────────────────────────────── -->
     <section class="wks-hero">
       <div class="container">
@@ -232,13 +214,13 @@ onMounted(() => {
           </div>
           <div class="view-toggle">
             <button :class="{ active: view === 'list' }" @click="view = 'list'" title="Lista">
-              <DhIcon name="craft" :size="16" :stroke="1.4" />
+              <DhIcon name="list" :size="16" :stroke="1.4" />
             </button>
             <button :class="{ active: view === 'grid' }" @click="view = 'grid'" title="Siatka">
-              <DhIcon name="kitchen" :size="16" :stroke="1.4" />
+              <DhIcon name="grid" :size="16" :stroke="1.4" />
             </button>
             <button :class="{ active: view === 'calendar' }" @click="view = 'calendar'" title="Kalendarz">
-              <DhIcon name="sun" :size="16" :stroke="1.4" />
+              <DhIcon name="calendar" :size="16" :stroke="1.4" />
             </button>
           </div>
         </div>
@@ -314,11 +296,11 @@ onMounted(() => {
               <img :src="w.img" :alt="w.name" />
               <span class="month-tag">{{ w.date.split('–')[0].trim() + ' ' + (w.date.includes('maja') ? 'maja' : w.date.includes('czerwca') ? 'cze' : w.date.includes('lipca') ? 'lip' : w.date.includes('sierpnia') ? 'sie' : w.date.includes('września') ? 'wrz' : 'paź') }}</span>
             </div>
-            <div>
-              <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-                <DhIcon :name="w.icon" :size="20" :stroke="1.4" style="color:var(--accent-earth)" />
+            <div class="wks-info-col">
+              <div class="wks-badges">
+                <DhIcon :name="w.icon" :size="20" :stroke="1.4" class="wks-badge-ic" />
                 <span class="chip">{{ w.cat }}</span>
-                <span style="font-size:11px;color:var(--text-muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:.08em">· {{ w.durLabel }} · {{ w.hours }}</span>
+                <span class="wks-meta-short">· {{ w.durLabel }} · {{ w.hours }}</span>
               </div>
               <h3>{{ w.name }}</h3>
               <p class="wrow-desc">{{ w.desc }}</p>
@@ -413,75 +395,19 @@ onMounted(() => {
         <div class="rent-cta">
           <h3>Prowadzisz warsztaty? Możesz wynająć Dom Jogi.</h3>
           <p>Wynajmujemy całość obiektu grupom warsztatowym — od weekendu w górę.</p>
-          <a class="btn btn-primary" href="#">
+          <NuxtLink class="btn btn-primary" to="#">
             Zobacz Dom Jogi
             <DhIcon name="arrow" :size="14" :stroke="1.6" />
-          </a>
+          </NuxtLink>
         </div>
 
       </div>
     </section>
-
-    <!-- ─── FOOTER ─────────────────────────────────────────────────── -->
-    <footer>
-      <div class="container">
-        <div style="text-align:center;padding:40px 0;border-bottom:1px solid rgba(249,247,242,0.1)">
-          <div style="font-family:var(--serif);font-style:italic;font-size:36px;color:var(--bg-primary);margin-bottom:8px">Dolina Harmonii</div>
-          <p style="color:rgba(249,247,242,0.7)">Kopaniec 47 · 58-512 Stara Kamienica · dolina@harmonii.pl</p>
-        </div>
-        <div style="display:flex;justify-content:space-between;padding:32px 0;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(249,247,242,0.5)">
-          <span>© 2026 Dolina Harmonii</span>
-          <NuxtLink to="/" style="color:inherit">← Wróć do strony głównej</NuxtLink>
-        </div>
-      </div>
-    </footer>
-
   </div>
 </template>
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-
-:root {
-  --bg-primary: #F9F7F2; --bg-section: #EFEDE5; --bg-sage: #E2E8DF; --bg-card: #FFFFFF;
-  --text-main: #2C2C2C; --text-muted: #5C5C58;
-  --brand-primary: #1B3022; --brand-deep: #122019;
-  --accent-earth: #A67C52; --accent-earth-deep: #8A6440;
-  --cta-main: #E9C46A; --cta-main-hover: #D9B25A;
-  --line: #DDD7CB;
-  --shadow-sm: 0 1px 2px rgba(27,48,34,.04), 0 2px 6px rgba(27,48,34,.05);
-  --shadow-md: 0 4px 12px rgba(27,48,34,.06), 0 12px 28px rgba(27,48,34,.08);
-  --serif: 'Lora', Georgia, serif; --sans: 'Inter', -apple-system, sans-serif; --mono: 'JetBrains Mono', monospace;
-  --r-sm: 4px; --r-md: 8px; --r-lg: 16px; --r-pill: 999px; --max-w: 1240px;
-}
-
-.dh-root *, .dh-root *::before, .dh-root *::after { box-sizing: border-box; }
-.dh-root { background: var(--bg-primary); color: var(--text-main); font-family: var(--sans); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
-.dh-root img { max-width: 100%; display: block; }
-.dh-root h1, .dh-root h2, .dh-root h3, .dh-root h4 { font-family: var(--serif); color: var(--brand-primary); font-weight: 500; letter-spacing: -0.01em; margin: 0; line-height: 1.15; }
-.dh-root p { margin: 0; }
-.dh-root a { color: var(--accent-earth); text-decoration: none; transition: color .2s; }
-.dh-root a:hover { color: var(--brand-primary); }
-.eyebrow { font-family: var(--sans); text-transform: uppercase; letter-spacing: 0.18em; font-size: 12px; font-weight: 600; color: var(--accent-earth); }
-.container { max-width: var(--max-w); margin: 0 auto; padding: 0 48px; }
-.dh-root section.tight { padding: 80px 0; }
-
-.btn { display: inline-flex; align-items: center; gap: 10px; font-family: var(--sans); font-weight: 600; font-size: 14px; letter-spacing: 0.04em; padding: 14px 26px; border-radius: var(--r-sm); border: none; cursor: pointer; transition: all .2s; text-decoration: none; }
-.dh-root .btn-primary { background: var(--cta-main); color: var(--brand-primary); }
-.dh-root .btn-primary:hover { background: var(--cta-main-hover); color: var(--brand-primary); transform: translateY(-1px); }
-.dh-root .btn-secondary { background: transparent; border: 1px solid var(--accent-earth); color: var(--accent-earth); }
-.dh-root .btn-secondary:hover { background: var(--accent-earth); color: var(--bg-primary); }
-
-.chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-family: var(--sans); font-weight: 500; padding: 6px 12px; border-radius: var(--r-pill); background: var(--bg-sage); color: var(--brand-primary); letter-spacing: 0.02em; }
-
-/* Nav */
-.nav-pill { position: fixed; top: 24px; left: 50%; transform: translateX(-50%); z-index: 50; display: flex; align-items: center; gap: 4px; background: rgba(249,247,242,0.92); backdrop-filter: blur(14px); border: 1px solid rgba(141,161,146,0.3); border-radius: var(--r-pill); padding: 6px 6px 6px 20px; box-shadow: var(--shadow-md); font-size: 13px; white-space: nowrap; max-width: calc(100vw - 48px); }
-.nav-pill .brand { font-family: var(--serif); color: var(--brand-primary); font-size: 16px; font-weight: 500; display: flex; align-items: center; gap: 8px; padding-right: 18px; margin-right: 4px; border-right: 1px solid var(--line); flex-shrink: 0; text-decoration: none; }
-.nav-pill ul { display: flex; list-style: none; margin: 0; padding: 0 4px; }
-.nav-pill li a { display: block; padding: 8px 12px; color: var(--brand-primary); font-weight: 500; font-size: 13px; border-radius: var(--r-pill); transition: background .2s, color .2s; }
-.nav-pill li a:hover { background: var(--bg-sage); color: var(--brand-primary); }
-.nav-pill .nav-cta { background: transparent; color: var(--brand-primary); padding: 9px 18px; border-radius: var(--r-pill); border: 1px solid var(--accent-earth); font-weight: 500; font-size: 13px; margin-left: 8px; transition: background .2s, color .2s; flex-shrink: 0; text-decoration: none; }
-.nav-pill .nav-cta:hover { background: var(--accent-earth); color: var(--bg-primary); }
+<style scoped>
+/* Page-specific styles only. Base styles moved to main.css */
 
 /* Hero */
 .wks-hero { padding: 140px 0 48px; background: var(--bg-section); border-bottom: 1px solid var(--line); }
@@ -498,7 +424,7 @@ onMounted(() => {
 .feature-block { display: grid; grid-template-columns: 1.1fr 1fr; gap: 0; border: 1px solid var(--line); border-radius: var(--r-md); overflow: hidden; background: var(--bg-card); margin-bottom: 96px; box-shadow: var(--shadow-md); }
 .feat-img { position: relative; min-height: 480px; }
 .feat-img img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
-.feat-img .badge { position: absolute; top: 24px; left: 24px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: var(--r-pill); background: var(--cta-main); color: var(--brand-primary); font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; z-index: 2; }
+.feat-badge { position: absolute; top: 24px; left: 24px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: var(--r-pill); background: var(--cta-main); color: var(--brand-primary); font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; z-index: 2; }
 .feat-body { padding: 56px; display: flex; flex-direction: column; justify-content: center; }
 .feat-body h2 { font-size: 48px; margin-bottom: 16px; font-style: italic; line-height: 1.05; }
 .feat-body p { color: var(--text-muted); margin-bottom: 28px; font-size: 16px; line-height: 1.6; }
@@ -509,12 +435,9 @@ onMounted(() => {
 /* Controls */
 .controls-bar { display: flex; gap: 16px; align-items: center; padding: 20px 0; margin-bottom: 16px; }
 .search-input { flex: 1; display: flex; align-items: center; gap: 12px; background: var(--bg-card); border: 1px solid var(--line); border-radius: var(--r-pill); padding: 4px 4px 4px 20px; transition: border-color .2s; }
-.search-input:focus-within { border-color: var(--accent-earth); }
-.search-input svg { color: var(--accent-earth); flex-shrink: 0; }
+.search-input.focused { border-color: var(--accent-earth); }
 .search-input input { flex: 1; border: none; outline: none; background: transparent; font-family: var(--sans); font-size: 14px; color: var(--text-main); padding: 12px 0; }
-.search-input input::placeholder { color: var(--text-muted); }
 .clear-btn { background: var(--bg-section); border: none; border-radius: 999px; width: 36px; height: 36px; cursor: pointer; color: var(--text-muted); font-size: 14px; display: flex; align-items: center; justify-content: center; }
-.clear-btn:hover { background: var(--line); }
 .sort-select { background: var(--bg-card); border: 1px solid var(--line); border-radius: var(--r-pill); height: 48px; display: flex; align-items: center; padding: 0 6px 0 20px; gap: 8px; }
 .sort-label { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--text-muted); white-space: nowrap; }
 .sort-select select { border: none; background: transparent; font-family: var(--sans); font-size: 13px; padding: 12px 16px 12px 4px; outline: none; cursor: pointer; color: var(--brand-primary); }
@@ -529,7 +452,6 @@ onMounted(() => {
 .label-col { flex: 0 0 130px; font-family: var(--mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--text-muted); padding-top: 14px; }
 .filter-chips { display: flex; gap: 8px; flex-wrap: wrap; flex: 1; }
 .filter-chip { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: var(--r-pill); border: 1px solid var(--line); background: transparent; cursor: pointer; font-family: var(--sans); font-size: 13px; color: var(--text-main); transition: all .2s; }
-.filter-chip:hover { border-color: var(--accent-earth); }
 .filter-chip.active { background: var(--brand-primary); color: var(--bg-primary); border-color: var(--brand-primary); }
 .chip-ic { width: 18px; height: 18px; display: flex; align-items: center; }
 .month-chip { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; padding: 8px 14px; }
@@ -539,12 +461,10 @@ onMounted(() => {
 .rcount { font-family: var(--serif); font-size: 22px; color: var(--brand-primary); }
 .rcount em { font-style: italic; color: var(--accent-earth); }
 .clear-all-btn { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent-earth); background: none; border: none; cursor: pointer; padding: 8px 14px; }
-.clear-all-btn:hover { color: var(--brand-primary); }
 
 /* Empty */
 .empty { text-align: center; padding: 96px 0; color: var(--text-muted); }
 .empty h3 { color: var(--brand-primary); margin-bottom: 12px; font-style: italic; }
-.empty .btn { margin-top: 20px; }
 
 /* List view */
 .wks-list { display: flex; flex-direction: column; gap: 16px; }
@@ -553,6 +473,10 @@ onMounted(() => {
 .img-wrap { position: relative; }
 .img-wrap img { width: 100%; height: 160px; object-fit: cover; border-radius: var(--r-sm); }
 .month-tag { position: absolute; top: 10px; left: 10px; background: var(--bg-primary); color: var(--brand-primary); font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; padding: 6px 10px; border-radius: var(--r-sm); }
+.wks-info-col { flex: 1; }
+.wks-badges { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.wks-badge-ic { color: var(--accent-earth); }
+.wks-meta-short { font-size: 11px; color: var(--text-muted); font-family: var(--mono); text-transform: uppercase; letter-spacing: .08em; }
 .wks-row h3 { font-size: 26px; margin-bottom: 6px; line-height: 1.2; color: var(--brand-primary); }
 .wrow-desc { color: var(--text-muted); font-size: 14px; line-height: 1.5; max-width: 520px; margin-bottom: 12px; }
 .row-meta { display: flex; gap: 12px; align-items: center; margin-top: 10px; }
@@ -617,8 +541,4 @@ onMounted(() => {
 
 /* Footer */
 footer { background: var(--brand-deep); color: rgba(249,247,242,.75); padding: 80px 0 32px; font-size: 14px; }
-
-/* Reveal */
-.reveal { opacity: 0; transform: translateY(20px); transition: opacity .8s ease, transform .8s ease; }
-.reveal.in { opacity: 1; transform: translateY(0); }
 </style>

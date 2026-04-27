@@ -1,0 +1,164 @@
+/* app/assets/css/main.css */
+
+/* ─── Google Fonts ──────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ─── Design tokens ─────────────────────────────────────────────── */
+:root {
+  --bg-primary: #F9F7F2;
+  --bg-section: #EFEDE5;
+  --bg-sage: #E2E8DF;
+  --bg-card: #FFFFFF;
+  --text-main: #2C2C2C;
+  --text-muted: #5C5C58;
+  --brand-primary: #1B3022;
+  --brand-deep: #122019;
+  --accent-soft: #8DA192;
+  --accent-earth: #A67C52;
+  --accent-earth-deep: #8A6440;
+  --cta-main: #E9C46A;
+  --cta-main-hover: #D9B25A;
+  --line: #DDD7CB;
+  --shadow-sm: 0 1px 2px rgba(27,48,34,.04), 0 2px 6px rgba(27,48,34,.05);
+  --shadow-md: 0 4px 12px rgba(27,48,34,.06), 0 12px 28px rgba(27,48,34,.08);
+  --shadow-lg: 0 8px 24px rgba(27,48,34,.08), 0 24px 60px rgba(27,48,34,.12);
+  --serif: 'Lora', Georgia, serif;
+  --sans: 'Inter', -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+  --r-sm: 4px; --r-md: 8px; --r-lg: 16px; --r-pill: 999px;
+  --max-w: 1240px;
+}
+
+/* ─── Base ──────────────────────────────────────────────────────── */
+* , *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg-primary);
+  color: var(--text-main);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.dh-root {
+  /* Legacy wrapper class, keeping for compatibility during refactor */
+}
+
+img { max-width: 100%; display: block; }
+
+h1, h2, h3, h4, h5 {
+  font-family: var(--serif);
+  color: var(--brand-primary);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  margin: 0;
+  line-height: 1.15;
+}
+h1 { font-size: clamp(48px, 6vw, 88px); }
+h2 { font-size: clamp(36px, 4vw, 56px); }
+h3 { font-size: clamp(24px, 2.4vw, 32px); }
+h4 { font-size: 20px; }
+p { margin: 0; }
+a { color: var(--accent-earth); text-decoration: none; transition: color .2s; }
+a:hover { color: var(--brand-primary); }
+
+/* ─── Utilities ─────────────────────────────────────────────────── */
+.eyebrow {
+  font-family: var(--sans);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent-earth);
+}
+
+.container {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 48px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  padding: 14px 26px;
+  border-radius: var(--r-sm);
+  border: none;
+  cursor: pointer;
+  transition: all .2s;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--cta-main);
+  color: var(--brand-primary);
+}
+.btn-primary:hover {
+  background: var(--cta-main-hover);
+  color: var(--brand-primary);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid var(--accent-earth);
+  color: var(--accent-earth);
+}
+.btn-secondary:hover {
+  background: var(--accent-earth);
+  color: var(--bg-primary);
+}
+
+.btn-glass {
+  background: rgba(249,247,242,0.15);
+  color: #FAF8F2;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(249,247,242,0.4);
+}
+.btn-glass:hover {
+  background: rgba(249,247,242,0.28);
+  color: #FAF8F2;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-family: var(--sans);
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: var(--r-pill);
+  background: var(--bg-sage);
+  color: var(--brand-primary);
+  letter-spacing: 0.02em;
+}
+
+/* ─── Sections ──────────────────────────────────────────────────── */
+section { padding: 120px 0; position: relative; }
+section.tight { padding: 80px 0; }
+section.cream { background: var(--bg-section); }
+section.sage { background: var(--bg-sage); }
+
+.section-head {
+  text-align: center;
+  margin-bottom: 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+.section-head h2 { max-width: 720px; }
+.section-head .lede { color: var(--text-muted); max-width: 580px; }
+
+/* ─── Animations ────────────────────────────────────────────────── */
+.reveal { opacity: 0; transform: translateY(20px); transition: opacity .8s ease, transform .8s ease; }
+.reveal.in { opacity: 1; transform: translateY(0); }

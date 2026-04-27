@@ -1,115 +1,37 @@
 <script setup lang="ts">
 // Dolina Harmonii — bespoke organic icon system
-// Three modes: 'line' (clean), 'sketch' (hand-drawn), 'filled' (woodcut)
+// Unified "sketch" (hand-drawn) style for all icons
 
-type IconMode = 'line' | 'sketch' | 'filled'
-
-interface IconDef {
-  line: string
-  sketch: string
-  filled: string
-}
-
-const ICON_DEFS: Record<string, IconDef> = {
-  meditation: {
-    line: `<path d="M32 18c-2.6 0-4.8 2.2-4.8 4.8 0 2.6 2.2 4.8 4.8 4.8s4.8-2.2 4.8-4.8c0-2.6-2.2-4.8-4.8-4.8z"/><path d="M19 46c2-7 6.5-11 13-11s11 4 13 11"/><path d="M14 46c4-2 8.5-2.5 12.5 0"/><path d="M37.5 46c4-2.5 8.5-2 12.5 0"/>`,
-    sketch: `<path d="M31.8 18.1c-2.7-.2-5 2-5 4.8.1 2.7 2.4 4.9 5 4.8 2.7-.1 4.7-2.2 4.7-4.9 0-2.5-2-4.5-4.7-4.7z"/><path d="M19.2 46.4c1.7-7.1 6.5-11.4 12.8-11.3 6.4.1 11.1 4.4 13.2 11.1"/><path d="M13.6 45.8c4.2-2.3 8.5-2.4 12.7-.1"/><path d="M37.6 46c4.1-2.4 8.4-2.2 12.7.1"/>`,
-    filled: `<circle cx="32" cy="22.8" r="4.8"/><path d="M19 46c2-7 6.5-11 13-11s11 4 13 11z"/><path d="M14 46c4-2 8.5-2.5 12.5 0z" opacity=".7"/><path d="M37.5 46c4-2.5 8.5-2 12.5 0z" opacity=".7"/>`,
-  },
-  leaf: {
-    line: `<path d="M14 50c0-18 14-34 36-36-2 22-18 36-36 36z"/><path d="M14 50C24 40 36 28 50 14"/>`,
-    sketch: `<path d="M13.8 50.2c.4-18.2 14.2-34.1 36.4-36.1-2.4 21.7-18.6 36.6-36.4 36.1z"/><path d="M14.2 49.8C24.4 39.6 36 28.2 50.2 13.6"/>`,
-    filled: `<path d="M14 50c0-18 14-34 36-36-2 22-18 36-36 36z"/>`,
-  },
-  seed: {
-    line: `<path d="M32 12c-7 6-7 16 0 22 7-6 7-16 0-22z"/><path d="M32 34v18"/><path d="M32 42c-3 0-6-2-7-5"/><path d="M32 46c3 0 6-2 7-5"/>`,
-    sketch: `<path d="M32 11.8c-7.2 6.1-7 16.2.1 22.1 7-5.9 6.9-16.2-.1-22.1z"/><path d="M32 33.8c.1 6.2 0 12.3-.1 18.4"/><path d="M32 42.2c-3.1.2-6-1.8-7.2-4.9"/><path d="M31.9 46.1c3 .3 6-1.7 7.3-4.7"/>`,
-    filled: `<path d="M32 12c-7 6-7 16 0 22 7-6 7-16 0-22z"/><path d="M32 34v18" stroke-width="2"/>`,
-  },
-  craft: {
-    line: `<circle cx="32" cy="32" r="6"/><path d="M32 14v8M32 42v8M14 32h8M42 32h8"/><path d="M19 19l5 5M40 40l5 5M19 45l5-5M40 24l5-5"/>`,
-    sketch: `<circle cx="32" cy="32" r="6.1"/><path d="M32 14.2v8M32 42v8.1M14.1 32h8M42 32h8.1"/><path d="M19.1 18.9l5 5.1M39.9 40l5.2 5.1M19 45.1l5.1-5M40 24l5.1-5.1"/>`,
-    filled: `<circle cx="32" cy="32" r="6"/><path d="M32 14v8M32 42v8M14 32h8M42 32h8"/><path d="M19 19l5 5M40 40l5 5M19 45l5-5M40 24l5-5"/>`,
-  },
-  candle: {
-    line: `<path d="M32 10c2 2 3 4 3 6s-3 3-3 6c0-3-3-4-3-6s1-4 3-6z"/><path d="M26 26h12v22a4 4 0 01-4 4h-4a4 4 0 01-4-4z"/><path d="M26 32h12"/>`,
-    sketch: `<path d="M32 10c2 2.1 3 4 3 6s-3 3.1-3.1 6c0-3-2.9-4-2.9-6 0-2 1-4 3-6z"/><path d="M26 26h12v22.1c0 2.1-1.9 4-4 4l-4-.1c-2.1 0-4-1.9-4-3.9z"/><path d="M26 32h12.1"/>`,
-    filled: `<path d="M32 10c2 2 3 4 3 6s-3 3-3 6c0-3-3-4-3-6s1-4 3-6z"/><path d="M26 26h12v22a4 4 0 01-4 4h-4a4 4 0 01-4-4z"/>`,
-  },
-  herb: {
-    line: `<path d="M32 52v-22"/><path d="M32 30c-6 0-10-4-10-10 6 0 10 4 10 10z"/><path d="M32 22c6 0 10-4 10-10-6 0-10 4-10 10z"/><path d="M32 36c-5 0-8-3-8-8 5 0 8 3 8 8z"/>`,
-    sketch: `<path d="M32 52.1l-.1-22.1"/><path d="M32 30c-6 0-10-4-10.1-10 6 .1 10.1 4 10.1 10z"/><path d="M31.9 22.1c6 0 10-4 10-10-5.9-.1-10 4-10 10z"/><path d="M32 36.1c-5 0-8-3-8.1-8 5.1 0 8 3 8.1 8z"/>`,
-    filled: `<path d="M32 52v-22"/><path d="M32 30c-6 0-10-4-10-10 6 0 10 4 10 10z"/><path d="M32 22c6 0 10-4 10-10-6 0-10 4-10 10z"/><path d="M32 36c-5 0-8-3-8-8 5 0 8 3 8 8z"/>`,
-  },
-  arrow: {
-    line: `<path d="M14 32h36"/><path d="M40 22l10 10-10 10"/>`,
-    sketch: `<path d="M14 32.1l36-.1"/><path d="M40 22l10.1 10-10.1 10.1"/>`,
-    filled: `<path d="M14 32h36M40 22l10 10-10 10"/>`,
-  },
-  compass: {
-    line: `<circle cx="32" cy="32" r="20"/><path d="M32 18l4 14-4 14-4-14z"/>`,
-    sketch: `<circle cx="32" cy="32" r="20.1"/><path d="M32 18l4 14-4.1 14-4-14z"/>`,
-    filled: `<circle cx="32" cy="32" r="20"/><path d="M32 18l4 14-4 14-4-14z"/>`,
-  },
-  star: {
-    line: `<path d="M32 12l5 13 14 1-11 9 4 13-12-8-12 8 4-13-11-9 14-1z"/>`,
-    sketch: `<path d="M32 12l5.1 13 14-.1-11 9.1 4 13-12.1-8-12 8 4-13-11-9.1 14 .1z"/>`,
-    filled: `<path d="M32 12l5 13 14 1-11 9 4 13-12-8-12 8 4-13-11-9 14-1z"/>`,
-  },
-  bed: {
-    line: `<path d="M10 42v-12c0-2 2-4 4-4h36c2 0 4 2 4 4v12"/><path d="M10 42h44v8"/><path d="M10 50v-8"/><path d="M16 32h12v-4"/>`,
-    sketch: `<path d="M10 42.1V30c0-2 2-4 4-4l36 .1c2 0 4.1 2 4 4l.1 12"/><path d="M10.1 42h44v8.1"/><path d="M10 50v-8"/><path d="M16 32.1l12-.1v-4"/>`,
-    filled: `<path d="M10 42v-12c0-2 2-4 4-4h36c2 0 4 2 4 4v12z"/><path d="M10 42h44v8H10z"/>`,
-  },
-  fireplace: {
-    line: `<path d="M10 50V20c0-2 2-4 4-4h36c2 0 4 2 4 4v30"/><path d="M10 30h44"/><path d="M32 36c2 2 4 4 4 8 0 4-2 6-4 6s-4-2-4-6c0-2 1-4 2-5 0 1 1 2 2 3"/>`,
-    sketch: `<path d="M10 50V20c0-2 2-4 4.1-4l36-.1c2 0 4 2 4 4.1v30"/><path d="M10 30h44.1"/><path d="M32.1 36c2 2 4 4 4 8 0 4-2 6-4 6.1-2-.1-4-2-4-6 0-2 1-4 2-5 0 1 1 2 2 3"/>`,
-    filled: `<path d="M10 50V20c0-2 2-4 4-4h36c2 0 4 2 4 4v30z"/><path d="M32 36c2 2 4 4 4 8 0 4-2 6-4 6s-4-2-4-6c0-2 1-4 2-5 0 1 1 2 2 3"/>`,
-  },
-  kitchen: {
-    line: `<path d="M14 18h36v32H14z"/><path d="M14 30h36"/><circle cx="22" cy="40" r="2"/><circle cx="32" cy="40" r="2"/><circle cx="42" cy="40" r="2"/><path d="M22 24h12"/>`,
-    sketch: `<path d="M14 18h36.1v32H14z"/><path d="M14 30.1l36-.1"/><circle cx="22" cy="40" r="2"/><circle cx="32" cy="40" r="2"/><circle cx="42" cy="40" r="2"/><path d="M22 24h12.1"/>`,
-    filled: `<path d="M14 18h36v32H14z"/><path d="M14 30h36"/>`,
-  },
-  bath: {
-    line: `<path d="M8 30h48v6c0 6-4 10-10 10H18c-6 0-10-4-10-10z"/><path d="M14 46l-2 6M50 46l2 6"/><path d="M16 30v-12c0-3 2-6 6-6 2 0 4 1 5 3"/><path d="M24 16h6"/>`,
-    sketch: `<path d="M8 30.1h48v6c0 6-4 10-10 10.1H18.1c-6 0-10-4-10.1-10z"/><path d="M14 46l-2.1 6.1M50 46l2.1 6"/><path d="M16 30.1V18c0-3 2-6 6-6 2 0 4 1 5 3"/><path d="M24.1 16l6-.1"/>`,
-    filled: `<path d="M8 30h48v6c0 6-4 10-10 10H18c-6 0-10-4-10-10z"/>`,
-  },
-  tea: {
-    line: `<path d="M14 22h28v18a8 8 0 01-8 8h-12a8 8 0 01-8-8z"/><path d="M42 26h6a4 4 0 014 4v4a4 4 0 01-4 4h-6"/><path d="M22 12c-2 3 2 5 0 8M30 12c-2 3 2 5 0 8"/>`,
-    sketch: `<path d="M14 22.1h28v18a8 8 0 01-8 8H22a8 8 0 01-8-8z"/><path d="M42 26.1h6c2.1 0 4 1.9 4 4v4c0 2.1-1.9 4-4 4h-6"/><path d="M22 12c-2 3 2.1 5 0 8m8-8c-2.1 3 2 5 0 8"/>`,
-    filled: `<path d="M14 22h28v18a8 8 0 01-8 8h-12a8 8 0 01-8-8z"/><path d="M42 26h6a4 4 0 014 4v4a4 4 0 01-4 4h-6"/>`,
-  },
-  mountain: {
-    line: `<path d="M8 48l14-22 8 12 6-8 8 12 12-22"/><path d="M8 48h48"/><path d="M22 26l4 6"/>`,
-    sketch: `<path d="M8.1 48.2l14-22.1 8 12 6-8 8 12 12.1-22.1"/><path d="M8 48.1l48-.1"/><path d="M22 26.1l4 6"/>`,
-    filled: `<path d="M8 48l14-22 8 12 6-8 8 12 12-22 -2 28z"/>`,
-  },
+const ICON_DEFS: Record<string, string> = {
+  meditation: `<path d="M31.8 18.1c-2.7-.2-5 2-5 4.8.1 2.7 2.4 4.9 5 4.8 2.7-.1 4.7-2.2 4.7-4.9 0-2.5-2-4.5-4.7-4.7z"/><path d="M19.2 46.4c1.7-7.1 6.5-11.4 12.8-11.3 6.4.1 11.1 4.4 13.2 11.1"/><path d="M13.6 45.8c4.2-2.3 8.5-2.4 12.7-.1"/><path d="M37.6 46c4.1-2.4 8.4-2.2 12.7.1"/>`,
+  leaf: `<path d="M13.8 50.2c.4-18.2 14.2-34.1 36.4-36.1-2.4 21.7-18.6 36.6-36.4 36.1z"/><path d="M14.2 49.8C24.4 39.6 36 28.2 50.2 13.6"/>`,
+  seed: `<path d="M32 11.8c-7.2 6.1-7 16.2.1 22.1 7-5.9 6.9-16.2-.1-22.1z"/><path d="M32 33.8c.1 6.2 0 12.3-.1 18.4"/><path d="M32 42.2c-3.1.2-6-1.8-7.2-4.9"/><path d="M31.9 46.1c3 .3 6-1.7 7.3-4.7"/>`,
+  craft: `<circle cx="32" cy="32" r="6.1"/><path d="M32 14.2v8M32 42v8.1M14.1 32h8M42 32h8.1"/><path d="M19.1 18.9l5 5.1M39.9 40l5.2 5.1M19 45.1l5.1-5M40 24l5.1-5.1"/>`,
+  candle: `<path d="M32 10c2 2.1 3 4 3 6s-3 3.1-3.1 6c0-3-2.9-4-2.9-6 0-2 1-4 3-6z"/><path d="M26 26h12v22.1c0 2.1-1.9 4-4 4l-4-.1c-2.1 0-4-1.9-4-3.9z"/><path d="M26 32h12.1"/>`,
+  herb: `<path d="M32 52.1l-.1-22.1"/><path d="M32 30c-6 0-10-4-10.1-10 6 .1 10.1 4 10.1 10z"/><path d="M31.9 22.1c6 0 10-4 10-10-5.9-.1-10 4-10 10z"/><path d="M32 36.1c-5 0-8-3-8.1-8 5.1 0 8 3 8.1 8z"/>`,
+  arrow: `<path d="M14 32.1l36-.1"/><path d="M40 22l10.1 10-10.1 10.1"/>`,
+  compass: `<circle cx="32" cy="32" r="20.1"/><path d="M32 18l4 14-4.1 14-4-14z"/>`,
+  star: `<path d="M32 12l5.1 13 14-.1-11 9.1 4 13-12.1-8-12 8 4-13-11-9.1 14 .1z"/>`,
+  bed: `<path d="M10 42.1V30c0-2 2-4 4-4l36 .1c2 0 4.1 2 4 4l.1 12"/><path d="M10.1 42h44v8.1"/><path d="M10 50v-8"/><path d="M16 32.1l12-.1v-4"/>`,
+  fireplace: `<path d="M10 50V20c0-2 2-4 4.1-4l36-.1c2 0 4 2 4 4.1v30"/><path d="M10 30h44.1"/><path d="M32.1 36c2 2 4 4 4 8 0 4-2 6-4 6.1-2-.1-4-2-4-6 0-2 1-4 2-5 0 1 1 2 2 3"/>`,
+  kitchen: `<path d="M14 18h36.1v32H14z"/><path d="M14 30.1l36-.1"/><circle cx="22" cy="40" r="2"/><circle cx="32" cy="40" r="2"/><circle cx="42" cy="40" r="2"/><path d="M22 24h12.1"/>`,
+  bath: `<path d="M8 30.1h48v6c0 6-4 10-10 10.1H18.1c-6 0-10-4-10.1-10z"/><path d="M14 46l-2.1 6.1M50 46l2.1 6"/><path d="M16 30.1V18c0-3 2-6 6-6 2 0 4 1 5 3"/><path d="M24.1 16l6-.1"/>`,
+  tea: `<path d="M14 22.1h28v18a8 8 0 01-8 8H22a8 8 0 01-8-8z"/><path d="M42 26.1h6c2.1 0 4 1.9 4 4v4c0 2.1-1.9 4-4 4h-6"/><path d="M22 12c-2 3 2.1 5 0 8m8-8c-2.1 3 2 5 0 8"/>`,
+  mountain: `<path d="M8.1 48.2l14-22.1 8 12 6-8 8 12 12.1-22.1"/><path d="M8 48.1l48-.1"/><path d="M22 26.1l4 6"/>`,
 }
 
 const props = withDefaults(defineProps<{
   name: string
   size?: number
-  mode?: IconMode
   stroke?: number
   class?: string
 }>(), {
   size: 24,
-  mode: 'sketch',
   stroke: 1.5,
 })
 
-const paths = computed(() => {
-  const def = ICON_DEFS[props.name]
-  if (!def) return ''
-  return def[props.mode] || def.line
-})
-
-const isFilled = computed(() => props.mode === 'filled')
-const strokeWidth = computed(() =>
-  isFilled.value ? 1.2 : props.stroke * (props.mode === 'sketch' ? 1.05 : 1)
-)
+const paths = computed(() => ICON_DEFS[props.name] || '')
+const strokeWidth = computed(() => props.stroke * 1.05)
 </script>
 
 <template>
@@ -118,7 +40,7 @@ const strokeWidth = computed(() =>
     :viewBox="'0 0 64 64'"
     :width="size"
     :height="size"
-    :fill="isFilled ? 'currentColor' : 'none'"
+    fill="none"
     stroke="currentColor"
     :stroke-width="strokeWidth"
     stroke-linecap="round"

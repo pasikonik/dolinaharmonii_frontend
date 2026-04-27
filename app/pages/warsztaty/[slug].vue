@@ -1,31 +1,54 @@
 <script setup lang="ts">
-import type { Workshop, Instructor } from '~/types/directus'
-
-definePageMeta({ layout: false })
+import type { Workshop } from '~/types/directus'
 
 const route = useRoute()
-const { getWorkshop, getImageUrl } = useDirectus()
+const { getWorkshop, getWorkshops, getImageUrl } = useDirectus()
 
-const { data, error } = await useAsyncData(
+const { data } = await useAsyncData(
   `workshop-${route.params.slug}`,
   () => getWorkshop(route.params.slug as string)
 )
 
 const workshop = computed(() => data.value?.data?.[0] ?? null)
 
+const { data: relatedData } = await useAsyncData(
+  `related-${route.params.slug as string}`,
+  () => {
+    const cat = workshop.value?.category
+    const id = typeof cat === 'object' ? cat?.id : null
+    if (!id) return Promise.resolve(null)
+    return getWorkshops({
+      filter: {
+        _and: [
+          { status: { _eq: 'published' } },
+          { category: { id: { _eq: id } } },
+          { slug: { _neq: route.params.slug as string } },
+        ],
+      },
+      limit: 3,
+    })
+  }
+)
+
 useSeoMeta({
   title: () => workshop.value ? `${workshop.value.title} — Dolina Harmonii` : 'Warsztat — Dolina Harmonii',
-  description: () => workshop.value?.meta_description || workshop.value?.short_description || '',
+  description: () => workshop.value?.short_description || '',
 })
 
 const lightboxIndex = ref<number | null>(null)
 
 const galleryImages = computed(() => {
-  if (!workshop.value) return STATIC_W.gallery
-  if (workshop.value.cover_image) {
-    return [getImageUrl(workshop.value.cover_image, { width: 1400, format: 'webp' })]
+  const imgs: string[] = []
+  if (workshop.value?.cover_image) {
+    imgs.push(getImageUrl(workshop.value.cover_image, { width: 1400, format: 'webp' }))
   }
-  return STATIC_W.gallery
+  if (Array.isArray(workshop.value?.gallery)) {
+    for (const item of workshop.value.gallery) {
+      const fileId = typeof item === 'object' && item !== null ? item.directus_files_id : item
+      if (fileId) imgs.push(getImageUrl(fileId, { width: 1400, format: 'webp' }))
+    }
+  }
+  return imgs
 })
 
 function openLightbox(i: number) { lightboxIndex.value = i }
@@ -58,250 +81,182 @@ onMounted(() => {
   onUnmounted(() => io.disconnect())
 })
 
-const displayData = computed(() => {
-  if (workshop.value) {
-    const w = workshop.value
-    const spotsFree = w.capacity - (w.spots_taken ?? 0)
-    const pct = ((w.spots_taken ?? 0) / w.capacity) * 100
-    const instructor = Array.isArray(w.instructors) && w.instructors.length > 0
-      ? w.instructors[0].instructors_id : null
-    return {
-      title: w.title,
-      category: typeof w.category === 'object' ? w.category : null,
-      lede: w.short_description,
-      description: w.description,
-      price: `${w.price} zł`,
-      date: w.start_date ? new Date(w.start_date).toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' }) : '',
-      duration: '',
-      spotsTotal: w.capacity,
-      spotsFree,
-      pct,
-      instructor,
-    }
-  }
-  return {
-    title: STATIC_W.title,
-    category: STATIC_W.category,
-    lede: STATIC_W.lede,
-    description: null,
-    price: STATIC_W.price,
-    date: STATIC_W.date,
-    duration: STATIC_W.duration,
-    spotsTotal: STATIC_W.spotsTotal,
-    spotsFree: STATIC_W.spotsTotal - STATIC_W.spotsTaken,
-    pct: (STATIC_W.spotsTaken / STATIC_W.spotsTotal) * 100,
-    instructor: STATIC_W.instructor,
-  }
+const category = computed(() => {
+  const cat = workshop.value?.category
+  return typeof cat === 'object' ? cat : null
 })
 
-const STATIC_W = {
-  title: 'Mindfulness w naturze',
-  category: { name: 'Mindfulness', icon: 'meditation' },
-  level: 'Wszystkie poziomy',
-  lede: 'Trzydniowy warsztat uważnej obecności w terenie. Codzienna praktyka rano, spacery medytacyjne, wieczorny krąg ciszy przy ognisku.',
-  date: '8–10 maja 2026',
-  hours: '17:00 (pt) — 14:00 (nd)',
-  duration: '3 dni · 18h praktyki',
-  spotsTotal: 12,
-  spotsTaken: 8,
-  price: '1 480 zł',
-  intro: 'Zatrzymujemy się na trzy dni, żeby z uważnością wrócić do tego, co bezpośrednie: oddech, krok, dotyk powietrza na skórze. To warsztat dla osób, które chcą zacząć praktykę mindfulness — albo pogłębić ją w innym kontekście niż miejski kurs.',
-  body: [
-    'Pracujemy w niedużej grupie (max 12 osób) w drewnianym Domu Jogi i w okolicznym lesie. Codzienna praktyka medytacji prowadzonej przeplata się z nieformalnymi spacerami, milczącymi posiłkami i kręgiem dzielenia.',
-    'Nie wymagamy żadnego doświadczenia. Wymagamy gotowości — żeby na trzy dni odłożyć telefon, posiedzieć w niewygodzie, posłuchać siebie i innych. Uważność jest umiejętnością; jak każdą inną — można jej się nauczyć.',
-  ],
-  gallery: [
-    'https://images.unsplash.com/photo-1545389336-cf090694435e?auto=format&fit=crop&w=1400&q=80',
-    'https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=1400&q=80',
-    'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1400&q=80',
-    'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=1400&q=80',
-    'https://images.unsplash.com/photo-1542718610-a1d656d1884c?auto=format&fit=crop&w=1400&q=80',
-    'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?auto=format&fit=crop&w=1400&q=80',
-    'https://images.unsplash.com/photo-1591291621164-2c6367723315?auto=format&fit=crop&w=1400&q=80',
-    'https://images.unsplash.com/photo-1455218873509-8097305ee378?auto=format&fit=crop&w=1400&q=80',
-    'https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=1400&q=80',
-  ],
-  includes: [
-    { ic: 'bed',        t: '2 noclegi w pokojach 2-os' },
-    { ic: 'tea',        t: 'Pełne wyżywienie wegetariańskie' },
-    { ic: 'meditation', t: '18h praktyki prowadzonej' },
-    { ic: 'candle',     t: 'Krąg przy ognisku' },
-    { ic: 'bath',       t: 'Sauna fińska (sobota wieczorem)' },
-    { ic: 'herb',       t: 'Materiały i herbaty ziołowe' },
-  ],
-  bring: [
-    'Wygodne ubrania w kilku warstwach (zmienna pogoda)',
-    'Buty trekkingowe lub wodoodporne',
-    'Mata, koc i poduszka — opcjonalnie (mamy też swoje)',
-    'Notes i długopis',
-    'Telefon na czas warsztatu trafia do koszyka — to część praktyki',
-  ],
-  instructor: {
-    name: 'Joanna Lis',
-    role: 'Prowadząca · nauczycielka mindfulness',
-    bio: 'Certyfikowana nauczycielka MBSR (Bangor University). Prowadzi warsztaty od 2014 r., związana z Doliną Harmonii od początku. Autorka książki „Praktyka, nie ucieczka".',
-    photo: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=900&q=80',
-    email: 'joanna@harmonii.pl',
-    phone: '+48 691 230 451',
-  },
-}
+const instructor = computed(() => {
+  const w = workshop.value
+  if (!w || !Array.isArray(w.instructors) || w.instructors.length === 0) return null
+  return w.instructors[0].instructors_id
+})
+
+const spotsInfo = computed(() => {
+  const w = workshop.value
+  if (!w?.capacity) return null
+  const free = w.capacity - (w.spots_taken ?? 0)
+  const pct = ((w.spots_taken ?? 0) / w.capacity) * 100
+  return { total: w.capacity, free, taken: w.spots_taken ?? 0, pct }
+})
+
+const startDate = computed(() =>
+  workshop.value?.start_date
+    ? new Date(workshop.value.start_date).toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' })
+    : null
+)
+
+const duration = computed(() => {
+  const { start_date, end_date } = workshop.value ?? {}
+  if (!start_date || !end_date) return null
+  const days = Math.round((new Date(end_date).getTime() - new Date(start_date).getTime()) / 86_400_000) + 1
+  return days === 1 ? '1 dzień' : `${days} dni`
+})
+
+const relatedWorkshops = computed(() =>
+  relatedData.value?.data?.map((w: Workshop) => ({
+    slug: w.slug,
+    title: w.title,
+    date: w.start_date ? new Date(w.start_date).toLocaleDateString('pl-PL', { month: 'long', year: 'numeric' }) : '',
+    img: w.cover_image ? getImageUrl(w.cover_image, { width: 400, format: 'webp' }) : '',
+  })) ?? []
+)
 </script>
 
 <template>
-  <div class="dh-root">
-
-    <!-- ─── NAV ──────────────────────────────────────────────────── -->
-    <nav class="nav-pill">
-      <NuxtLink class="brand" to="/">
-        <DhIcon name="seed" :size="22" :stroke="1.4" />
-        Dolina Harmonii
-      </NuxtLink>
-      <ul>
-        <li><NuxtLink to="/#dolina">Dolina</NuxtLink></li>
-        <li><NuxtLink to="/warsztaty">Warsztaty</NuxtLink></li>
-        <li><NuxtLink to="/#noclegi">Noclegi</NuxtLink></li>
-        <li><NuxtLink to="/#izery">Magiczne Izery</NuxtLink></li>
-        <li><NuxtLink to="/#galeria">Galeria</NuxtLink></li>
-      </ul>
-      <NuxtLink class="nav-cta" to="/warsztaty">Wszystkie warsztaty</NuxtLink>
-    </nav>
-
+  <div class="workshop-detail-page">
     <!-- ─── HERO ──────────────────────────────────────────────────── -->
-    <section class="w-hero">
+    <header class="w-hero">
       <div class="container">
-
         <div class="w-hero-grid">
           <!-- Left: title + meta -->
-          <div>
-            <div class="cat-row">
+          <div class="w-hero-title-col">
+            <div v-if="category" class="cat-row">
               <span class="cat-pill">
                 <DhIcon
-                  :name="typeof displayData.category === 'object' && displayData.category?.icon ? displayData.category.icon.split(':').pop()! : 'meditation'"
+                  :name="category.icon ? category.icon.split(':').pop()! : 'meditation'"
                   :size="16" :stroke="1.4"
                 />
-                {{ typeof displayData.category === 'object' ? displayData.category?.name : displayData.category }}
+                {{ category.name }}
               </span>
-              <span class="level-pill">{{ STATIC_W.level }}</span>
             </div>
-            <h1 v-html="displayData.title.replace(/w naturze/, '<em>w naturze</em>')" />
-            <p class="lede">{{ displayData.lede }}</p>
+            <h1>{{ workshop?.title }}</h1>
+            <p v-if="workshop?.short_description" class="lede">{{ workshop.short_description }}</p>
           </div>
 
           <!-- Right: booking card -->
           <aside class="book-card" id="zapis">
-            <div class="book-label">Cena za osobę</div>
-            <div class="book-price">
-              {{ displayData.price }}
-              <small>brutto</small>
-            </div>
+            <template v-if="workshop?.price">
+              <div class="book-label">Cena za osobę</div>
+              <div class="book-price">
+                {{ workshop.price }} zł
+                <small>brutto</small>
+              </div>
+            </template>
 
-            <div class="avail-wrap">
+            <div v-if="spotsInfo" class="avail-wrap">
               <div class="avail-head">
                 <span class="ah-l">Wolne miejsca</span>
-                <span class="ah-r">{{ displayData.spotsFree }} z {{ displayData.spotsTotal }}</span>
+                <span class="ah-r">{{ spotsInfo.free }} z {{ spotsInfo.total }}</span>
               </div>
               <div class="avail-bar">
-                <div class="fill" :style="{ width: `${displayData.pct}%` }" />
+                <div class="fill" :style="{ width: `${spotsInfo.pct}%` }" />
               </div>
               <div class="avail-meta">
-                <span>{{ displayData.spotsTotal - displayData.spotsFree }} zajętych</span>
-                <span>zostało {{ displayData.spotsFree }}</span>
+                <span>{{ spotsInfo.taken }} zajętych</span>
+                <span>zostało {{ spotsInfo.free }}</span>
               </div>
             </div>
 
             <div class="divide" />
 
-            <div class="book-row">
+            <div v-if="startDate" class="book-row">
               <span class="bk">Termin</span>
-              <span class="bv">{{ displayData.date }}</span>
+              <span class="bv">{{ startDate }}</span>
             </div>
-            <div class="book-row">
+            <div v-if="duration" class="book-row">
               <span class="bk">Czas trwania</span>
-              <span class="bv">{{ displayData.duration || STATIC_W.duration }}</span>
+              <span class="bv">{{ duration }}</span>
             </div>
           </aside>
         </div>
 
         <!-- Gallery strip -->
-        <div class="w-gallery-strip">
-          <div>
+        <div v-if="galleryImages.length" class="w-gallery-strip" :class="{ 'single': galleryImages.length === 1 }">
+          <div class="gallery-main" @click="openLightbox(0)">
             <img :src="galleryImages[0]" alt="" />
           </div>
-          <div class="right-stack">
-            <div><img :src="galleryImages[1]" alt="" /></div>
-            <div>
+          <div v-if="galleryImages.length >= 3" class="right-stack">
+            <div @click="openLightbox(1)"><img :src="galleryImages[1]" alt="" /></div>
+            <div class="gallery-more" @click="openLightbox(2)">
               <img :src="galleryImages[2]" alt="" />
-              <div class="more-overlay">+ {{ galleryImages.length - 3 }} zdjęć</div>
+              <div v-if="galleryImages.length > 3" class="more-overlay">+ {{ galleryImages.length - 3 }} zdjęć</div>
             </div>
           </div>
         </div>
       </div>
-    </section>
+    </header>
 
     <!-- ─── BODY ──────────────────────────────────────────────────── -->
     <section class="w-body">
       <div class="container">
         <div class="w-body-grid">
-
           <!-- Main content -->
-          <div>
-            <!-- About -->
-            <div class="w-section reveal">
+          <div class="w-content-col">
+            <div v-if="workshop?.description" class="w-section reveal">
               <span class="eyebrow">O warsztacie</span>
-              <h2 style="margin-top:16px">Trzy dni z uważnością — od oddechu do kroku.</h2>
-              <p class="lead-p">{{ STATIC_W.intro }}</p>
-              <p v-for="(p, i) in STATIC_W.body" :key="i">{{ p }}</p>
-            </div>
-
-            <!-- Includes + Bring -->
-            <div class="w-section reveal" style="display:grid;grid-template-columns:1fr 1fr;gap:56px">
-              <div>
-                <span class="eyebrow">W cenie</span>
-                <h2 style="margin-top:16px;font-size:28px">Co jest wliczone</h2>
-                <ul class="check-list" style="margin-top:24px">
-                  <li v-for="(it, i) in STATIC_W.includes" :key="i">
-                    <span class="ico"><DhIcon :name="it.ic" :size="26" :stroke="1.4" /></span>
-                    <span>{{ it.t }}</span>
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <span class="eyebrow">Zabierz ze sobą</span>
-                <h2 style="margin-top:16px;font-size:28px">Praktyczne</h2>
-                <ul class="check-list" style="margin-top:24px">
-                  <li v-for="(t, i) in STATIC_W.bring" :key="i">
-                    <span class="ico"><DhIcon name="leaf" :size="22" :stroke="1.4" /></span>
-                    <span>{{ t }}</span>
-                  </li>
-                </ul>
-              </div>
+              <div class="body-p-wrap" v-html="workshop.description" />
             </div>
           </div>
 
           <!-- Sidebar — only instructor -->
           <aside class="side">
-            <div class="instructor-card reveal">
-              <div class="head">
+            <div v-if="instructor" class="instructor-card reveal">
+              <span class="inst-label">Prowadzący</span>
+              <div class="inst-head">
                 <img
+                  v-if="instructor.photo"
                   class="photo"
-                  :src="displayData.instructor?.photo || STATIC_W.instructor.photo"
-                  :alt="displayData.instructor?.name || STATIC_W.instructor.name"
+                  :src="getImageUrl(instructor.photo, { width: 200, format: 'webp' })"
+                  :alt="instructor.name"
                 />
-                <div class="inst-body">
-                  <div class="role">{{ STATIC_W.instructor.role }}</div>
-                  <h3>{{ displayData.instructor?.name || STATIC_W.instructor.name }}</h3>
+                <div class="inst-info">
+                  <div v-if="instructor.role" class="role-tag">{{ instructor.role }}</div>
+                  <h3 class="inst-name">{{ instructor.name }}</h3>
                 </div>
               </div>
-              <p>{{ STATIC_W.instructor.bio }}</p>
-              <div class="contact">
-                <a :href="`mailto:${STATIC_W.instructor.email}`">
+              <p v-if="instructor.bio" class="inst-bio">{{ instructor.bio }}</p>
+              <div class="inst-contact">
+                <a v-if="instructor.email" :href="`mailto:${instructor.email}`" class="contact-link">
                   <DhIcon name="seed" :size="16" :stroke="1.4" />
-                  {{ STATIC_W.instructor.email }}
+                  {{ instructor.email }}
                 </a>
-                <a :href="`tel:${STATIC_W.instructor.phone.replace(/\s/g, '')}`">
+                <a v-if="instructor.phone" :href="`tel:${instructor.phone.replace(/\s/g, '')}`" class="contact-link">
                   <DhIcon name="compass" :size="16" :stroke="1.4" />
-                  {{ STATIC_W.instructor.phone }}
+                  {{ instructor.phone }}
                 </a>
+                <a v-if="instructor.website" :href="instructor.website" class="contact-link" target="_blank" rel="noopener">
+                  <DhIcon name="leaf" :size="16" :stroke="1.4" />
+                  {{ instructor.website }}
+                </a>
+              </div>
+            </div>
+
+            <div v-if="relatedWorkshops.length" class="related-card reveal">
+              <span class="eyebrow">Z tej samej kategorii</span>
+              <div class="related-list">
+                <NuxtLink
+                  v-for="w in relatedWorkshops"
+                  :key="w.slug"
+                  :to="`/warsztaty/${w.slug}`"
+                  class="related-item"
+                >
+                  <img v-if="w.img" :src="w.img" alt="" />
+                  <div class="related-meta">
+                    <div class="related-title">{{ w.title }}</div>
+                    <div class="related-date">{{ w.date }}</div>
+                  </div>
+                </NuxtLink>
               </div>
             </div>
           </aside>
@@ -312,43 +267,26 @@ const STATIC_W = {
     <!-- ─── LIGHTBOX ──────────────────────────────────────────────── -->
     <Teleport to="body">
       <div v-if="lightboxIndex !== null" class="lightbox open" @click="closeLightbox">
-        <button class="lightbox-nav prev" @click.stop="prevImg">←</button>
+        <button class="lightbox-nav prev" @click.stop="prevImg">‹</button>
         <img :src="galleryImages[lightboxIndex]" alt="" @click.stop />
-        <button class="lightbox-nav next" @click.stop="nextImg">→</button>
+        <button class="lightbox-nav next" @click.stop="nextImg">›</button>
         <button class="lightbox-close" @click="closeLightbox">×</button>
         <div class="lightbox-counter">{{ lightboxIndex + 1 }} / {{ galleryImages.length }}</div>
       </div>
     </Teleport>
-
-    <!-- ─── FOOTER ─────────────────────────────────────────────────── -->
-    <footer>
-      <div class="container">
-        <div style="text-align:center;padding:40px 0;border-bottom:1px solid rgba(249,247,242,0.1)">
-          <div style="font-family:var(--serif);font-style:italic;font-size:36px;color:var(--bg-primary);margin-bottom:8px">Dolina Harmonii</div>
-          <p style="color:rgba(249,247,242,0.7)">Kopaniec 47 · 58-512 Stara Kamienica · dolina@harmonii.pl</p>
-        </div>
-        <div style="display:flex;justify-content:space-between;padding:32px 0;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(249,247,242,0.5)">
-          <span>© 2026 Dolina Harmonii</span>
-          <NuxtLink to="/warsztaty" style="color:inherit">← Wszystkie warsztaty</NuxtLink>
-        </div>
-      </div>
-    </footer>
-
   </div>
 </template>
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+<style scoped>
+/* Page-specific styles only. Base styles moved to main.css */
 
 /* ─── Hero ────────────────────────────────────────────────────── */
 .w-hero { padding: 160px 0 0; background: var(--bg-section); border-bottom: 1px solid var(--line); }
 .w-hero-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 64px; align-items: end; }
 .w-hero h1 { font-size: clamp(56px, 6.4vw, 104px); font-style: italic; font-weight: 500; line-height: 0.96; letter-spacing: -0.02em; margin-bottom: 28px; }
-.w-hero h1 em { color: var(--accent-earth); font-style: italic; }
 .w-hero .lede { font-family: var(--serif); font-size: 22px; line-height: 1.45; color: var(--text-muted); max-width: 560px; margin-bottom: 32px; }
 .cat-row { display: flex; gap: 10px; align-items: center; margin-bottom: 28px; }
 .cat-pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: var(--r-pill); background: var(--bg-card); border: 1px solid var(--line); font-size: 12px; font-weight: 500; letter-spacing: .04em; color: var(--brand-primary); }
-.level-pill { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--text-muted); padding: 8px 0 8px 14px; border-left: 1px solid var(--line); }
 
 /* ─── Booking Card ────────────────────────────────────────────── */
 .book-card { background: var(--bg-card); border: 1px solid var(--line); border-radius: var(--r-md); box-shadow: var(--shadow-md); padding: 32px; transform: translateY(64px); }
@@ -371,7 +309,8 @@ const STATIC_W = {
 
 /* ─── Gallery Strip ───────────────────────────────────────────── */
 .w-gallery-strip { margin-top: 96px; display: grid; grid-template-columns: 2fr 1fr; gap: 8px; height: 460px; }
-.w-gallery-strip > div { overflow: hidden; border-radius: var(--r-sm); position: relative; background: var(--bg-section); }
+.w-gallery-strip.single { grid-template-columns: 1fr; }
+.w-gallery-strip > div { overflow: hidden; border-radius: var(--r-sm); position: relative; background: var(--bg-section); cursor: pointer; }
 .w-gallery-strip img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s ease; }
 .w-gallery-strip > div:hover img { transform: scale(1.04); }
 .w-gallery-strip .right-stack { display: grid; grid-template-rows: 1fr 1fr; gap: 8px; height: 100%; }
@@ -381,28 +320,33 @@ const STATIC_W = {
 .w-body { padding: 96px 0; }
 .w-body-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 96px; align-items: start; }
 .w-section { margin-bottom: 72px; }
-.w-section:last-child { margin-bottom: 0; }
-.w-section h2 { font-size: 36px; margin-bottom: 24px; }
-.w-section .lead-p { font-family: var(--serif); font-size: 22px; line-height: 1.5; color: var(--brand-primary); margin-bottom: 24px; }
-.w-section p { color: var(--text-muted); margin-bottom: 16px; font-size: 16px; line-height: 1.7; }
-
-/* ─── Check list ──────────────────────────────────────────────── */
-.check-list { display: flex; flex-direction: column; gap: 14px; margin: 0; padding: 0; }
-.check-list li { display: flex; gap: 14px; align-items: flex-start; list-style: none; font-size: 15px; color: var(--text-main); }
-.check-list .ico { width: 28px; height: 28px; flex-shrink: 0; color: var(--accent-earth); margin-top: -2px; }
+.body-p-wrap { margin-top: 24px; }
+.body-p-wrap p { color: var(--text-muted); margin-bottom: 16px; font-size: 16px; line-height: 1.7; }
 
 /* ─── Sidebar ─────────────────────────────────────────────────── */
 .side { position: sticky; top: 100px; display: flex; flex-direction: column; gap: 32px; }
 .instructor-card { background: var(--bg-card); border: 1px solid var(--line); border-radius: var(--r-md); overflow: hidden; padding: 24px; }
-.instructor-card .head { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
-.instructor-card .photo { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; filter: saturate(0.9); flex-shrink: 0; }
-.instructor-card .inst-body { flex: 1; min-width: 0; }
-.instructor-card .role { font-family: var(--mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent-earth); margin-bottom: 4px; }
-.instructor-card h3 { font-size: 20px; margin-bottom: 0; line-height: 1.2; }
-.instructor-card p { color: var(--text-muted); font-size: 13px; line-height: 1.55; margin-bottom: 14px; }
-.instructor-card .contact { border-top: 1px solid var(--line); padding-top: 14px; display: flex; flex-direction: column; gap: 8px; }
-.instructor-card .contact a { display: flex; align-items: center; gap: 10px; color: var(--brand-primary); font-size: 13px; }
-.instructor-card .contact a:hover { color: var(--accent-earth); }
+.inst-head { display: flex; align-items: center; gap: 16px; }
+.photo { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; filter: saturate(0.9); flex-shrink: 0; }
+.inst-label { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px; }
+.inst-info { flex: 1; min-width: 0; }
+.role-tag { font-family: var(--mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent-earth); margin-bottom: 4px; }
+.inst-name { font-size: 20px; margin-bottom: 0; line-height: 1.2; }
+.inst-bio { color: var(--text-muted); font-size: 13px; line-height: 1.55; margin-bottom: 14px; margin-top: 16px; }
+.inst-contact { border-top: 1px solid var(--line); padding-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+.contact-link { display: flex; align-items: center; gap: 10px; color: var(--brand-primary); font-size: 13px; text-decoration: none; word-break: break-all; }
+.contact-link:hover { color: var(--accent-earth); }
+
+/* ─── Related workshops ───────────────────────────────────────── */
+.related-card { background: var(--bg-card); border: 1px solid var(--line); border-radius: var(--r-md); padding: 20px; }
+.related-card .eyebrow { display: block; margin-bottom: 16px; }
+.related-list { display: flex; flex-direction: column; gap: 4px; }
+.related-item { display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit; padding: 8px; border-radius: var(--r-sm); transition: background .2s; }
+.related-item:hover { background: var(--bg-section); }
+.related-item img { width: 56px; height: 56px; object-fit: cover; border-radius: var(--r-sm); flex-shrink: 0; }
+.related-meta { flex: 1; min-width: 0; }
+.related-title { font-family: var(--serif); font-size: 15px; color: var(--brand-primary); line-height: 1.3; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.related-date { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); }
 
 /* ─── Lightbox ────────────────────────────────────────────────── */
 .lightbox { position: fixed; inset: 0; z-index: 100; background: rgba(18,32,25,0.94); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; padding: 48px; }
