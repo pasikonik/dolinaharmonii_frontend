@@ -18,7 +18,7 @@ export interface Workshop {
   short_description: string
   description: string
   cover_image: string // UUID pliku
-  gallery: string[]
+  gallery: Array<string | { directus_files_id: string }>
   meta_title?: string
   meta_description?: string
   category: Category | string // string gdy nie ma fields expansion
@@ -38,6 +38,7 @@ export interface Instructor {
   id: string
   name: string
   slug: string
+  role?: string
   bio?: string
   photo?: string
   email?: string

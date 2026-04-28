@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import type { Workshop } from '~/types/directus'
+import type { Workshop } from '~~/types/directus'
 
-// ─── Data fetching ────────────────────────────────────────────────────────────
 const { getWorkshops, getImageUrl } = useDirectus()
 
 const { data } = await useAsyncData('workshops-home', () => getWorkshops({ limit: 3 }))
 const workshops = computed(() => data.value?.data ?? [])
 
-// ─── SEO ─────────────────────────────────────────────────────────────────────
 useSeoMeta({
   title: 'Dolina Harmonii — miejsce naturalnych mocy',
   description: 'Ośrodek warsztatowy w Kopańcu, w Górach Izerskich. Warsztaty mindfulness, medytacja, rękodzieło, pobyty regeneracyjne.',
@@ -15,22 +13,15 @@ useSeoMeta({
   ogDescription: 'Miejsce naturalnych mocy w Górach Izerskich.',
 })
 
-// ─── Scroll reveal ────────────────────────────────────────────────────────────
-onMounted(() => {
-  const els = document.querySelectorAll('.reveal')
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in') })
-  }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' })
-  els.forEach(el => io.observe(el))
-  onUnmounted(() => io.disconnect())
-})
+useScrollReveal({ rootMargin: '0px 0px -60px 0px' })
 
-// ─── Static data (placeholder until CMS-driven) ───────────────────────────────
 const STATIC_WORKSHOPS = [
   { slug: 'mindfulness-w-naturze', name: 'Mindfulness w naturze', cat: 'mindfulness', icon: 'meditation', img: 'https://images.unsplash.com/photo-1545389336-cf090694435e?auto=format&fit=crop&w=1000&q=80', dur: '3 dni', date: 'Maj 2026', desc: 'Praktyka uważnej obecności na łące, w lesie i przy ognisku — w towarzystwie cykli pór roku.' },
   { slug: 'cisza-i-medytacja', name: 'Cisza i medytacja', cat: 'medytacja', icon: 'candle', img: 'https://images.unsplash.com/photo-1591291621164-2c6367723315?auto=format&fit=crop&w=1000&q=80', dur: '5 dni', date: 'Czerwiec', desc: 'Pięciodniowe odosobnienie w ciszy z prowadzeniem zen i tradycji wglądu. Dla początkujących i wracających.' },
-  { slug: 'rekodzieło-z-izerow', name: 'Rękodzieło z Izerów', cat: 'rękodzieło', icon: 'craft', img: 'https://images.unsplash.com/photo-1452860606245-08befc0ff44b?auto=format&fit=crop&w=1000&q=80', dur: 'Weekend', date: 'Lipiec', desc: 'Filcowanie wełną, plecionkarstwo, wypał ceramiki — z lokalnymi rękodzielniczkami.' },
+  { slug: 'rekodzielo-z-izerow', name: 'Rękodzieło z Izerów', cat: 'rękodzieło', icon: 'craft', img: 'https://images.unsplash.com/photo-1452860606245-08befc0ff44b?auto=format&fit=crop&w=1000&q=80', dur: 'Weekend', date: 'Lipiec', desc: 'Filcowanie wełną, plecionkarstwo, wypał ceramiki — z lokalnymi rękodzielniczkami.' },
 ]
+
+const FALLBACK_IMG = '/duzy_dom.avif'
 
 function calcDuration(start?: string | null, end?: string | null): string {
   if (!start || !end) return ''
@@ -38,13 +29,19 @@ function calcDuration(start?: string | null, end?: string | null): string {
   return days === 1 ? '1 dzień' : `${days} dni`
 }
 
+function categoryIcon(cat: Workshop['category']): string {
+  if (typeof cat !== 'object' || !cat?.icon) return 'meditation'
+  // Format: "tabler:leaf" or just "leaf"
+  return cat.icon.includes(':') ? (cat.icon.split(':')[1] ?? 'meditation') : cat.icon
+}
+
 const displayWorkshops = computed(() => {
   if (workshops.value.length > 0) return workshops.value.map(w => ({
     slug: w.slug,
     name: w.title,
     cat: typeof w.category === 'object' ? w.category?.name : w.category,
-    icon: typeof w.category === 'object' ? (w.category?.icon?.split(':')[1] ?? 'meditation') : 'meditation',
-    img: w.cover_image ? getImageUrl(w.cover_image, { width: 1000, format: 'webp' }) : STATIC_WORKSHOPS[0].img,
+    icon: categoryIcon(w.category),
+    img: w.cover_image ? getImageUrl(w.cover_image, { width: 1000, format: 'webp' }) : FALLBACK_IMG,
     dur: calcDuration(w.start_date, w.end_date),
     date: w.start_date ? new Date(w.start_date).toLocaleDateString('pl-PL', { month: 'long', year: 'numeric' }) : '',
     desc: w.short_description,
@@ -67,7 +64,7 @@ const ACCOMMODATIONS = [
     num: '02 — Obiekt osobny', name: 'Leśny Domek',
     tag: 'Dwupoziomowy · 4/5 osób',
     desc: 'Osobny, dwupoziomowy obiekt ukryty w zaciszu, pośród drzew. Z okien rozciąga się widok na Osadę z owieczkami, leśny labirynt, staw oraz Wiśniową Górę. Na dole salon i kuchnia, na piętrze część sypialna.',
-    main: '/lesny_domek.avif',
+    main: '/lesny-domek.avif',
     small: '/lesny_taras.avif',
     features: [{ i: 'bed', t: 'Łoże + 2 łóżka + sofa' }, { i: 'bath', t: 'Łazienka z prysznicem' }, { i: 'kitchen', t: 'Kuchnia, jadalnia' }, { i: 'fireplace', t: 'Salon z kominkiem' }, { i: 'leaf', t: 'Widok na Wiśniową Górę' }, { i: 'star', t: 'Pełna prywatność' }],
     price: 'od 580 zł', priceFor: 'cały domek / doba',
@@ -108,15 +105,21 @@ const TEAM = [
   <div class="home-page">
     <!-- ─── HERO ──────────────────────────────────────────────────── -->
     <header class="hero" id="top">
-      <img class="hero-bg"
-        src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=2400&q=80" alt="" />
+      <NuxtImg
+        class="hero-bg"
+        src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=2400&q=80"
+        alt=""
+        loading="eager"
+        fetchpriority="high"
+        sizes="100vw"
+      />
       <div class="hero-content">
         <div class="hero-eyebrow-row">
           <span class="line"></span>
           Kopaniec · Góry Izerskie
           <span class="line"></span>
         </div>
-        <p class="hero-tagline">miejsce naturalnych mocy</p>
+        <h1 class="hero-tagline">Dolina Harmonii — miejsce naturalnych mocy</h1>
         <div class="hero-ctas">
           <NuxtLink class="btn btn-primary" to="#noclegi">
             Zaplanuj pobyt
@@ -950,5 +953,46 @@ const TEAM = [
   font-size: 18px;
   color: var(--brand-primary);
   font-style: italic;
+}
+
+/* ─── Responsive ────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .intro-grid,
+  .region-grid,
+  .accommodation,
+  .accommodation.reverse {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+  .accommodation.reverse .acc-imgs { order: 0; }
+  .accommodation.reverse .acc-text { order: 0; }
+  .workshop-grid { grid-template-columns: repeat(2, 1fr); }
+  .team-grid { grid-template-columns: repeat(2, 1fr); }
+  .gallery-grid { grid-template-columns: repeat(3, 1fr); grid-auto-rows: 200px; }
+  .gallery-grid .span-2-col { grid-column: span 2; }
+  .gallery-grid .span-2-row { grid-row: span 1; }
+  .workshops-head { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .hero-meta { padding: 0 24px; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .accommodation { margin-bottom: 96px; }
+  .accommodation:not(.reverse) .acc-imgs .small,
+  .accommodation.reverse .acc-imgs .small { bottom: -24px; right: -16px; left: auto; }
+}
+
+@media (max-width: 720px) {
+  .workshop-grid { grid-template-columns: 1fr; }
+  .team-grid { grid-template-columns: 1fr 1fr; gap: 20px; }
+  .gallery-grid { grid-template-columns: 1fr 1fr; grid-auto-rows: 180px; }
+  .gallery-grid .span-2-col,
+  .gallery-grid .span-2-row { grid-column: auto; grid-row: auto; }
+  .intro-stats { flex-wrap: wrap; gap: 16px; }
+  .stat-num { font-size: 28px; }
+  .acc-features { grid-template-columns: 1fr; }
+  .acc-text h3 { font-size: 36px; }
+  .region-stats { grid-template-columns: 1fr; }
+  .hero-content { padding: 0 24px; }
+  .hero-ctas { flex-direction: column; align-items: stretch; }
+  .partners-list { gap: 16px; font-size: 15px; justify-content: center; }
+  .partners-strip { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .intro-badge { left: 16px; right: 16px; bottom: -16px; max-width: none; }
 }
 </style>

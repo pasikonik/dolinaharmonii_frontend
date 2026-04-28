@@ -1,19 +1,26 @@
-// composables/useDirectus.ts
+import type { Category, DirectusResponse, Workshop } from '~~/types/directus'
+
+interface ImageOptions {
+  width?: number
+  height?: number
+  format?: 'webp' | 'avif' | 'jpg' | 'png'
+  quality?: number
+}
+
 export function useDirectus() {
   const config = useRuntimeConfig()
   const baseURL = config.public.directusUrl
+  const token = config.directusToken
 
-  // Główna funkcja fetch — wrapper na $fetch z bazowym URL
-  async function get<T>(
-    endpoint: string,
-    params?: Record<string, unknown>
-  ): Promise<T> {
-    return $fetch<T>(`${baseURL}${endpoint}`, {
-      params,
-    })
+  const headers: Record<string, string> = {}
+  if (token && import.meta.server) {
+    headers.Authorization = `Bearer ${token}`
   }
 
-  // Warsztaty
+  function get<T>(endpoint: string, params?: Record<string, unknown>): Promise<T> {
+    return $fetch<T>(`${baseURL}${endpoint}`, { params, headers })
+  }
+
   function getWorkshops(params?: Record<string, unknown>) {
     return get<DirectusResponse<Workshop[]>>('/items/workshops', {
       fields: [
@@ -48,7 +55,6 @@ export function useDirectus() {
     })
   }
 
-  // Kategorie
   function getCategories() {
     return get<DirectusResponse<Category[]>>('/items/categories', {
       fields: '*',
@@ -56,18 +62,15 @@ export function useDirectus() {
     })
   }
 
-  // URL obrazka przez Directus Image API
-  function getImageUrl(
-    fileId: string,
-    options: { width?: number; height?: number; format?: string; quality?: number } = {}
-  ) {
+  function getImageUrl(fileId: string, options: ImageOptions = {}) {
     const params = new URLSearchParams()
     if (options.width) params.set('width', String(options.width))
     if (options.height) params.set('height', String(options.height))
-    if (options.format) params.set('format', options.format || 'webp')
-    if (options.quality) params.set('quality', String(options.quality || 80))
+    params.set('format', options.format ?? 'webp')
+    params.set('quality', String(options.quality ?? 80))
 
-    return `${baseURL}/assets/${fileId}?${params.toString()}`
+    const qs = params.toString()
+    return `${baseURL}/assets/${fileId}${qs ? `?${qs}` : ''}`
   }
 
   return {

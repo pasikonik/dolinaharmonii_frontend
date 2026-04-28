@@ -18,6 +18,10 @@ const ICON_DEFS: Record<string, string> = {
   bath: `<path d="M8 30.1h48v6c0 6-4 10-10 10.1H18.1c-6 0-10-4-10.1-10z"/><path d="M14 46l-2.1 6.1M50 46l2.1 6"/><path d="M16 30.1V18c0-3 2-6 6-6 2 0 4 1 5 3"/><path d="M24.1 16l6-.1"/>`,
   tea: `<path d="M14 22.1h28v18a8 8 0 01-8 8H22a8 8 0 01-8-8z"/><path d="M42 26.1h6c2.1 0 4 1.9 4 4v4c0 2.1-1.9 4-4 4h-6"/><path d="M22 12c-2 3 2.1 5 0 8m8-8c-2.1 3 2 5 0 8"/>`,
   mountain: `<path d="M8.1 48.2l14-22.1 8 12 6-8 8 12 12.1-22.1"/><path d="M8 48.1l48-.1"/><path d="M22 26.1l4 6"/>`,
+  hands: `<path d="M22 38c-2.1-2-4-4.1-4-7v-12a3 3 0 016-.1v8.1"/><path d="M28 19c0-2 1-3 3-3.1 2 .1 3 1.1 3 3.1v10"/><path d="M34 22c.1-2 1-3 3-3 2 0 3 1 3 3v10"/><path d="M40 28c0-1 1-2 2.1-2 1 0 2 .9 2 2v8"/><path d="M22 36c-2 2-2 5 0 8l4 4c4 4 8 5 14.1 4 4-.7 6-3 6-7v-9"/>`,
+  list: `<path d="M14 18h36"/><path d="M14 32h36"/><path d="M14 46h36"/>`,
+  grid: `<path d="M14 14h14v14H14z"/><path d="M36 14h14v14H36z"/><path d="M14 36h14v14H14z"/><path d="M36 36h14v14H36z"/>`,
+  calendar: `<path d="M12 18h40v32a2 2 0 01-2 2H14a2 2 0 01-2-2z"/><path d="M12 28h40"/><path d="M22 12v10"/><path d="M42 12v10"/>`,
 }
 
 const props = withDefaults(defineProps<{

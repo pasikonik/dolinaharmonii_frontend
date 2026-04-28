@@ -23,8 +23,8 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <section id="rezerwacja" class="cf-section">
-    <div class="cf-container">
+  <section id="rezerwacja" class="tight">
+    <div class="container">
       <div class="cf-wrap reveal">
 
         <!-- ── Lewa strona: info kontaktowe ── -->
@@ -93,6 +93,7 @@ async function handleSubmit() {
             <select
               v-model="form.topic"
               name="topic"
+              required
               :disabled="status === 'sending'"
             >
               <option value="" disabled>Czego dotyczy zapytanie?</option>
@@ -132,16 +133,6 @@ async function handleSubmit() {
 </template>
 
 <style scoped>
-.cf-section {
-  padding: 80px 0;
-}
-
-.cf-container {
-  max-width: 1240px;
-  margin: 0 auto;
-  padding: 0 48px;
-}
-
 .cf-wrap {
   background: var(--bg-sage);
   border-radius: var(--r-lg);
@@ -283,34 +274,11 @@ async function handleSubmit() {
   color: var(--text-muted);
 }
 
-/* Button */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  font-family: var(--sans);
-  font-weight: 600;
-  font-size: 14px;
-  letter-spacing: 0.04em;
-  padding: 14px 26px;
-  border-radius: var(--r-sm);
-  border: none;
-  cursor: pointer;
-  transition: all .2s;
-  text-decoration: none;
-}
-
-.btn-primary {
-  background: var(--cta-main);
-  color: var(--brand-primary);
-}
-.btn-primary:hover:not(:disabled) {
-  background: var(--cta-main-hover);
-  transform: translateY(-1px);
-}
-.btn-primary:disabled {
+/* Button: use global .btn / .btn-primary, only override disabled state */
+:deep(.btn-primary:disabled) {
   opacity: .7;
   cursor: not-allowed;
+  transform: none;
 }
 
 /* Success state */
@@ -337,17 +305,6 @@ async function handleSubmit() {
   color: var(--text-muted);
   font-size: 14px;
   margin: 0;
-}
-
-/* Reveal animation */
-.reveal {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity .8s ease, transform .8s ease;
-}
-.reveal.in {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 /* Responsive */

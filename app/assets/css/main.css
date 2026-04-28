@@ -1,7 +1,6 @@
 /* app/assets/css/main.css */
 
-/* ─── Google Fonts ──────────────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+/* Fonts loaded via app.head in nuxt.config.ts (preconnect + stylesheet) */
 
 /* ─── Design tokens ─────────────────────────────────────────────── */
 :root {
@@ -32,6 +31,8 @@
 /* ─── Base ──────────────────────────────────────────────────────── */
 * , *::before, *::after { box-sizing: border-box; }
 
+html { scroll-behavior: smooth; }
+
 body {
   margin: 0;
   padding: 0;
@@ -41,10 +42,6 @@ body {
   font-size: 16px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-}
-
-.dh-root {
-  /* Legacy wrapper class, keeping for compatibility during refactor */
 }
 
 img { max-width: 100%; display: block; }
@@ -79,6 +76,9 @@ a:hover { color: var(--brand-primary); }
   max-width: var(--max-w);
   margin: 0 auto;
   padding: 0 48px;
+}
+@media (max-width: 720px) {
+  .container { padding: 0 24px; }
 }
 
 .btn {
@@ -145,6 +145,10 @@ a:hover { color: var(--brand-primary); }
 /* ─── Sections ──────────────────────────────────────────────────── */
 section { padding: 120px 0; position: relative; }
 section.tight { padding: 80px 0; }
+@media (max-width: 720px) {
+  section { padding: 72px 0; }
+  section.tight { padding: 56px 0; }
+}
 section.cream { background: var(--bg-section); }
 section.sage { background: var(--bg-sage); }
 

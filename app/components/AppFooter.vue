@@ -17,27 +17,25 @@
           <ul>
             <li><NuxtLink to="/#dolina">O Dolinie</NuxtLink></li>
             <li><NuxtLink to="/#noclegi">Noclegi</NuxtLink></li>
-            <li><NuxtLink to="/#noclegi">Duży Dom</NuxtLink></li>
-            <li><NuxtLink to="/#noclegi">Leśny Domek</NuxtLink></li>
-            <li><NuxtLink to="/#noclegi">Studio z oranżerią</NuxtLink></li>
+            <li><NuxtLink to="/noclegi/duzy-dom">Duży Dom</NuxtLink></li>
+            <li><NuxtLink to="/noclegi/lesny-domek">Leśny Domek</NuxtLink></li>
+            <li><NuxtLink to="/noclegi/studio-z-oranzeria">Studio z oranżerią</NuxtLink></li>
           </ul>
         </div>
         <div>
           <h5>Praktyka</h5>
           <ul>
             <li><NuxtLink to="/warsztaty">Warsztaty</NuxtLink></li>
-            <li><a href="#">Wydarzenia specjalne</a></li>
-            <li><a href="/#izery">Magiczne Izery</a></li>
-            <li><a href="/#galeria">Galeria</a></li>
+            <li><NuxtLink to="/#izery">Magiczne Izery</NuxtLink></li>
+            <li><NuxtLink to="/#galeria">Galeria</NuxtLink></li>
           </ul>
         </div>
         <div>
           <h5>Kontakt</h5>
           <ul>
-            <li>dolina@harmonii.pl</li>
-            <li>+48 757 123 456</li>
+            <li><a href="mailto:dolina@harmonii.pl">dolina@harmonii.pl</a></li>
+            <li><a href="tel:+48757123456">+48 757 123 456</a></li>
             <li>pn–pt, 10:00–18:00</li>
-            <li><a href="#">Polityka prywatności</a></li>
           </ul>
         </div>
       </div>

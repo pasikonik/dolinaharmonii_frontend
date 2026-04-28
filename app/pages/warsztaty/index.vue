@@ -26,13 +26,6 @@ const MONTHS = [
   { id: 'paź', label: 'Październik' },
 ]
 
-const YEARS = [
-  { id: 'all',  label: 'Wszystkie' },
-  { id: '2026', label: '2026' },
-  { id: '2027', label: '2027' },
-  { id: 'past', label: 'Archiwum' },
-]
-
 const MONTH_LABELS: Record<string, string> = {
   maj: 'Maj 2026', cze: 'Czerwiec 2026', lip: 'Lipiec 2026',
   sie: 'Sierpień 2026', wrz: 'Wrzesień 2026', paź: 'Październik 2026',
@@ -61,22 +54,31 @@ const WORKSHOPS = [
 ]
 
 // ─── Filter state ──────────────────────────────────────────────────────────
+type WorkshopRow = typeof WORKSHOPS[number]
+
 const cat   = ref('all')
 const month = ref('all')
-const year  = ref('2026')
 const view  = ref<'list'|'grid'|'calendar'>('list')
 const sort  = ref('date')
 const q     = ref('')
 
 const MONTH_ORDER = ['maj','cze','lip','sie','wrz','paź']
 
+const FALLBACK_PERSON = { name: '—', photo: '' }
+function getPerson(id: string) {
+  return PEOPLE[id] ?? FALLBACK_PERSON
+}
+
+function monthShort(w: WorkshopRow): string {
+  return MONTH_LABELS[w.month]?.split(' ')[0] ?? w.month
+}
+
 const filtered = computed(() => WORKSHOPS.filter(w => {
   if (cat.value !== 'all' && w.cat !== cat.value) return false
   if (month.value !== 'all' && w.month !== month.value) return false
-  if (year.value !== 'all' && year.value !== '2026') return false
   if (q.value) {
     const query = q.value.toLowerCase()
-    const person = PEOPLE[w.instr].name.toLowerCase()
+    const person = getPerson(w.instr).name.toLowerCase()
     if (!w.name.toLowerCase().includes(query) && !w.desc.toLowerCase().includes(query) && !person.includes(query)) return false
   }
   return true
@@ -94,21 +96,22 @@ const sorted = computed(() => [...filtered.value].sort((a, b) => {
 
 const monthGroups = computed(() =>
   sorted.value.reduce((acc, w) => {
-    ;(acc[w.month] = acc[w.month] || []).push(w)
+    const list = acc[w.month] ?? (acc[w.month] = [])
+    list.push(w)
     return acc
-  }, {} as Record<string, typeof WORKSHOPS>)
+  }, {} as Record<string, WorkshopRow[]>)
 )
 
-const hasFilters = computed(() => cat.value !== 'all' || month.value !== 'all' || year.value !== '2026' || q.value !== '')
-function clearAll() { cat.value = 'all'; month.value = 'all'; year.value = '2026'; q.value = '' }
+const hasFilters = computed(() => cat.value !== 'all' || month.value !== 'all' || q.value !== '')
+function clearAll() { cat.value = 'all'; month.value = 'all'; q.value = '' }
 
-function availClass(w: typeof WORKSHOPS[0]) {
+function availClass(w: WorkshopRow) {
   const free = w.spots - w.taken
   if (free === 0) return 'full'
   if (free <= 3)  return 'low'
   return ''
 }
-function availLabel(w: typeof WORKSHOPS[0]) {
+function availLabel(w: WorkshopRow) {
   const free = w.spots - w.taken
   if (free === 0) return 'Brak miejsc'
   if (free <= 3)  return `ostatnie ${free} miejsc`
@@ -120,25 +123,7 @@ function pluralWorkshops(n: number) {
   return 'warsztatów'
 }
 
-// Scroll reveal
-onMounted(() => {
-  const run = () => {
-    const els = document.querySelectorAll('.reveal')
-    const io = new IntersectionObserver(
-      entries => entries.forEach(e => e.isIntersecting && e.target.classList.add('in')),
-      { threshold: 0.05 }
-    )
-    els.forEach(el => io.observe(el))
-    return io
-  }
-  let io = run()
-  watch([view, cat, month, year, q, sort], async () => {
-    io.disconnect()
-    await nextTick()
-    io = run()
-  })
-  onUnmounted(() => io.disconnect())
-})
+useScrollReveal({ threshold: 0.05, retriggerOn: [view, cat, month, q, sort] })
 </script>
 
 <template>
@@ -254,19 +239,6 @@ onMounted(() => {
               </button>
             </div>
           </div>
-          <div class="filter-row">
-            <div class="label-col">Rok</div>
-            <div class="filter-chips">
-              <button
-                v-for="y in YEARS" :key="y.id"
-                class="filter-chip month-chip"
-                :class="{ active: year === y.id }"
-                @click="year = y.id"
-              >
-                {{ y.label }}
-              </button>
-            </div>
-          </div>
         </div>
 
         <!-- ─── RESULTS HEAD ──────────────────────────────────────── -->
@@ -293,8 +265,8 @@ onMounted(() => {
             :style="{ transitionDelay: `${i * 30}ms` }"
           >
             <div class="img-wrap">
-              <img :src="w.img" :alt="w.name" />
-              <span class="month-tag">{{ w.date.split('–')[0].trim() + ' ' + (w.date.includes('maja') ? 'maja' : w.date.includes('czerwca') ? 'cze' : w.date.includes('lipca') ? 'lip' : w.date.includes('sierpnia') ? 'sie' : w.date.includes('września') ? 'wrz' : 'paź') }}</span>
+              <img :src="w.img" :alt="w.name" loading="lazy" />
+              <span class="month-tag">{{ w.day }} {{ monthShort(w) }}</span>
             </div>
             <div class="wks-info-col">
               <div class="wks-badges">
@@ -306,8 +278,8 @@ onMounted(() => {
               <p class="wrow-desc">{{ w.desc }}</p>
               <div class="row-meta">
                 <span class="instr-line">
-                  <img :src="PEOPLE[w.instr].photo" :alt="PEOPLE[w.instr].name" />
-                  {{ PEOPLE[w.instr].name }}
+                  <img :src="getPerson(w.instr).photo" :alt="getPerson(w.instr).name" loading="lazy" />
+                  {{ getPerson(w.instr).name }}
                 </span>
               </div>
             </div>
@@ -335,8 +307,8 @@ onMounted(() => {
             :style="{ transitionDelay: `${i * 30}ms` }"
           >
             <div class="card-ph">
-              <img :src="w.img" :alt="w.name" />
-              <span class="month-tag">{{ MONTH_LABELS[w.month].split(' ')[0] }}</span>
+              <img :src="w.img" :alt="w.name" loading="lazy" />
+              <span class="month-tag">{{ monthShort(w) }}</span>
               <span class="cat-tag">
                 <DhIcon :name="w.icon" :size="12" :stroke="1.6" />
                 {{ w.cat }}
@@ -347,8 +319,8 @@ onMounted(() => {
               <h3>{{ w.name }}</h3>
               <p class="card-desc">{{ w.desc }}</p>
               <div class="card-instr">
-                <img :src="PEOPLE[w.instr].photo" :alt="PEOPLE[w.instr].name" />
-                Prow. {{ PEOPLE[w.instr].name }}
+                <img :src="getPerson(w.instr).photo" :alt="getPerson(w.instr).name" loading="lazy" />
+                Prow. {{ getPerson(w.instr).name }}
               </div>
               <div class="card-foot">
                 <div class="card-price">{{ w.price }}</div>
@@ -360,18 +332,18 @@ onMounted(() => {
 
         <!-- ─── CALENDAR VIEW ─────────────────────────────────────── -->
         <div v-else class="cal-view">
-          <div v-for="m in Object.keys(monthGroups)" :key="m" class="cal-month reveal">
-            <h3>{{ MONTH_LABELS[m] }}</h3>
-            <div class="m-sub">{{ monthGroups[m].length }} {{ pluralWorkshops(monthGroups[m].length) }} w tym miesiącu</div>
+          <div v-for="(rows, m) in monthGroups" :key="m" class="cal-month reveal">
+            <h3>{{ MONTH_LABELS[m] ?? m }}</h3>
+            <div class="m-sub">{{ rows.length }} {{ pluralWorkshops(rows.length) }} w tym miesiącu</div>
             <div class="cal-rows">
               <NuxtLink
-                v-for="w in monthGroups[m]" :key="w.id"
+                v-for="w in rows" :key="w.id"
                 :to="`/warsztaty/${w.slug}`"
                 class="cal-row"
               >
                 <div class="cal-day">
                   {{ w.day }}
-                  <small>{{ w.date.split('–')[1]?.trim().slice(0,3) || w.month }}</small>
+                  <small>{{ monthShort(w) }}</small>
                 </div>
                 <div class="cal-info">
                   <h4>{{ w.name }}</h4>
@@ -381,8 +353,8 @@ onMounted(() => {
                   </span>
                 </div>
                 <div class="cal-instr">
-                  <img :src="PEOPLE[w.instr].photo" :alt="PEOPLE[w.instr].name" />
-                  <span>{{ PEOPLE[w.instr].name }}</span>
+                  <img :src="getPerson(w.instr).photo" :alt="getPerson(w.instr).name" loading="lazy" />
+                  <span>{{ getPerson(w.instr).name }}</span>
                 </div>
                 <div class="cal-price">{{ w.price }}</div>
                 <div class="cal-avail" :class="availClass(w)">{{ availLabel(w) }}</div>
@@ -393,10 +365,10 @@ onMounted(() => {
 
         <!-- ─── RENT CTA ──────────────────────────────────────────── -->
         <div class="rent-cta">
-          <h3>Prowadzisz warsztaty? Możesz wynająć Dom Jogi.</h3>
+          <h3>Prowadzisz warsztaty? Możesz wynająć Duży Dom.</h3>
           <p>Wynajmujemy całość obiektu grupom warsztatowym — od weekendu w górę.</p>
-          <NuxtLink class="btn btn-primary" to="#">
-            Zobacz Dom Jogi
+          <NuxtLink class="btn btn-primary" to="/noclegi/duzy-dom">
+            Zobacz Duży Dom
             <DhIcon name="arrow" :size="14" :stroke="1.6" />
           </NuxtLink>
         </div>
@@ -424,7 +396,7 @@ onMounted(() => {
 .feature-block { display: grid; grid-template-columns: 1.1fr 1fr; gap: 0; border: 1px solid var(--line); border-radius: var(--r-md); overflow: hidden; background: var(--bg-card); margin-bottom: 96px; box-shadow: var(--shadow-md); }
 .feat-img { position: relative; min-height: 480px; }
 .feat-img img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
-.feat-badge { position: absolute; top: 24px; left: 24px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: var(--r-pill); background: var(--cta-main); color: var(--brand-primary); font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; z-index: 2; }
+.feat-img .badge { position: absolute; top: 24px; left: 24px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: var(--r-pill); background: var(--cta-main); color: var(--brand-primary); font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; z-index: 2; }
 .feat-body { padding: 56px; display: flex; flex-direction: column; justify-content: center; }
 .feat-body h2 { font-size: 48px; margin-bottom: 16px; font-style: italic; line-height: 1.05; }
 .feat-body p { color: var(--text-muted); margin-bottom: 28px; font-size: 16px; line-height: 1.6; }
@@ -539,6 +511,33 @@ onMounted(() => {
 .rent-cta h3 { font-style: italic; font-size: 32px; margin-bottom: 12px; }
 .rent-cta p { color: var(--text-muted); margin-bottom: 24px; max-width: 520px; margin-left: auto; margin-right: auto; }
 
-/* Footer */
-footer { background: var(--brand-deep); color: rgba(249,247,242,.75); padding: 80px 0 32px; font-size: 14px; }
+/* ─── Responsive ────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .feature-block { grid-template-columns: 1fr; }
+  .feat-img { min-height: 320px; }
+  .feat-body { padding: 40px; }
+  .wks-row { grid-template-columns: 160px 1fr; gap: 20px; padding: 20px; }
+  .wrow-date, .price-wrap { grid-column: 2; text-align: left; }
+  .wks-grid { grid-template-columns: repeat(2, 1fr); }
+  .wks-hero-row { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .wks-hero-stats { flex-wrap: wrap; gap: 24px; }
+  .cal-row { grid-template-columns: 60px 1fr; gap: 16px; padding: 16px; }
+  .cal-row .cal-instr,
+  .cal-row .cal-price,
+  .cal-row .cal-avail { grid-column: 2; text-align: left; }
+}
+
+@media (max-width: 720px) {
+  .controls-bar { flex-wrap: wrap; }
+  .search-input { flex: 1 1 100%; }
+  .filter-row { flex-direction: column; gap: 12px; }
+  .label-col { padding-top: 0; }
+  .wks-row { grid-template-columns: 1fr; gap: 14px; }
+  .wks-row .img-wrap img { height: 200px; }
+  .wrow-date, .price-wrap { grid-column: 1; }
+  .wks-grid { grid-template-columns: 1fr; }
+  .feat-body h2 { font-size: 32px; }
+  .feature-meta { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .results-head { flex-direction: column; align-items: flex-start; gap: 8px; }
+}
 </style>

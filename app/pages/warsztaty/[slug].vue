@@ -1,18 +1,27 @@
 <script setup lang="ts">
-import type { Workshop } from '~/types/directus'
+import type { Workshop } from '~~/types/directus'
 
 const route = useRoute()
+const slug = computed(() => route.params.slug as string)
 const { getWorkshop, getWorkshops, getImageUrl } = useDirectus()
 
 const { data } = await useAsyncData(
-  `workshop-${route.params.slug}`,
-  () => getWorkshop(route.params.slug as string)
+  `workshop-${slug.value}`,
+  () => getWorkshop(slug.value),
 )
 
 const workshop = computed(() => data.value?.data?.[0] ?? null)
 
+if (!workshop.value) {
+  throw createError({
+    statusCode: 404,
+    statusMessage: 'Nie znaleziono takiego warsztatu',
+    fatal: true,
+  })
+}
+
 const { data: relatedData } = await useAsyncData(
-  `related-${route.params.slug as string}`,
+  `related-${slug.value}`,
   () => {
     const cat = workshop.value?.category
     const id = typeof cat === 'object' ? cat?.id : null
@@ -22,12 +31,12 @@ const { data: relatedData } = await useAsyncData(
         _and: [
           { status: { _eq: 'published' } },
           { category: { id: { _eq: id } } },
-          { slug: { _neq: route.params.slug as string } },
+          { slug: { _neq: slug.value } },
         ],
       },
       limit: 3,
     })
-  }
+  },
 )
 
 useSeoMeta({
@@ -62,24 +71,17 @@ function nextImg() {
   lightboxIndex.value = (lightboxIndex.value + 1) % galleryImages.value.length
 }
 
-onMounted(() => {
-  const onKey = (e: KeyboardEvent) => {
-    if (lightboxIndex.value === null) return
-    if (e.key === 'Escape') closeLightbox()
-    if (e.key === 'ArrowRight') nextImg()
-    if (e.key === 'ArrowLeft') prevImg()
-  }
-  window.addEventListener('keydown', onKey)
-  onUnmounted(() => window.removeEventListener('keydown', onKey))
+function onKey(e: KeyboardEvent) {
+  if (lightboxIndex.value === null) return
+  if (e.key === 'Escape') closeLightbox()
+  else if (e.key === 'ArrowRight') nextImg()
+  else if (e.key === 'ArrowLeft') prevImg()
+}
 
-  const els = document.querySelectorAll('.reveal')
-  const io = new IntersectionObserver(
-    entries => entries.forEach(e => e.isIntersecting && e.target.classList.add('in')),
-    { threshold: 0.1 }
-  )
-  els.forEach(el => io.observe(el))
-  onUnmounted(() => io.disconnect())
-})
+onMounted(() => window.addEventListener('keydown', onKey))
+onUnmounted(() => window.removeEventListener('keydown', onKey))
+
+useScrollReveal()
 
 const category = computed(() => {
   const cat = workshop.value?.category
@@ -89,7 +91,7 @@ const category = computed(() => {
 const instructor = computed(() => {
   const w = workshop.value
   if (!w || !Array.isArray(w.instructors) || w.instructors.length === 0) return null
-  return w.instructors[0].instructors_id
+  return w.instructors[0]?.instructors_id ?? null
 })
 
 const spotsInfo = computed(() => {
@@ -358,7 +360,23 @@ const relatedWorkshops = computed(() =>
 .lightbox-nav.next { right: 24px; top: 50%; transform: translateY(-50%); }
 .lightbox-counter { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); font-family: var(--mono); font-size: 12px; letter-spacing: .12em; color: rgba(249,247,242,.7); text-transform: uppercase; }
 
-/* ─── Reveal ──────────────────────────────────────────────────── */
-.reveal { opacity: 0; transform: translateY(20px); transition: opacity .8s ease, transform .8s ease; }
-.reveal.in { opacity: 1; transform: translateY(0); }
+/* ─── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .w-hero { padding: 120px 0 0; }
+  .w-hero-grid { grid-template-columns: 1fr; gap: 32px; }
+  .book-card { transform: none; }
+  .w-body-grid { grid-template-columns: 1fr; gap: 48px; }
+  .side { position: static; }
+  .w-gallery-strip { height: 360px; }
+}
+
+@media (max-width: 720px) {
+  .w-gallery-strip { grid-template-columns: 1fr; height: auto; }
+  .w-gallery-strip .right-stack { display: none; }
+  .w-gallery-strip .gallery-main { aspect-ratio: 4/3; }
+  .lightbox { padding: 16px; }
+  .lightbox-close, .lightbox-nav { width: 40px; height: 40px; }
+  .lightbox-nav.prev { left: 8px; }
+  .lightbox-nav.next { right: 8px; }
+}
 </style>

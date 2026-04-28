@@ -112,34 +112,47 @@ const HOUSE_FEATURES = [
   { icon: 'bed',       t: '5 pokoi · do 14 osób', d: 'Każdy z osobną łazienką i własnym charakterem.' },
 ]
 
-// Slider state for each room
+// Slider state for each room — track current + which slides have been "touched"
+// so we can lazy-load images only after the user navigates to them.
 const sliderIndexes = ref<number[]>(ROOMS.map(() => 0))
+const visitedSlides = ref<Set<string>[]>(ROOMS.map((_, i) => new Set([`${i}-0`])))
+
+function markVisited(roomIndex: number, imgIndex: number) {
+  const set = visitedSlides.value[roomIndex]
+  if (set) set.add(`${roomIndex}-${imgIndex}`)
+}
+
+function shouldRender(roomIndex: number, imgIndex: number) {
+  return visitedSlides.value[roomIndex]?.has(`${roomIndex}-${imgIndex}`) ?? false
+}
 
 function prevSlide(roomIndex: number, e: Event) {
   e.stopPropagation()
-  const total = ROOMS[roomIndex].images.length
-  sliderIndexes.value[roomIndex] = (sliderIndexes.value[roomIndex] - 1 + total) % total
+  const room = ROOMS[roomIndex]
+  if (!room) return
+  const total = room.images.length
+  const current = sliderIndexes.value[roomIndex] ?? 0
+  const next = (current - 1 + total) % total
+  sliderIndexes.value[roomIndex] = next
+  markVisited(roomIndex, next)
 }
 function nextSlide(roomIndex: number, e: Event) {
   e.stopPropagation()
-  const total = ROOMS[roomIndex].images.length
-  sliderIndexes.value[roomIndex] = (sliderIndexes.value[roomIndex] + 1) % total
+  const room = ROOMS[roomIndex]
+  if (!room) return
+  const total = room.images.length
+  const current = sliderIndexes.value[roomIndex] ?? 0
+  const next = (current + 1) % total
+  sliderIndexes.value[roomIndex] = next
+  markVisited(roomIndex, next)
 }
 function goToSlide(roomIndex: number, imgIndex: number, e: Event) {
   e.stopPropagation()
   sliderIndexes.value[roomIndex] = imgIndex
+  markVisited(roomIndex, imgIndex)
 }
 
-// Scroll reveal
-onMounted(() => {
-  const els = document.querySelectorAll('.reveal')
-  const io = new IntersectionObserver(
-    entries => entries.forEach(e => e.isIntersecting && e.target.classList.add('in')),
-    { threshold: 0.08 }
-  )
-  els.forEach(el => io.observe(el))
-  onUnmounted(() => io.disconnect())
-})
+useScrollReveal({ threshold: 0.08 })
 </script>
 
 <template>
@@ -244,7 +257,12 @@ onMounted(() => {
                 class="slide"
                 :class="{ active: k === sliderIndexes[i] }"
               >
-                <img :src="src" :alt="`${r.name} — zdjęcie ${k+1}`" :loading="k === 0 ? 'eager' : 'lazy'" />
+                <img
+                  v-if="shouldRender(i, k)"
+                  :src="src"
+                  :alt="`${r.name} — zdjęcie ${k+1}`"
+                  :loading="k === 0 ? 'eager' : 'lazy'"
+                />
               </div>
               <span class="room-badge">0{{ i+1 }} · Pokój</span>
               <button class="slider-arrow prev" @click="prevSlide(i, $event)" aria-label="Poprzednie">‹</button>
@@ -257,7 +275,7 @@ onMounted(() => {
                   :aria-label="`Zdjęcie ${k+1}`"
                 />
               </div>
-              <span class="slider-counter">{{ sliderIndexes[i] + 1 }} / {{ r.images.length }}</span>
+              <span class="slider-counter">{{ (sliderIndexes[i] ?? 0) + 1 }} / {{ r.images.length }}</span>
             </div>
 
             <!-- Body -->
@@ -412,4 +430,29 @@ onMounted(() => {
 .cta-title { color: var(--brand-primary); margin-bottom: 8px; }
 .cta-desc { color: var(--text-muted); }
 .cta-buttons-wrap { display: flex; gap: 12px; flex-shrink: 0; }
+
+/* ─── Responsive ────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .intro-grid { grid-template-columns: 1fr; gap: 48px; }
+  .features-grid { grid-template-columns: repeat(2, 1fr); }
+  .price-options-grid { grid-template-columns: 1fr; }
+  .room-row, .room-row.alt { grid-template-columns: 1fr; }
+  .room-row.alt .room-img-slider { order: 0; }
+  .room-row.alt .room-body { order: 0; }
+  .room-img-slider { min-height: 280px; }
+  .quick-meta { gap: 16px 32px; }
+}
+
+@media (max-width: 720px) {
+  .features-grid { grid-template-columns: 1fr; }
+  .room-feats-list { grid-template-columns: 1fr; }
+  .room-body { padding: 28px 24px; }
+  .booking-cta-bar { padding: 28px; flex-direction: column; align-items: stretch; }
+  .cta-buttons-wrap { flex-direction: column; }
+  .img-stack { grid-template-columns: 1fr; }
+  .img-stack img.tall { grid-row: auto; aspect-ratio: 4/5; }
+  .hero-sub { min-height: 60vh; padding-top: 120px; padding-bottom: 56px; }
+  .quick-meta { gap: 8px; padding-top: 24px; margin-top: 32px; flex-direction: column; }
+  .room-foot-bar { flex-direction: column; align-items: flex-start; gap: 8px; }
+}
 </style>

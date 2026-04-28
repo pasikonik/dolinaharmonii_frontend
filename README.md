@@ -1,75 +1,66 @@
-# Nuxt Minimal Starter
+# Dolina Harmonii — frontend
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Strona ośrodka warsztatowego w Kopańcu (Góry Izerskie). Nuxt 4 + Vue 3, treść z Directusa.
+
+## Stack
+
+- **Nuxt 4** (Vue 3, Vite, TypeScript)
+- **Directus** jako headless CMS (warsztaty, kategorie, prowadzący)
+- **@nuxt/image** z providerem `directus`
+- **@nuxt/icon**, **@nuxt/ui**
+
+## Wymagania
+
+- Node 20+
+- pnpm
 
 ## Setup
 
-Make sure to install dependencies:
-
 ```bash
-# npm
-npm install
-
-# pnpm
+cp .env.example .env       # i uzupełnij DIRECTUS_URL, DIRECTUS_TOKEN
 pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
+pnpm dev                    # http://localhost:3000
 ```
 
-## Development Server
+## Skrypty
 
-Start the development server on `http://localhost:3000`:
+| Komenda           | Co robi                                    |
+|-------------------|--------------------------------------------|
+| `pnpm dev`        | dev serwer z HMR                           |
+| `pnpm build`      | build produkcyjny (.output)                |
+| `pnpm generate`   | static export                              |
+| `pnpm preview`    | podgląd produkcyjnego buildu               |
+| `pnpm typecheck`  | sprawdzenie typów (`nuxt typecheck`)       |
 
-```bash
-# npm
-npm run dev
+## Struktura
 
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
+```
+app/
+  components/        # AppNav, AppFooter, ContactForm, DhIcon
+  composables/       # useDirectus, useScrollReveal
+  layouts/           # default
+  pages/
+    index.vue
+    warsztaty/
+      index.vue      # lista + filtry
+      [slug].vue     # szczegóły warsztatu (z Directusa)
+    noclegi/
+      duzy-dom.vue
+  router.options.ts  # scroll behavior dla anchorów
+  app.vue
+types/directus.ts    # interfejsy Workshop, Category, Instructor
+public/              # zdjęcia .avif
 ```
 
-## Production
+## Zmienne środowiskowe
 
-Build the application for production:
+| Zmienna          | Skąd            | Do czego                                                |
+|------------------|-----------------|---------------------------------------------------------|
+| `DIRECTUS_URL`   | publiczna       | bazowy URL Directusa (`runtimeConfig.public`)           |
+| `DIRECTUS_TOKEN` | server-only     | token do API Directusa (jeśli pobieranie wymaga auth)   |
 
-```bash
-# npm
-npm run build
+## Konwencje
 
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+- Aliasy: `~/` → `app/`, `~~/` → root projektu (typy w `types/` importujemy `~~/types/...`).
+- Klasa `.reveal` w szablonach jest aktywowana przez `useScrollReveal()`.
+- Linki anchorowe (`/#noclegi`) działają dzięki `router.options.ts`.

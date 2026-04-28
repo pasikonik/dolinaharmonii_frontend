@@ -1,15 +1,17 @@
-<!-- app/components/AppNav.vue -->
 <script setup lang="ts">
-// Navigation is fixed at the top, matching the landing page "pill" design
+const open = ref(false)
+const route = useRoute()
+
+watch(() => route.fullPath, () => { open.value = false })
 </script>
 
 <template>
-  <nav class="nav-pill">
-    <NuxtLink class="brand" to="/">
+  <nav class="nav-pill" :class="{ 'is-open': open }">
+    <NuxtLink class="brand" to="/" @click="open = false">
       <DhIcon name="seed" :size="28" :stroke="1.4" />
       Dolina Harmonii
     </NuxtLink>
-    <ul>
+    <ul class="nav-list">
       <li><NuxtLink to="/#dolina">Dolina</NuxtLink></li>
       <li><NuxtLink to="/warsztaty">Warsztaty</NuxtLink></li>
       <li><NuxtLink to="/#noclegi">Noclegi</NuxtLink></li>
@@ -18,6 +20,14 @@
       <li><NuxtLink to="/#zespol">Zespół</NuxtLink></li>
     </ul>
     <NuxtLink class="nav-cta" to="/#rezerwacja">Zarezerwuj</NuxtLink>
+    <button
+      class="nav-toggle"
+      :aria-expanded="open"
+      aria-label="Menu"
+      @click="open = !open"
+    >
+      <span /><span /><span />
+    </button>
   </nav>
 </template>
 
@@ -55,13 +65,13 @@
   flex-shrink: 0;
   text-decoration: none;
 }
-ul {
+.nav-list {
   display: flex;
   list-style: none;
   margin: 0;
   padding: 0 4px;
 }
-li a {
+.nav-list li a {
   display: block;
   padding: 8px 12px;
   color: var(--brand-primary);
@@ -70,7 +80,7 @@ li a {
   border-radius: var(--r-pill);
   transition: background .2s, color .2s;
 }
-li a:hover { background: var(--bg-sage); color: var(--brand-primary); }
+.nav-list li a:hover { background: var(--bg-sage); color: var(--brand-primary); }
 
 .nav-cta {
   background: transparent;
@@ -89,5 +99,66 @@ li a:hover { background: var(--bg-sage); color: var(--brand-primary); }
   background: var(--accent-earth);
   color: var(--bg-primary);
   border-color: var(--accent-earth);
+}
+
+.nav-toggle {
+  display: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  flex-direction: column;
+  gap: 5px;
+  align-items: center;
+  justify-content: center;
+  margin-left: 4px;
+}
+.nav-toggle span {
+  display: block;
+  width: 18px;
+  height: 1.5px;
+  background: var(--brand-primary);
+  border-radius: 1px;
+  transition: transform .25s, opacity .25s;
+}
+
+@media (max-width: 900px) {
+  .nav-pill {
+    padding: 6px 6px 6px 16px;
+    gap: 0;
+  }
+  .nav-cta { display: none; }
+  .nav-toggle { display: flex; }
+  .nav-list {
+    position: absolute;
+    top: calc(100% + 12px);
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px;
+    background: rgba(249,247,242,0.98);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(141,161,146,0.3);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-md);
+    opacity: 0;
+    transform: translateY(-8px);
+    pointer-events: none;
+    transition: opacity .2s, transform .2s;
+  }
+  .is-open .nav-list {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+  .nav-list li a {
+    padding: 12px 14px;
+  }
+  .is-open .nav-toggle span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .is-open .nav-toggle span:nth-child(2) { opacity: 0; }
+  .is-open .nav-toggle span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
 }
 </style>
