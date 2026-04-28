@@ -159,7 +159,7 @@ const TEAM = [
             </p>
             <div class="intro-stats">
               <div
-                v-for="s in [{ n: '8', l: 'lat tworzenia miejsca' }, { n: '40+', l: 'warsztatów rocznie' }, { n: '3', l: 'budynki, 7 pokoi' }]"
+                v-for="s in [{ n: '9', l: 'lat tworzenia miejsca' }, { n: '40+', l: 'warsztatów rocznie' }, { n: '3', l: 'budynki, 7 pokoi' }]"
                 :key="s.n">
                 <div class="stat-num">{{ s.n }}</div>
                 <div class="stat-label">{{ s.l }}</div>
@@ -230,7 +230,7 @@ const TEAM = [
       <div class="container">
         <div class="section-head reveal">
           <span class="eyebrow">Oferta miejsca</span>
-          <h2>Dwa domy, dwa rytmy.</h2>
+          <h2>Trzy domy, trzy rytmy.</h2>
           <p class="lede">Wynajmiemy ci pokój, weekend lub całą stodołę — w zależności od tego, czy przyjeżdżasz solo, w
             parze, czy z grupą warsztatową.</p>
         </div>
