@@ -52,6 +52,31 @@ types/directus.ts    # interfejsy Workshop, Category, Instructor
 public/              # zdjęcia .avif
 ```
 
+## Design System
+
+Projekt korzysta z systemu designu opisanego w `app/assets/css/main.css`. Oparty jest o zmienne CSS (CSS variables), co ułatwia zarządzanie spójnością wizualną.
+
+### Kolory (Tokens)
+
+- **Tło:** `--bg-primary` (główne), `--bg-section` (kremowe), `--bg-sage` (szałwiowe), `--bg-card` (białe kart)
+- **Tekst:** `--text-main` (główny), `--text-muted` (wyciszony)
+- **Marka i Akcenty:** `--brand-primary`, `--brand-deep` (ciemne zielenie), `--accent-earth` (ziemisty, linki)
+- **CTA:** `--cta-main` (żółty/złoty), `--cta-main-hover`
+
+### Typografia
+
+- **Serif (Nagłówki):** Lora (`--serif`) — nagłówki `h1` - `h5`
+- **Sans (Tekst):** Inter (`--sans`) — tekst główny, elementy UI
+
+### Użyteczne klasy (Utilities)
+
+- `.container` — kontener strony (`max-width: 1240px`)
+- `.eyebrow` — wyróżniony mały tekst nad nagłówkami
+- `.btn`, `.btn-primary`, `.btn-secondary`, `.btn-glass` — style przycisków
+- `.chip` — etykiety / tagi
+- `section.cream`, `section.sage`, `section.tight` — modyfikatory dla sekcji
+- `.section-head` — nagłówek sekcji z opisem
+
 ## Zmienne środowiskowe
 
 | Zmienna          | Skąd            | Do czego                                                |
