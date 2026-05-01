@@ -16,11 +16,49 @@ function fmt(n: number): string {
   return n.toLocaleString('pl-PL')
 }
 
+const origin = useRequestURL().origin
+
 useSeoMeta({
   title: 'Dolina Harmonii — miejsce naturalnych mocy',
   description: 'Ośrodek warsztatowy w Kopańcu, w Górach Izerskich. Warsztaty mindfulness, medytacja, rękodzieło, pobyty regeneracyjne.',
-  ogTitle: 'Dolina Harmonii',
-  ogDescription: 'Miejsce naturalnych mocy w Górach Izerskich.',
+  ogTitle: 'Dolina Harmonii — miejsce naturalnych mocy',
+  ogDescription: 'Ośrodek warsztatowy w Kopańcu, w Górach Izerskich. Warsztaty mindfulness, medytacja, rękodzieło, pobyty regeneracyjne.',
+  ogUrl: origin,
+  ogImage: `${origin}/duzy_dom.avif`,
+  ogType: 'website',
+  twitterCard: 'summary_large_image',
+  twitterTitle: 'Dolina Harmonii — miejsce naturalnych mocy',
+  twitterDescription: 'Ośrodek warsztatowy w Kopańcu, w Górach Izerskich. Warsztaty mindfulness, medytacja, rękodzieło.',
+  twitterImage: `${origin}/duzy_dom.avif`,
+})
+
+useHead({
+  script: [{
+    key: 'ld-localbusiness',
+    type: 'application/ld+json',
+    innerHTML: JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'LodgingBusiness',
+      name: 'Dolina Harmonii',
+      description: 'Ośrodek warsztatowy i dom gościnny w Kopańcu, w Górach Izerskich. Warsztaty mindfulness, medytacja, rękodzieło, pobyty regeneracyjne.',
+      url: origin,
+      email: 'dolina@harmonii.pl',
+      foundingDate: '2017',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Kopaniec',
+        addressRegion: 'Dolny Śląsk',
+        postalCode: '58-564',
+        addressCountry: 'PL',
+      },
+      geo: {
+        '@type': 'GeoCoordinates',
+        latitude: 50.85,
+        longitude: 15.45,
+      },
+      image: `${origin}/duzy_dom.avif`,
+    }),
+  }],
 })
 
 useScrollReveal({ rootMargin: '0px 0px -60px 0px' })

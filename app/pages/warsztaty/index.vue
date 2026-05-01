@@ -1,8 +1,17 @@
 <script setup lang="ts">
-// Page-specific setup logic
+const origin = useRequestURL().origin
+
 useSeoMeta({
   title: 'Warsztaty — Dolina Harmonii',
   description: 'Kameralne, kilkudniowe warsztaty od maja do października w Dolinie Harmonii. Mindfulness, joga, natura, rękodzieło.',
+  ogTitle: 'Warsztaty — Dolina Harmonii',
+  ogDescription: 'Kameralne, kilkudniowe warsztaty od maja do października w Dolinie Harmonii. Mindfulness, joga, natura, rękodzieło.',
+  ogUrl: `${origin}/warsztaty`,
+  ogImage: `${origin}/kopaniec.avif`,
+  twitterCard: 'summary_large_image',
+  twitterTitle: 'Warsztaty — Dolina Harmonii',
+  twitterDescription: 'Kameralne, kilkudniowe warsztaty od maja do października w Dolinie Harmonii.',
+  twitterImage: `${origin}/kopaniec.avif`,
 })
 
 // ─── Static data ──────────────────────────────────────────────────────────

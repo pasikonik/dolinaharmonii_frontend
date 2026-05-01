@@ -22,9 +22,48 @@ const minRoomPrice = computed(() =>
   )
 )
 
+const origin = useRequestURL().origin
+
 useSeoMeta({
   title: 'Duży Dom — Dolina Harmonii',
-  description: 'Drewniany Dom Gościnny z pięcioma przytulnymi pokojami. Kominek w salonie, sala warsztatowa, sauna infrared. Od 320 zł / pokój.',
+  description: () => `Drewniany Dom Gościnny z pięcioma przytulnymi pokojami. Kominek w salonie, sala warsztatowa, sauna infrared. Od ${fmt(minRoomPrice.value)} zł / pokój.`,
+  ogTitle: 'Duży Dom — Dom Gościnny · Dolina Harmonii',
+  ogDescription: 'Drewniany Dom Gościnny z 5 pokojami, kominkiem i salą warsztatową w Kopańcu, Góry Izerskie.',
+  ogUrl: `${origin}/noclegi/duzy-dom`,
+  ogImage: `${origin}/duzy_dom.avif`,
+  twitterCard: 'summary_large_image',
+  twitterTitle: 'Duży Dom — Dolina Harmonii',
+  twitterDescription: 'Drewniany Dom Gościnny z 5 pokojami, kominkiem i salą warsztatową w Kopańcu.',
+  twitterImage: `${origin}/duzy_dom.avif`,
+})
+
+useHead({
+  script: [{
+    key: 'ld-hotel',
+    type: 'application/ld+json',
+    innerHTML: JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Hotel',
+      name: 'Duży Dom — Dolina Harmonii',
+      description: 'Drewniany Dom Gościnny z pięcioma przytulnymi pokojami w Kopańcu, Góry Izerskie.',
+      url: `${origin}/noclegi/duzy-dom`,
+      email: 'dolina@harmonii.pl',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Kopaniec',
+        addressRegion: 'Dolny Śląsk',
+        addressCountry: 'PL',
+      },
+      image: `${origin}/duzy_dom.avif`,
+      numberOfRooms: 5,
+      amenityFeature: [
+        { '@type': 'LocationFeatureSpecification', name: 'Kominek', value: true },
+        { '@type': 'LocationFeatureSpecification', name: 'Sauna infrared', value: true },
+        { '@type': 'LocationFeatureSpecification', name: 'Sala warsztatowa', value: true },
+        { '@type': 'LocationFeatureSpecification', name: 'Kuchnia dla gości', value: true },
+      ],
+    }),
+  }],
 })
 
 const ROOMS = computed(() => [
@@ -228,9 +267,9 @@ useScrollReveal({ threshold: 0.08 })
           </div>
           <div class="reveal">
             <div class="img-stack">
-              <img class="tall" src="/kwiecisty-4.avif" alt="" />
-              <img src="/magiczny-1.avif" alt="" />
-              <img src="/sloneczny-1.avif" alt="" />
+              <img class="tall" src="/kwiecisty-4.avif" alt="Pokój Kwiecisty — wnętrze" />
+              <img src="/magiczny-1.avif" alt="Pokój Magiczny — poddasze" />
+              <img src="/sloneczny-1.avif" alt="Pokój Słoneczny" />
             </div>
           </div>
         </div>

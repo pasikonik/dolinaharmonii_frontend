@@ -10,7 +10,12 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/image',
     '@nuxt/icon',
+    '@nuxtjs/sitemap',
   ],
+
+  sitemap: {
+    sources: ['/api/_sitemap-urls'],
+  },
 
   css: ['~/assets/css/main.css'],
 

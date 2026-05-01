@@ -39,10 +39,70 @@ const { data: relatedData } = await useAsyncData(
   },
 )
 
+const origin = useRequestURL().origin
+
 useSeoMeta({
-  title: () => workshop.value ? `${workshop.value.title} — Dolina Harmonii` : 'Warsztat — Dolina Harmonii',
-  description: () => workshop.value?.short_description || '',
+  title: () => workshop.value
+    ? (workshop.value.meta_title || `${workshop.value.title} — Dolina Harmonii`)
+    : 'Warsztat — Dolina Harmonii',
+  description: () => workshop.value?.meta_description || workshop.value?.short_description || '',
+  ogTitle: () => workshop.value?.title ?? 'Warsztat — Dolina Harmonii',
+  ogDescription: () => workshop.value?.meta_description || workshop.value?.short_description || '',
+  ogUrl: () => `${origin}/warsztaty/${slug.value}`,
+  ogImage: () => workshop.value?.cover_image
+    ? getImageUrl(workshop.value.cover_image, { width: 1200, format: 'webp' })
+    : `${origin}/duzy_dom.avif`,
+  ogType: 'website',
+  twitterCard: 'summary_large_image',
+  twitterTitle: () => workshop.value?.title ?? 'Warsztat — Dolina Harmonii',
+  twitterDescription: () => workshop.value?.meta_description || workshop.value?.short_description || '',
+  twitterImage: () => workshop.value?.cover_image
+    ? getImageUrl(workshop.value.cover_image, { width: 1200, format: 'webp' })
+    : `${origin}/duzy_dom.avif`,
 })
+
+useHead(computed(() => ({
+  script: workshop.value ? [{
+    key: 'ld-event',
+    type: 'application/ld+json' as const,
+    innerHTML: JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Event',
+      name: workshop.value.title,
+      description: workshop.value.short_description,
+      startDate: workshop.value.start_date,
+      endDate: workshop.value.end_date,
+      url: `${origin}/warsztaty/${slug.value}`,
+      location: {
+        '@type': 'Place',
+        name: 'Dolina Harmonii',
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: 'Kopaniec',
+          addressRegion: 'Dolny Śląsk',
+          addressCountry: 'PL',
+        },
+      },
+      ...(workshop.value.price ? {
+        offers: {
+          '@type': 'Offer',
+          price: String(workshop.value.price),
+          priceCurrency: 'PLN',
+          availability: 'https://schema.org/InStock',
+          url: `${origin}/warsztaty/${slug.value}#zapis`,
+        },
+      } : {}),
+      ...(workshop.value.cover_image ? {
+        image: getImageUrl(workshop.value.cover_image, { width: 1200, format: 'webp' }),
+      } : {}),
+      organizer: {
+        '@type': 'Organization',
+        name: 'Dolina Harmonii',
+        url: origin,
+      },
+    }),
+  }] : [],
+})))
 
 const lightboxIndex = ref<number | null>(null)
 
