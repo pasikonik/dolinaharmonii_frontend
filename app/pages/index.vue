@@ -1,10 +1,20 @@
 <script setup lang="ts">
 import type { Workshop } from '~~/types/directus'
+import { DEFAULT_PRICING } from '~~/types/directus'
 
-const { getWorkshops, getImageUrl } = useDirectus()
+const { getWorkshops, getImageUrl, getPricing } = useDirectus()
 
 const { data } = await useAsyncData('workshops-home', () => getWorkshops({ limit: 3 }))
 const workshops = computed(() => data.value?.data ?? [])
+
+const { data: pricingData } = await useAsyncData('prices', async () => {
+  try { return await getPricing() } catch { return null }
+})
+const p = computed(() => pricingData.value?.data ?? DEFAULT_PRICING)
+
+function fmt(n: number): string {
+  return n.toLocaleString('pl-PL')
+}
 
 useSeoMeta({
   title: 'Dolina Harmonii — miejsce naturalnych mocy',
@@ -14,6 +24,8 @@ useSeoMeta({
 })
 
 useScrollReveal({ rootMargin: '0px 0px -60px 0px' })
+
+const yearsOpen = new Date().getFullYear() - 2017
 
 const STATIC_WORKSHOPS = [
   { slug: 'mindfulness-w-naturze', name: 'Mindfulness w naturze', cat: 'mindfulness', icon: 'meditation', img: 'https://images.unsplash.com/photo-1545389336-cf090694435e?auto=format&fit=crop&w=1000&q=80', dur: '3 dni', date: 'Maj 2026', desc: 'Praktyka uważnej obecności na łące, w lesie i przy ognisku — w towarzystwie cykli pór roku.' },
@@ -49,7 +61,7 @@ const displayWorkshops = computed(() => {
   return STATIC_WORKSHOPS
 })
 
-const ACCOMMODATIONS = [
+const ACCOMMODATIONS = computed(() => [
   {
     num: '01 — Obiekt główny', name: 'Duży Dom',
     tag: 'Dom Gościnny · 5 pokoi · 12–14 miejsc',
@@ -57,7 +69,8 @@ const ACCOMMODATIONS = [
     main: '/duzy_dom.avif',
     small: '/sala-w-1.avif',
     features: [{ i: 'bed', t: '5 pokoi gościnnych' }, { i: 'fireplace', t: 'Kominek w salonie' }, { i: 'kitchen', t: 'Kuchnia dla gości' }, { i: 'meditation', t: 'Sala warsztatowa' }, { i: 'bath', t: 'Sauna infrared' }, { i: 'leaf', t: 'Sad i widok na góry' }],
-    price: 'od 320 zł', priceFor: 'pokój / doba',
+    price: `od ${fmt(Math.min(p.value.forest_room, p.value.sun_room, p.value.flower_room, p.value.ethnic_room, p.value.magic_room))} zł`,
+    priceFor: 'pokój / doba',
     url: '/noclegi/duzy-dom',
   },
   {
@@ -67,7 +80,8 @@ const ACCOMMODATIONS = [
     main: '/lesny-domek.avif',
     small: '/lesny_taras.avif',
     features: [{ i: 'bed', t: 'Łoże + 2 łóżka + sofa' }, { i: 'bath', t: 'Łazienka z prysznicem' }, { i: 'kitchen', t: 'Kuchnia, jadalnia' }, { i: 'fireplace', t: 'Salon z kominkiem' }, { i: 'leaf', t: 'Widok na Wiśniową Górę' }, { i: 'star', t: 'Pełna prywatność' }],
-    price: 'od 580 zł', priceFor: 'cały domek / doba',
+    price: `od ${fmt(p.value.forest_house)} zł`,
+    priceFor: 'cały domek / doba',
     url: '/noclegi/lesny-domek',
   },
   {
@@ -77,10 +91,11 @@ const ACCOMMODATIONS = [
     main: '/oranzeria.avif',
     small: '/oranzeria-inside.avif',
     features: [{ i: 'bed', t: 'Łoże + rozkładana sofa' }, { i: 'bath', t: 'Łazienka z prysznicem' }, { i: 'kitchen', t: 'Aneks kuchenny' }, { i: 'leaf', t: 'Salon-oranżeria' }, { i: 'tea', t: 'Widok na sad owocowy' }, { i: 'star', t: 'Prawie osobny apartament' }],
-    price: 'od 480 zł', priceFor: 'studio / doba',
+    price: `od ${fmt(p.value.studio_room)} zł`,
+    priceFor: 'studio / doba',
     url: '/noclegi/studio-z-oranzeria',
   },
-]
+])
 
 const GALLERY = [
   { src: 'https://images.unsplash.com/photo-1518173946687-a4c8892bbd9f?auto=format&fit=crop&w=1200&q=80', span: 'span-2-row' },
@@ -122,7 +137,7 @@ const TEAM = [
         <h1 class="hero-tagline">Dolina Harmonii — miejsce naturalnych mocy</h1>
         <div class="hero-ctas">
           <NuxtLink class="btn btn-primary" to="#noclegi">
-            Zaplanuj pobyt
+            Zobacz noclegi
             <DhIcon name="arrow" :size="18" :stroke="1.6" />
           </NuxtLink>
           <NuxtLink class="btn btn-glass" to="/warsztaty">Zobacz warsztaty</NuxtLink>
@@ -159,7 +174,7 @@ const TEAM = [
             </p>
             <div class="intro-stats">
               <div
-                v-for="s in [{ n: '9', l: 'lat tworzenia miejsca' }, { n: '40+', l: 'warsztatów rocznie' }, { n: '3', l: 'budynki, 7 pokoi' }]"
+                v-for="s in [{ n: String(yearsOpen), l: 'lat tworzenia miejsca' }, { n: '40+', l: 'warsztatów rocznie' }, { n: '3', l: 'budynki, 7 pokoi' }]"
                 :key="s.n">
                 <div class="stat-num">{{ s.n }}</div>
                 <div class="stat-label">{{ s.l }}</div>
@@ -218,7 +233,7 @@ const TEAM = [
         </div>
         <div class="all-workshops-cta">
           <NuxtLink class="btn btn-secondary" to="/warsztaty">
-            Pełen kalendarz warsztatów
+            Wszystkie warsztaty
             <DhIcon name="arrow" :size="18" :stroke="1.6" />
           </NuxtLink>
         </div>
@@ -266,7 +281,7 @@ const TEAM = [
                 Zobacz obiekt
                 <DhIcon name="arrow" :size="18" :stroke="1.6" />
               </NuxtLink>
-              <NuxtLink class="btn btn-secondary" to="#rezerwacja">Sprawdź dostępność</NuxtLink>
+              <a class="btn btn-secondary" href="mailto:dolina@harmonii.pl">Zapytaj o termin</a>
             </div>
           </div>
         </div>

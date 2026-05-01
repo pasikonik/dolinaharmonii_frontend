@@ -26,10 +26,6 @@ const MONTHS = [
   { id: 'paź', label: 'Październik' },
 ]
 
-const MONTH_LABELS: Record<string, string> = {
-  maj: 'Maj 2026', cze: 'Czerwiec 2026', lip: 'Lipiec 2026',
-  sie: 'Sierpień 2026', wrz: 'Wrzesień 2026', paź: 'Październik 2026',
-}
 
 const PEOPLE: Record<string, { name: string, photo: string }> = {
   joanna: { name: 'Joanna Lis',      photo: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80' },
@@ -53,12 +49,17 @@ const WORKSHOPS = [
   { id: 'rzezba',          slug: 'rzezba-w-drewnie',         name: 'Rzeźba w drewnie',          cat: 'drewno',      icon: 'candle',     month: 'sie', durLabel: '3 dni',    date: '7–9 sierpnia',        dateLong: '7–9 sierpnia 2026',        day: 7,  hours: '14:00 – 16:00', spots: 8,  taken: 7,  instr: 'anna',   img: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=900&q=80', desc: 'Tradycyjna rzeźba w drewnie z lokalnym snycerzem — od bryły do formy.',               price: '1 380 zł', priceN: 1380 },
 ]
 
+const MONTH_LABELS: Record<string, string> = {
+  maj: 'Maj', cze: 'Czerwiec', lip: 'Lipiec',
+  sie: 'Sierpień', wrz: 'Wrzesień', paź: 'Październik',
+}
+
 // ─── Filter state ──────────────────────────────────────────────────────────
 type WorkshopRow = typeof WORKSHOPS[number]
 
 const cat   = ref('all')
 const month = ref('all')
-const view  = ref<'list'|'grid'|'calendar'>('list')
+const view  = ref<'list'|'grid'>('list')
 const sort  = ref('date')
 const q     = ref('')
 
@@ -70,8 +71,15 @@ function getPerson(id: string) {
 }
 
 function monthShort(w: WorkshopRow): string {
-  return MONTH_LABELS[w.month]?.split(' ')[0] ?? w.month
+  return MONTH_LABELS[w.month] ?? w.month
 }
+
+function pluralWorkshops(n: number) {
+  if (n === 1) return 'warsztat'
+  if (n >= 2 && n <= 4) return 'warsztaty'
+  return 'warsztatów'
+}
+
 
 const filtered = computed(() => WORKSHOPS.filter(w => {
   if (cat.value !== 'all' && w.cat !== cat.value) return false
@@ -94,13 +102,6 @@ const sorted = computed(() => [...filtered.value].sort((a, b) => {
   return a.day - b.day
 }))
 
-const monthGroups = computed(() =>
-  sorted.value.reduce((acc, w) => {
-    const list = acc[w.month] ?? (acc[w.month] = [])
-    list.push(w)
-    return acc
-  }, {} as Record<string, WorkshopRow[]>)
-)
 
 const hasFilters = computed(() => cat.value !== 'all' || month.value !== 'all' || q.value !== '')
 function clearAll() { cat.value = 'all'; month.value = 'all'; q.value = '' }
@@ -116,11 +117,6 @@ function availLabel(w: WorkshopRow) {
   if (free === 0) return 'Brak miejsc'
   if (free <= 3)  return `ostatnie ${free} miejsc`
   return `${free} z ${w.spots} miejsc`
-}
-function pluralWorkshops(n: number) {
-  if (n === 1) return 'warsztat'
-  if (n >= 2 && n <= 4) return 'warsztaty'
-  return 'warsztatów'
 }
 
 useScrollReveal({ threshold: 0.05, retriggerOn: [view, cat, month, q, sort] })
@@ -204,9 +200,7 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [view, cat, month, q, sort] })
             <button :class="{ active: view === 'grid' }" @click="view = 'grid'" title="Siatka">
               <DhIcon name="grid" :size="16" :stroke="1.4" />
             </button>
-            <button :class="{ active: view === 'calendar' }" @click="view = 'calendar'" title="Kalendarz">
-              <DhIcon name="calendar" :size="16" :stroke="1.4" />
-            </button>
+
           </div>
         </div>
 
@@ -330,38 +324,6 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [view, cat, month, q, sort] })
           </NuxtLink>
         </div>
 
-        <!-- ─── CALENDAR VIEW ─────────────────────────────────────── -->
-        <div v-else class="cal-view">
-          <div v-for="(rows, m) in monthGroups" :key="m" class="cal-month reveal">
-            <h3>{{ MONTH_LABELS[m] ?? m }}</h3>
-            <div class="m-sub">{{ rows.length }} {{ pluralWorkshops(rows.length) }} w tym miesiącu</div>
-            <div class="cal-rows">
-              <NuxtLink
-                v-for="w in rows" :key="w.id"
-                :to="`/warsztaty/${w.slug}`"
-                class="cal-row"
-              >
-                <div class="cal-day">
-                  {{ w.day }}
-                  <small>{{ monthShort(w) }}</small>
-                </div>
-                <div class="cal-info">
-                  <h4>{{ w.name }}</h4>
-                  <span class="cal-cat">
-                    <DhIcon :name="w.icon" :size="12" :stroke="1.4" />
-                    {{ w.cat }} · {{ w.durLabel }}
-                  </span>
-                </div>
-                <div class="cal-instr">
-                  <img :src="getPerson(w.instr).photo" :alt="getPerson(w.instr).name" loading="lazy" />
-                  <span>{{ getPerson(w.instr).name }}</span>
-                </div>
-                <div class="cal-price">{{ w.price }}</div>
-                <div class="cal-avail" :class="availClass(w)">{{ availLabel(w) }}</div>
-              </NuxtLink>
-            </div>
-          </div>
-        </div>
 
         <!-- ─── RENT CTA ──────────────────────────────────────────── -->
         <div class="rent-cta">
@@ -488,23 +450,6 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [view, cat, month, q, sort] })
 .card-avail.low { color: var(--accent-earth-deep); font-weight: 600; }
 .card-avail.full { opacity: .5; }
 
-/* Calendar view */
-.cal-view { display: flex; flex-direction: column; gap: 56px; }
-.cal-month h3 { font-family: var(--serif); font-size: 36px; font-style: italic; margin-bottom: 8px; }
-.m-sub { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 28px; }
-.cal-rows { display: flex; flex-direction: column; gap: 12px; }
-.cal-row { display: grid; grid-template-columns: 80px 1fr 200px 140px 120px; align-items: center; gap: 24px; padding: 20px 24px; background: var(--bg-card); border: 1px solid var(--line); border-radius: var(--r-md); text-decoration: none; color: inherit; transition: all .2s; }
-.cal-row:hover { border-color: var(--accent-earth); transform: translateX(4px); }
-.cal-day { font-family: var(--serif); font-size: 32px; color: var(--brand-primary); font-weight: 500; line-height: 1; }
-.cal-day small { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--text-muted); margin-top: 6px; }
-.cal-info h4 { font-size: 20px; margin-bottom: 4px; color: var(--brand-primary); }
-.cal-cat { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--accent-earth); }
-.cal-instr { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-muted); }
-.cal-instr img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
-.cal-price { font-family: var(--serif); font-size: 20px; color: var(--brand-primary); text-align: right; }
-.cal-avail { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); text-align: right; }
-.cal-avail.low { color: var(--accent-earth-deep); font-weight: 600; }
-.cal-avail.full { opacity: .5; }
 
 /* Rent CTA */
 .rent-cta { margin-top: 96px; padding: 56px 0; border-top: 1px solid var(--line); text-align: center; }
@@ -521,10 +466,6 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [view, cat, month, q, sort] })
   .wks-grid { grid-template-columns: repeat(2, 1fr); }
   .wks-hero-row { flex-direction: column; align-items: flex-start; gap: 16px; }
   .wks-hero-stats { flex-wrap: wrap; gap: 24px; }
-  .cal-row { grid-template-columns: 60px 1fr; gap: 16px; padding: 16px; }
-  .cal-row .cal-instr,
-  .cal-row .cal-price,
-  .cal-row .cal-avail { grid-column: 2; text-align: left; }
 }
 
 @media (max-width: 720px) {

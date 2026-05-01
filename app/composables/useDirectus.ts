@@ -1,4 +1,4 @@
-import type { Category, DirectusResponse, Workshop } from '~~/types/directus'
+import type { Category, DirectusResponse, Pricing, Workshop } from '~~/types/directus'
 
 interface ImageOptions {
   width?: number
@@ -62,6 +62,10 @@ export function useDirectus() {
     })
   }
 
+  function getPricing() {
+    return get<DirectusResponse<Pricing>>('/items/prices')
+  }
+
   function getImageUrl(fileId: string, options: ImageOptions = {}) {
     const params = new URLSearchParams()
     if (options.width) params.set('width', String(options.width))
@@ -77,6 +81,7 @@ export function useDirectus() {
     getWorkshops,
     getWorkshop,
     getCategories,
+    getPricing,
     getImageUrl,
   }
 }

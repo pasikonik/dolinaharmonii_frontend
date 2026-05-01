@@ -47,3 +47,28 @@ export interface Instructor {
   instagram?: string
   facebook?: string
 }
+
+// Singleton — kolekcja "prices" w Directus
+export interface Pricing {
+  id: number
+  // Duży Dom — pokoje (cena od X zł / pokój / noc)
+  forest_room: number    // Pokój Leśny (2-os.)
+  sun_room: number       // Pokój Słoneczny (3-os.)
+  flower_room: number    // Pokój Kwiecisty (2/3-os.)
+  ethnic_room: number    // Pokój Etniczny (2-os.)
+  magic_room: number     // Pokój Magiczny (5/6-os.)
+  // Osobne obiekty
+  forest_house: number   // Leśny Domek
+  studio_room: number    // Studio z oranżerią
+}
+
+export const DEFAULT_PRICING: Pricing = {
+  id: 1,
+  forest_room: 320,
+  sun_room: 380,
+  flower_room: 360,
+  ethnic_room: 340,
+  magic_room: 580,
+  forest_house: 580,
+  studio_room: 480,
+}

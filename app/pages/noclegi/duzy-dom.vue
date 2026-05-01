@@ -1,10 +1,33 @@
 <script setup lang="ts">
+import { DEFAULT_PRICING } from '~~/types/directus'
+
+const { getPricing } = useDirectus()
+
+const { data: pricingData } = await useAsyncData('prices', async () => {
+  try { return await getPricing() } catch { return null }
+})
+const p = computed(() => pricingData.value?.data ?? DEFAULT_PRICING)
+
+function fmt(n: number): string {
+  return n.toLocaleString('pl-PL')
+}
+
+const minRoomPrice = computed(() =>
+  Math.min(
+    p.value.forest_room,
+    p.value.sun_room,
+    p.value.flower_room,
+    p.value.ethnic_room,
+    p.value.magic_room,
+  )
+)
+
 useSeoMeta({
   title: 'Duży Dom — Dolina Harmonii',
   description: 'Drewniany Dom Gościnny z pięcioma przytulnymi pokojami. Kominek w salonie, sala warsztatowa, sauna infrared. Od 320 zł / pokój.',
 })
 
-const ROOMS = [
+const ROOMS = computed(() => [
   {
     name: 'Słoneczny',
     who: '3-osobowy pokój na piętrze',
@@ -20,7 +43,7 @@ const ROOMS = [
       'Widok na sad i zieleń',
       'Drewniane meble, naturalne tkaniny',
     ],
-    price: 'od 380 zł',
+    price: `od ${fmt(p.value.sun_room)} zł`,
     unit: 'pokój / doba',
   },
   {
@@ -39,17 +62,17 @@ const ROOMS = [
       'Widok na sad i zieleń',
       'Naturalne, leśne barwy wnętrza',
     ],
-    price: 'od 320 zł',
+    price: `od ${fmt(p.value.forest_room)} zł`,
     unit: 'pokój / doba',
   },
   {
     name: 'Kwiecisty',
     who: '2/3-osobowy pokój na piętrze',
     images: [
+      '/kwiecisty-4.avif',
       '/kwiecisty-1.avif',
       '/kwiecisty-2.avif',
       '/kwiecisty-3.avif',
-      '/kwiecisty-4.avif',
     ],
     lead: 'Przytulny pokój z łóżkiem małżeńskim i kanapą, z oknem otwartym na Wiśniową Górę.',
     features: [
@@ -58,7 +81,7 @@ const ROOMS = [
       'Widok na Wiśniową Górę',
       'Kwiatowe motywy i tekstylia',
     ],
-    price: 'od 360 zł',
+    price: `od ${fmt(p.value.flower_room)} zł`,
     unit: 'pokój / doba',
   },
   {
@@ -77,7 +100,7 @@ const ROOMS = [
       'Widok na Wiśniową Górę',
       'Etniczne dekoracje, ręcznie tkane dywany',
     ],
-    price: 'od 340 zł',
+    price: `od ${fmt(p.value.ethnic_room)} zł`,
     unit: 'pokój / doba',
   },
   {
@@ -96,10 +119,10 @@ const ROOMS = [
       'Widok na Osadę Kopaniec',
       'Najwięcej miejsca i światła',
     ],
-    price: 'od 580 zł',
+    price: `od ${fmt(p.value.magic_room)} zł`,
     unit: 'pokój / doba',
   },
-]
+])
 
 const HOUSE_FEATURES = [
   { icon: 'fireplace', t: 'Salon z kominkiem',     d: 'Sercem Domu jest salon z trzaskającym ogniem w przeszklonym kominku.' },
@@ -114,8 +137,8 @@ const HOUSE_FEATURES = [
 
 // Slider state for each room — track current + which slides have been "touched"
 // so we can lazy-load images only after the user navigates to them.
-const sliderIndexes = ref<number[]>(ROOMS.map(() => 0))
-const visitedSlides = ref<Set<string>[]>(ROOMS.map((_, i) => new Set([`${i}-0`])))
+const sliderIndexes = ref<number[]>(Array.from({ length: 5 }, () => 0))
+const visitedSlides = ref<Set<string>[]>(Array.from({ length: 5 }, (_, i) => new Set([`${i}-0`])))
 
 function markVisited(roomIndex: number, imgIndex: number) {
   const set = visitedSlides.value[roomIndex]
@@ -128,7 +151,7 @@ function shouldRender(roomIndex: number, imgIndex: number) {
 
 function prevSlide(roomIndex: number, e: Event) {
   e.stopPropagation()
-  const room = ROOMS[roomIndex]
+  const room = ROOMS.value[roomIndex]
   if (!room) return
   const total = room.images.length
   const current = sliderIndexes.value[roomIndex] ?? 0
@@ -138,7 +161,7 @@ function prevSlide(roomIndex: number, e: Event) {
 }
 function nextSlide(roomIndex: number, e: Event) {
   e.stopPropagation()
-  const room = ROOMS[roomIndex]
+  const room = ROOMS.value[roomIndex]
   if (!room) return
   const total = room.images.length
   const current = sliderIndexes.value[roomIndex] ?? 0
@@ -169,7 +192,7 @@ useScrollReveal({ threshold: 0.08 })
           <span>· 12–14 miejsc</span>
           <span>· Salon · Kuchnia · Jadalnia</span>
           <span>· Sauna infrared</span>
-          <span>· Od 320 zł / pokój</span>
+          <span>· Od {{ fmt(minRoomPrice) }} zł / pokój</span>
         </div>
       </div>
     </header>
@@ -313,7 +336,7 @@ useScrollReveal({ threshold: 0.08 })
         <div class="price-options-grid">
           <div class="price-tile-card reveal">
             <span class="pt-label-tag">Pojedynczy pokój</span>
-            <span class="pt-price-big">320–580 zł</span>
+            <span class="pt-price-big">{{ fmt(minRoomPrice) }}–{{ fmt(p.magic_room) }} zł</span>
             <span class="pt-unit-text">w zależności od pokoju, doba, ze śniadaniem na życzenie</span>
           </div>
           <div class="price-tile-card featured-tile reveal">
@@ -330,7 +353,7 @@ useScrollReveal({ threshold: 0.08 })
 
         <div class="booking-cta-bar reveal">
           <div class="cta-text-content">
-            <h3 class="cta-title">Sprawdź dostępność</h3>
+            <h3 class="cta-title">Zapytaj o termin</h3>
             <p class="cta-desc">Napisz lub zadzwoń — odpowiadamy w ciągu 48 godzin. Pokoje rezerwujemy dwustopniowo: najpierw potwierdzamy termin, potem prosimy o zaliczkę.</p>
           </div>
           <div class="cta-buttons-wrap">

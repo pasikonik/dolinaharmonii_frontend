@@ -45,7 +45,7 @@ async function handleSubmit() {
             </div>
             <div class="cf-contact-row">
               <span class="cf-icon"><DhIcon name="seed" :size="22" :stroke="1.4" /></span>
-              <span>Kopaniec 47 · 58-512 Stara Kamienica</span>
+              <span>Kopaniec 67A · 58-512 Stara Kamienica</span>
             </div>
           </div>
         </div>
