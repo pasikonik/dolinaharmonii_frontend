@@ -3,6 +3,7 @@ import type { Workshop } from '~~/types/directus'
 import { DEFAULT_PRICING } from '~~/types/directus'
 
 const { getWorkshops, getImageUrl, getPricing } = useDirectus()
+const { lang, t } = useLang()
 
 const { data } = await useAsyncData('workshops-home', () => getWorkshops({ limit: 3 }))
 const workshops = computed(() => data.value?.data ?? [])
@@ -65,23 +66,64 @@ useScrollReveal({ rootMargin: '0px 0px -60px 0px' })
 
 const yearsOpen = new Date().getFullYear() - 2017
 
-const STATIC_WORKSHOPS = [
-  { slug: 'mindfulness-w-naturze', name: 'Mindfulness w naturze', cat: 'mindfulness', icon: 'meditation', img: 'https://images.unsplash.com/photo-1545389336-cf090694435e?auto=format&fit=crop&w=1000&q=80', dur: '3 dni', date: 'Maj 2026', desc: 'Praktyka uważnej obecności na łące, w lesie i przy ognisku — w towarzystwie cykli pór roku.' },
-  { slug: 'cisza-i-medytacja', name: 'Cisza i medytacja', cat: 'medytacja', icon: 'candle', img: 'https://images.unsplash.com/photo-1591291621164-2c6367723315?auto=format&fit=crop&w=1000&q=80', dur: '5 dni', date: 'Czerwiec', desc: 'Pięciodniowe odosobnienie w ciszy z prowadzeniem zen i tradycji wglądu. Dla początkujących i wracających.' },
-  { slug: 'rekodzielo-z-izerow', name: 'Rękodzieło z Izerów', cat: 'rękodzieło', icon: 'craft', img: 'https://images.unsplash.com/photo-1452860606245-08befc0ff44b?auto=format&fit=crop&w=1000&q=80', dur: 'Weekend', date: 'Lipiec', desc: 'Filcowanie wełną, plecionkarstwo, wypał ceramiki — z lokalnymi rękodzielniczkami.' },
+const STATIC_WORKSHOPS_RAW = [
+  {
+    slug: 'mindfulness-w-naturze',
+    name_pl: 'Mindfulness w naturze', name_en: 'Mindfulness in Nature',
+    cat_pl: 'mindfulness', cat_en: 'mindfulness',
+    icon: 'meditation',
+    img: 'https://images.unsplash.com/photo-1545389336-cf090694435e?auto=format&fit=crop&w=1000&q=80',
+    dur_pl: '3 dni', dur_en: '3 days',
+    date_pl: 'Maj 2026', date_en: 'May 2026',
+    desc_pl: 'Praktyka uważnej obecności na łące, w lesie i przy ognisku — w towarzystwie cykli pór roku.',
+    desc_en: 'A practice of mindful presence on the meadow, in the forest and by the fire — attuned to the cycles of the seasons.',
+  },
+  {
+    slug: 'cisza-i-medytacja',
+    name_pl: 'Cisza i medytacja', name_en: 'Silence & Meditation',
+    cat_pl: 'medytacja', cat_en: 'meditation',
+    icon: 'candle',
+    img: 'https://images.unsplash.com/photo-1591291621164-2c6367723315?auto=format&fit=crop&w=1000&q=80',
+    dur_pl: '5 dni', dur_en: '5 days',
+    date_pl: 'Czerwiec', date_en: 'June',
+    desc_pl: 'Pięciodniowe odosobnienie w ciszy z prowadzeniem zen i tradycji wglądu. Dla początkujących i wracających.',
+    desc_en: 'A five-day silent retreat led in the Zen and Insight traditions. Open to beginners and returning practitioners.',
+  },
+  {
+    slug: 'rekodzielo-z-izerow',
+    name_pl: 'Rękodzieło z Izerów', name_en: 'Izera Crafts',
+    cat_pl: 'rękodzieło', cat_en: 'crafts',
+    icon: 'craft',
+    img: 'https://images.unsplash.com/photo-1452860606245-08befc0ff44b?auto=format&fit=crop&w=1000&q=80',
+    dur_pl: 'Weekend', dur_en: 'Weekend',
+    date_pl: 'Lipiec', date_en: 'July',
+    desc_pl: 'Filcowanie wełną, plecionkarstwo, wypał ceramiki — z lokalnymi rękodzielniczkami.',
+    desc_en: 'Wool felting, basketry, ceramic firing — with local craftswomen from the Izera foothills.',
+  },
 ]
+
+const STATIC_WORKSHOPS = computed(() => STATIC_WORKSHOPS_RAW.map(w => ({
+  slug: w.slug,
+  name: t(w.name_pl, w.name_en),
+  cat: t(w.cat_pl, w.cat_en),
+  icon: w.icon,
+  img: w.img,
+  dur: t(w.dur_pl, w.dur_en),
+  date: t(w.date_pl, w.date_en),
+  desc: t(w.desc_pl, w.desc_en),
+})))
 
 const FALLBACK_IMG = '/duzy_dom.avif'
 
 function calcDuration(start?: string | null, end?: string | null): string {
   if (!start || !end) return ''
   const days = Math.round((new Date(end).getTime() - new Date(start).getTime()) / 86_400_000) + 1
+  if (lang.value === 'en') return days === 1 ? '1 day' : `${days} days`
   return days === 1 ? '1 dzień' : `${days} dni`
 }
 
 function categoryIcon(cat: Workshop['category']): string {
   if (typeof cat !== 'object' || !cat?.icon) return 'meditation'
-  // Format: "tabler:leaf" or just "leaf"
   return cat.icon.includes(':') ? (cat.icon.split(':')[1] ?? 'meditation') : cat.icon
 }
 
@@ -93,47 +135,65 @@ const displayWorkshops = computed(() => {
     icon: categoryIcon(w.category),
     img: w.cover_image ? getImageUrl(w.cover_image, { width: 1000, format: 'webp' }) : FALLBACK_IMG,
     dur: calcDuration(w.start_date, w.end_date),
-    date: w.start_date ? new Date(w.start_date).toLocaleDateString('pl-PL', { month: 'long', year: 'numeric' }) : '',
+    date: w.start_date ? new Date(w.start_date).toLocaleDateString(lang.value === 'en' ? 'en-GB' : 'pl-PL', { month: 'long', year: 'numeric' }) : '',
     desc: w.short_description,
   }))
-  return STATIC_WORKSHOPS
+  return STATIC_WORKSHOPS.value
 })
 
-const ACCOMMODATIONS = computed(() => [
+const ACCOM_RAW = [
   {
-    num: '01 — Obiekt główny', name: 'Duży Dom',
-    tag: 'Dom Gościnny · 5 pokoi · 12–14 miejsc',
-    desc: 'Drewniany dom z pięcioma przytulnymi pokojami — 2-, 3- i 5-osobowymi. Wnętrza wypełnia domowy klimat: drewniane meble, naturalne tkaniny, dekoracje inspirowane sielską prostotą izerskiej wsi. W salonie kominek z trzaskającym ogniem, w sali warsztatowej maty i poduszki do medytacji.',
-    main: '/duzy_dom.avif',
-    small: '/sala-w-1.avif',
-    features: [{ i: 'bed', t: '5 pokoi gościnnych' }, { i: 'fireplace', t: 'Kominek w salonie' }, { i: 'kitchen', t: 'Kuchnia dla gości' }, { i: 'meditation', t: 'Sala warsztatowa' }, { i: 'bath', t: 'Sauna infrared' }, { i: 'leaf', t: 'Sad i widok na góry' }],
-    price: `od ${fmt(Math.min(p.value.forest_room, p.value.sun_room, p.value.flower_room, p.value.ethnic_room, p.value.magic_room))} zł`,
-    priceFor: 'pokój / doba',
+    num_pl: '01 — Obiekt główny', num_en: '01 — Main building',
+    name: 'Duży Dom',
+    tag_pl: 'Dom Gościnny · 5 pokoi · 12–14 miejsc', tag_en: 'Guest House · 5 rooms · 12–14 guests',
+    desc_pl: 'Drewniany dom z pięcioma przytulnymi pokojami — 2-, 3- i 5-osobowymi. Wnętrza wypełnia domowy klimat: drewniane meble, naturalne tkaniny, dekoracje inspirowane sielską prostotą izerskiej wsi. W salonie kominek z trzaskającym ogniem, w sali warsztatowej maty i poduszki do medytacji.',
+    desc_en: 'A wooden house with five cosy rooms — for 2, 3 and 5 guests. The interiors exude a homely warmth: wooden furniture, natural fabrics, décor inspired by the pastoral simplicity of an Izera village. In the living room a crackling fireplace; in the workshop hall, mats and meditation cushions.',
+    main: '/duzy_dom.avif', small: '/sala-w-1.avif',
+    features_pl: [{ i: 'bed', t: '5 pokoi gościnnych' }, { i: 'fireplace', t: 'Kominek w salonie' }, { i: 'kitchen', t: 'Kuchnia dla gości' }, { i: 'meditation', t: 'Sala warsztatowa' }, { i: 'bath', t: 'Sauna infrared' }, { i: 'leaf', t: 'Sad i widok na góry' }],
+    features_en: [{ i: 'bed', t: '5 guest rooms' }, { i: 'fireplace', t: 'Fireplace in lounge' }, { i: 'kitchen', t: 'Guest kitchen' }, { i: 'meditation', t: 'Workshop hall' }, { i: 'bath', t: 'Infrared sauna' }, { i: 'leaf', t: 'Orchard & mountain view' }],
+    getPrice: (p: typeof DEFAULT_PRICING) => Math.min(p.forest_room, p.sun_room, p.flower_room, p.ethnic_room, p.magic_room),
+    priceFor_pl: 'pokój / doba', priceFor_en: 'room / night',
     url: '/noclegi/duzy-dom',
   },
   {
-    num: '02 — Obiekt osobny', name: 'Leśny Domek',
-    tag: 'Dwupoziomowy · 4/5 osób',
-    desc: 'Osobny, dwupoziomowy obiekt ukryty w zaciszu, pośród drzew. Z okien rozciąga się widok na Osadę z owieczkami, leśny labirynt, staw oraz Wiśniową Górę. Na dole salon i kuchnia, na piętrze część sypialna.',
-    main: '/lesny-domek.avif',
-    small: '/lesny_taras.avif',
-    features: [{ i: 'bed', t: 'Łoże + 2 łóżka + sofa' }, { i: 'bath', t: 'Łazienka z prysznicem' }, { i: 'kitchen', t: 'Kuchnia, jadalnia' }, { i: 'fireplace', t: 'Salon z kominkiem' }, { i: 'leaf', t: 'Widok na Wiśniową Górę' }, { i: 'star', t: 'Pełna prywatność' }],
-    price: `od ${fmt(p.value.forest_house)} zł`,
-    priceFor: 'cały domek / doba',
+    num_pl: '02 — Obiekt osobny', num_en: '02 — Separate building',
+    name: 'Leśny Domek',
+    tag_pl: 'Dwupoziomowy · 4/5 osób', tag_en: 'Two-storey · 4/5 guests',
+    desc_pl: 'Osobny, dwupoziomowy obiekt ukryty w zaciszu, pośród drzew. Z okien rozciąga się widok na Osadę z owieczkami, leśny labirynt, staw oraz Wiśniową Górę. Na dole salon i kuchnia, na piętrze część sypialna.',
+    desc_en: 'A separate two-storey cottage tucked away among the trees. The windows frame views of the sheep hamlet, forest labyrinth, pond and Cherry Hill. Ground floor: living room and kitchen; upper floor: sleeping quarters.',
+    main: '/lesny-domek.avif', small: '/lesny_taras.avif',
+    features_pl: [{ i: 'bed', t: 'Łoże + 2 łóżka + sofa' }, { i: 'bath', t: 'Łazienka z prysznicem' }, { i: 'kitchen', t: 'Kuchnia, jadalnia' }, { i: 'fireplace', t: 'Salon z kominkiem' }, { i: 'leaf', t: 'Widok na Wiśniową Górę' }, { i: 'star', t: 'Pełna prywatność' }],
+    features_en: [{ i: 'bed', t: 'Double + 2 beds + sofa' }, { i: 'bath', t: 'Bathroom with shower' }, { i: 'kitchen', t: 'Kitchen & dining' }, { i: 'fireplace', t: 'Living room + fireplace' }, { i: 'leaf', t: 'View of Cherry Hill' }, { i: 'star', t: 'Complete privacy' }],
+    getPrice: (p: typeof DEFAULT_PRICING) => p.forest_house,
+    priceFor_pl: 'cały domek / doba', priceFor_en: 'whole cottage / night',
     url: '/noclegi/lesny-domek',
   },
   {
-    num: '03 — Obiekt osobny', name: 'Studio z oranżerią',
-    tag: 'Apartament 2/3-osobowy',
-    desc: 'Osobny, kameralny obiekt z klimatycznym salonem w postaci przeszklonej oranżerii. Łoże małżeńskie, rozkładana sofa, aneks kuchenny i łazienka. Idealne dla pary szukającej intymności lub trójki gości pragnących osobnej przestrzeni z widokiem na sad.',
-    main: '/oranzeria.avif',
-    small: '/oranzeria-inside.avif',
-    features: [{ i: 'bed', t: 'Łoże + rozkładana sofa' }, { i: 'bath', t: 'Łazienka z prysznicem' }, { i: 'kitchen', t: 'Aneks kuchenny' }, { i: 'leaf', t: 'Salon-oranżeria' }, { i: 'tea', t: 'Widok na sad owocowy' }, { i: 'star', t: 'Prawie osobny apartament' }],
-    price: `od ${fmt(p.value.studio_room)} zł`,
-    priceFor: 'studio / doba',
+    num_pl: '03 — Obiekt osobny', num_en: '03 — Separate building',
+    name: 'Studio z oranżerią',
+    tag_pl: 'Apartament 2/3-osobowy', tag_en: '2/3-person apartment',
+    desc_pl: 'Osobny, kameralny obiekt z klimatycznym salonem w postaci przeszklonej oranżerii. Łoże małżeńskie, rozkładana sofa, aneks kuchenny i łazienka. Idealne dla pary szukającej intymności lub trójki gości pragnących osobnej przestrzeni z widokiem na sad.',
+    desc_en: 'A cosy separate unit with an atmospheric glass conservatory as the living room. Double bed, pull-out sofa, kitchenette and bathroom. Perfect for a couple seeking intimacy or three guests wanting a private space with orchard views.',
+    main: '/oranzeria.avif', small: '/oranzeria-inside.avif',
+    features_pl: [{ i: 'bed', t: 'Łoże + rozkładana sofa' }, { i: 'bath', t: 'Łazienka z prysznicem' }, { i: 'kitchen', t: 'Aneks kuchenny' }, { i: 'leaf', t: 'Salon-oranżeria' }, { i: 'tea', t: 'Widok na sad owocowy' }, { i: 'star', t: 'Prawie osobny apartament' }],
+    features_en: [{ i: 'bed', t: 'Double + pull-out sofa' }, { i: 'bath', t: 'Bathroom with shower' }, { i: 'kitchen', t: 'Kitchenette' }, { i: 'leaf', t: 'Glass conservatory lounge' }, { i: 'tea', t: 'View of the orchard' }, { i: 'star', t: 'Near-private apartment' }],
+    getPrice: (p: typeof DEFAULT_PRICING) => p.studio_room,
+    priceFor_pl: 'studio / doba', priceFor_en: 'studio / night',
     url: '/noclegi/studio-z-oranzeria',
   },
-])
+]
+
+const ACCOMMODATIONS = computed(() => ACCOM_RAW.map(a => ({
+  num: t(a.num_pl, a.num_en),
+  name: a.name,
+  tag: t(a.tag_pl, a.tag_en),
+  desc: t(a.desc_pl, a.desc_en),
+  main: a.main, small: a.small,
+  features: lang.value === 'en' ? a.features_en : a.features_pl,
+  price: `${t('od', 'from')} ${fmt(a.getPrice(p.value))} ${t('zł', 'PLN')}`,
+  priceFor: t(a.priceFor_pl, a.priceFor_en),
+  url: a.url,
+})))
 
 const GALLERY = [
   { src: 'https://images.unsplash.com/photo-1518173946687-a4c8892bbd9f?auto=format&fit=crop&w=1200&q=80', span: 'span-2-row' },
@@ -145,12 +205,14 @@ const GALLERY = [
   { src: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=900&q=80', span: 'span-2-col' },
 ]
 
-const TEAM = [
-  { name: 'Danuta Podwińska', role: 'Założycielka', img: '/dana.avif' },
-  { name: 'Filip Podwiński', role: 'Gospodarz', img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80' },
-  { name: 'Kulka', role: 'Gospodarz', img: '/kulka.avif' },
-  { name: 'Jędrzej Cyganik', role: 'Cieśla', img: '/Jedrzej.avif' },
+const TEAM_RAW = [
+  { name: 'Danuta', role_pl: 'Założycielka', role_en: 'Founder', img: '/dana.avif' },
+  { name: 'Filip', role_pl: 'Gospodarz', role_en: 'Host', img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80' },
+  { name: 'Kulka', role_pl: 'Gospodarz', role_en: 'Host', img: '/kulka.avif' },
+  { name: 'Jędrzej', role_pl: 'Cieśla', role_en: 'Carpenter', img: '/Jedrzej.avif' },
 ]
+
+const TEAM = computed(() => TEAM_RAW.map(m => ({ name: m.name, role: t(m.role_pl, m.role_en), img: m.img })))
 
 </script>
 
@@ -169,16 +231,16 @@ const TEAM = [
       <div class="hero-content">
         <div class="hero-eyebrow-row">
           <span class="line"></span>
-          Kopaniec · Góry Izerskie
+          Kopaniec · {{ t('Góry Izerskie', 'Izera Mountains') }}
           <span class="line"></span>
         </div>
-        <h1 class="hero-tagline">Dolina Harmonii — miejsce naturalnych mocy</h1>
+        <h1 class="hero-tagline">{{ t('Dolina Harmonii — miejsce naturalnych mocy', 'Dolina Harmonii — a place of natural power') }}</h1>
         <div class="hero-ctas">
           <NuxtLink class="btn btn-primary" to="#noclegi">
-            Zobacz noclegi
+            {{ t('Zobacz noclegi', 'Explore stays') }}
             <DhIcon name="arrow" :size="18" :stroke="1.6" />
           </NuxtLink>
-          <NuxtLink class="btn btn-glass" to="/warsztaty">Zobacz warsztaty</NuxtLink>
+          <NuxtLink class="btn btn-glass" to="/warsztaty">{{ t('Zobacz warsztaty', 'Browse workshops') }}</NuxtLink>
         </div>
       </div>
       <div class="hero-meta">
@@ -186,8 +248,8 @@ const TEAM = [
           <DhIcon name="compass" :size="18" :stroke="1.4" />
           50°51′N · 15°27′E
         </span>
-        <span>EST. 2017 · 720 m n.p.m.</span>
-        <span>↓ przewiń</span>
+        <span>EST. 2017 · 720 m {{ t('n.p.m.', 'a.s.l.') }}</span>
+        <span>↓ {{ t('przewiń', 'scroll') }}</span>
       </div>
     </header>
 
@@ -196,23 +258,32 @@ const TEAM = [
       <div class="container">
         <div class="intro-grid">
           <div class="intro-text reveal">
-            <span class="eyebrow">Czym jest Dolina</span>
+            <span class="eyebrow">{{ t('Czym jest Dolina', 'About the Valley') }}</span>
             <p class="lead">
-              Stary, drewniany dom u podnóża Izerów — przestrzeń, gdzie warsztaty, cisza i wspólny stół tworzą rytm dnia
-              bliski naturze.
+              {{ t(
+                'Stary, drewniany dom u podnóża Izerów — przestrzeń, gdzie warsztaty, cisza i wspólny stół tworzą rytm dnia bliski naturze.',
+                'An old wooden house at the foot of the Izeras — a space where workshops, silence and a shared table create a daily rhythm close to nature.'
+              ) }}
             </p>
             <p class="desc-muted">
-              Działamy od 2017 roku w Kopańcu — niewielkiej wsi otoczonej lasami, łąkami i strumieniami. Zapraszamy
-              grupy warsztatowe oraz osoby, które chcą po prostu zatrzymać się na kilka dni, oddychać i obserwować pory
-              roku.
+              {{ t(
+                'Działamy od 2017 roku w Kopańcu — niewielkiej wsi otoczonej lasami, łąkami i strumieniami. Zapraszamy grupy warsztatowe oraz osoby, które chcą po prostu zatrzymać się na kilka dni, oddychać i obserwować pory roku.',
+                'We have been here since 2017 in Kopaniec — a small village surrounded by forests, meadows and streams. We welcome workshop groups and anyone who simply wants to pause for a few days, breathe and watch the seasons change.'
+              ) }}
             </p>
             <p class="desc-muted">
-              Łączymy ekologię, rozwój osobisty i turystykę regionalną. Współtworzymy Magiczne Izery — opowieść o tym
-              miejscu, jego ludziach i tradycjach.
+              {{ t(
+                'Łączymy ekologię, rozwój osobisty i turystykę regionalną. Współtworzymy Magiczne Izery — opowieść o tym miejscu, jego ludziach i tradycjach.',
+                'We weave together ecology, personal growth and regional tourism. We co-create Magical Izeras — a story about this place, its people and traditions.'
+              ) }}
             </p>
             <div class="intro-stats">
               <div
-                v-for="s in [{ n: String(yearsOpen), l: 'lat tworzenia miejsca' }, { n: '40+', l: 'warsztatów rocznie' }, { n: '3', l: 'budynki, 7 pokoi' }]"
+                v-for="s in [
+                  { n: String(yearsOpen), l: t('lat tworzenia miejsca', 'years building this place') },
+                  { n: '40+', l: t('warsztatów rocznie', 'workshops a year') },
+                  { n: '3', l: t('budynki, 7 pokoi', 'buildings, 7 rooms') }
+                ]"
                 :key="s.n">
                 <div class="stat-num">{{ s.n }}</div>
                 <div class="stat-label">{{ s.l }}</div>
@@ -221,14 +292,17 @@ const TEAM = [
           </div>
           <div class="reveal intro-image-wrap">
             <img src="/szalas.avif"
-              alt="Wnętrze drewnianego domu" class="intro-main-img" />
+              :alt="t('Wnętrze drewnianego domu', 'Interior of the wooden house')" class="intro-main-img" />
             <div class="intro-badge">
               <div class="badge-head">
                 <DhIcon name="leaf" :size="28" :stroke="1.4" class="badge-ic" />
-                <span class="badge-label">Dwa filary</span>
+                <span class="badge-label">{{ t('Dwa filary', 'Two pillars') }}</span>
               </div>
               <p class="badge-text">
-                Wynajem przestrzeni dla grup warsztatowych oraz indywidualne pobyty regeneracyjne.
+                {{ t(
+                  'Wynajem przestrzeni dla grup warsztatowych oraz indywidualne pobyty regeneracyjne.',
+                  'Space rental for workshop groups and individual regenerative stays.'
+                ) }}
               </p>
             </div>
           </div>
@@ -241,12 +315,14 @@ const TEAM = [
       <div class="container">
         <div class="workshops-head reveal">
           <div>
-            <span class="eyebrow">Warsztaty &amp; wydarzenia</span>
-            <h2 class="section-title">Cztery ścieżki, jedna dolina.</h2>
+            <span class="eyebrow">{{ t('Warsztaty &amp; wydarzenia', 'Workshops &amp; events') }}</span>
+            <h2 class="section-title">{{ t('Cztery ścieżki, jedna dolina.', 'Four paths, one valley.') }}</h2>
           </div>
           <p class="lede">
-            Spotykamy się przy konkretnych praktykach — mindfulness, medytacji, rękodziele i samoopiece. Każdy warsztat
-            to mały, kameralny krąg.
+            {{ t(
+              'Spotykamy się przy konkretnych praktykach — mindfulness, medytacji, rękodziele i samoopiece. Każdy warsztat to mały, kameralny krąg.',
+              'We gather around specific practices — mindfulness, meditation, crafts and self-care. Every workshop is a small, intimate circle.'
+            ) }}
           </p>
         </div>
         <div class="workshop-grid">
@@ -271,7 +347,7 @@ const TEAM = [
         </div>
         <div class="all-workshops-cta">
           <NuxtLink class="btn btn-secondary" to="/warsztaty">
-            Wszystkie warsztaty
+            {{ t('Wszystkie warsztaty', 'All workshops') }}
             <DhIcon name="arrow" :size="18" :stroke="1.6" />
           </NuxtLink>
         </div>
@@ -282,10 +358,12 @@ const TEAM = [
     <section id="noclegi" class="cream">
       <div class="container">
         <div class="section-head reveal">
-          <span class="eyebrow">Oferta miejsca</span>
-          <h2>Trzy domy, trzy rytmy.</h2>
-          <p class="lede">Wynajmiemy ci pokój, weekend lub całą stodołę — w zależności od tego, czy przyjeżdżasz solo, w
-            parze, czy z grupą warsztatową.</p>
+          <span class="eyebrow">{{ t('Oferta miejsca', 'Our spaces') }}</span>
+          <h2>{{ t('Trzy domy, trzy rytmy.', 'Three houses, three rhythms.') }}</h2>
+          <p class="lede">{{ t(
+            'Wynajmiemy ci pokój, weekend lub całą stodołę — w zależności od tego, czy przyjeżdżasz solo, w parze, czy z grupą warsztatową.',
+            'We can rent you a room, a weekend, or the whole barn — depending on whether you arrive solo, as a couple, or with a workshop group.'
+          ) }}</p>
         </div>
         <div v-for="(a, i) in ACCOMMODATIONS" :key="i" class="accommodation reveal" :class="{ reverse: i % 2 === 1 }">
           <div class="acc-imgs">
@@ -307,7 +385,7 @@ const TEAM = [
             </div>
             <div class="acc-price-block">
               <div>
-                <div class="price-label">Pobyt indywidualny</div>
+                <div class="price-label">{{ t('Pobyt indywidualny', 'Individual stay') }}</div>
                 <div class="price-row">
                   <span class="price-val">{{ a.price }}</span>
                   <span class="price-unit">{{ a.priceFor }}</span>
@@ -316,10 +394,10 @@ const TEAM = [
             </div>
             <div class="acc-ctas">
               <NuxtLink class="btn btn-primary" :to="a.url">
-                Zobacz obiekt
+                {{ t('Zobacz obiekt', 'View property') }}
                 <DhIcon name="arrow" :size="18" :stroke="1.6" />
               </NuxtLink>
-              <a class="btn btn-secondary" href="mailto:dolina@harmonii.pl">Zapytaj o termin</a>
+              <a class="btn btn-secondary" href="mailto:dolina@harmonii.pl">{{ t('Zapytaj o termin', 'Ask about dates') }}</a>
             </div>
           </div>
         </div>
@@ -331,19 +409,27 @@ const TEAM = [
       <div class="container">
         <div class="region-grid">
           <div class="reveal">
-            <span class="eyebrow region-eyebrow">Magiczne Izery</span>
-            <h2 class="region-title">Najstarsze góry w Polsce, najmniej zatłoczone.</h2>
+            <span class="eyebrow region-eyebrow">{{ t('Magiczne Izery', 'Magical Izeras') }}</span>
+            <h2 class="region-title">{{ t('Najstarsze góry w Polsce, najmniej zatłoczone.', 'The oldest mountains in Poland, the least crowded.') }}</h2>
             <p class="region-desc">
-              Kopaniec leży w cieniu Izerskich Garbów — pasma uważanego za jedno z najmniej znanych w Polsce. Mchy,
-              torfowiska, kryształy kwarcu w strumieniach, ciemne niebo gwiazd.
+              {{ t(
+                'Kopaniec leży w cieniu Izerskich Garbów — pasma uważanego za jedno z najmniej znanych w Polsce. Mchy, torfowiska, kryształy kwarcu w strumieniach, ciemne niebo gwiazd.',
+                'Kopaniec lies in the shadow of the Izera Ridge — a range considered one of the least known in Poland. Mosses, peat bogs, quartz crystals in the streams, dark starry skies.'
+              ) }}
             </p>
             <p class="region-desc">
-              Współtworzymy oddolny ruch Magiczne Izery — opowieść o ludziach, miejscach i tradycjach regionu. Polecamy
-              wycieczki, mapy, miejscowych przewodników.
+              {{ t(
+                'Współtworzymy oddolny ruch Magiczne Izery — opowieść o ludziach, miejscach i tradycjach regionu. Polecamy wycieczki, mapy, miejscowych przewodników.',
+                'We co-create the grassroots Magical Izeras movement — a story about the people, places and traditions of the region. We recommend hikes, maps and local guides.'
+              ) }}
             </p>
             <div class="region-stats">
               <div
-                v-for="s in [{ n: '600+', l: 'milionów lat geologii' }, { n: 'III', l: 'stopień ochrony nieba' }, { n: '14', l: 'tras pieszych w okolicy' }]"
+                v-for="s in [
+                  { n: '600+', l: t('milionów lat geologii', 'million years of geology') },
+                  { n: 'III', l: t('stopień ochrony nieba', 'dark sky protection grade') },
+                  { n: '14', l: t('tras pieszych w okolicy', 'hiking trails nearby') }
+                ]"
                 :key="s.n" class="region-stat">
                 <div class="num">{{ s.n }}</div>
                 <div class="label">{{ s.l }}</div>
@@ -351,14 +437,14 @@ const TEAM = [
             </div>
             <div class="region-cta">
               <a class="btn btn-primary" href="#">
-                Poznaj region
+                {{ t('Poznaj region', 'Discover the region') }}
                 <DhIcon name="arrow" :size="18" :stroke="1.6" />
               </a>
             </div>
           </div>
           <div class="reveal region-img-wrap">
             <img src="/kopaniec.avif"
-              alt="Góry Izerskie" />
+              :alt="t('Góry Izerskie', 'Izera Mountains')" />
           </div>
         </div>
       </div>
@@ -368,10 +454,12 @@ const TEAM = [
     <section id="galeria">
       <div class="container">
         <div class="section-head reveal">
-          <span class="eyebrow">Galeria</span>
-          <h2>Cztery pory roku w Dolinie.</h2>
-          <p class="lede">Jazdy konne wczesną wiosną, koncerty w stodole, sierpniowe zbiory, ciche zimowe poranki —
-            fragmenty życia miejsca.</p>
+          <span class="eyebrow">{{ t('Galeria', 'Gallery') }}</span>
+          <h2>{{ t('Cztery pory roku w Dolinie.', 'Four seasons in the Valley.') }}</h2>
+          <p class="lede">{{ t(
+            'Jazdy konne wczesną wiosną, koncerty w stodole, sierpniowe zbiory, ciche zimowe poranki — fragmenty życia miejsca.',
+            'Horse rides in early spring, barn concerts, August harvests, quiet winter mornings — glimpses of life in this place.'
+          ) }}</p>
         </div>
         <div class="gallery-grid reveal">
           <img v-for="(g, i) in GALLERY" :key="i" :src="g.src" alt="" :class="g.span" />
@@ -383,10 +471,12 @@ const TEAM = [
     <section id="zespol" class="cream">
       <div class="container">
         <div class="section-head reveal">
-          <span class="eyebrow">Zespół &amp; partnerzy</span>
-          <h2>Ludzie, którzy tworzą Dolinę.</h2>
-          <p class="lede">Niewielka grupa stałych mieszkańców i prowadzących, plus szeroki krąg lokalnych
-            rzemieślniczek, muzyków i przewodników.</p>
+          <span class="eyebrow">{{ t('Zespół &amp; partnerzy', 'Team &amp; partners') }}</span>
+          <h2>{{ t('Ludzie, którzy tworzą Dolinę.', 'The people who make the Valley.') }}</h2>
+          <p class="lede">{{ t(
+            'Niewielka grupa stałych mieszkańców i prowadzących, plus szeroki krąg lokalnych rzemieślniczek, muzyków i przewodników.',
+            'A small group of permanent residents and facilitators, plus a wide circle of local craftswomen, musicians and guides.'
+          ) }}</p>
         </div>
         <div class="team-grid reveal">
           <div v-for="(m, i) in TEAM" :key="i" class="team-member">
@@ -396,7 +486,7 @@ const TEAM = [
           </div>
         </div>
         <div class="reveal partners-strip">
-          <span class="eyebrow">Współpracujemy z</span>
+          <span class="eyebrow">{{ t('Współpracujemy z', 'We work with') }}</span>
           <div class="partners-list">
             <span>Fundacja Harmonia Kultury</span>
             <span>· Magiczne Izery</span>
@@ -430,7 +520,7 @@ const TEAM = [
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(27, 48, 34, .15) 0%, rgba(27, 48, 34, .05) 30%, rgba(249, 247, 242, 0) 60%, rgba(249, 247, 242, .95) 100%);
+  background: linear-gradient(180deg, rgba(58, 75, 32, .15) 0%, rgba(58, 75, 32, .05) 30%, rgba(253, 251, 247, 0) 60%, rgba(253, 251, 247, .95) 100%);
   pointer-events: none;
 }
 
@@ -458,7 +548,7 @@ const TEAM = [
   justify-content: center;
   align-items: center;
   gap: 14px;
-  color: rgba(250, 248, 242, 0.9);
+  color: rgba(253, 251, 247, 0.9);
   font-family: var(--mono);
   font-size: 11px;
   letter-spacing: 0.2em;
@@ -481,7 +571,7 @@ const TEAM = [
   max-width: 680px;
   margin: 0 auto 40px;
   color: #FAF8F2;
-  text-shadow: 0 2px 30px rgba(27, 48, 34, .4);
+  text-shadow: 0 2px 30px rgba(58, 75, 32, .4);
 }
 
 .hero-ctas {
@@ -504,7 +594,7 @@ const TEAM = [
   font-size: 11px;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: rgba(250, 248, 242, .85);
+  color: rgba(253, 251, 247, .85);
 }
 
 .hero-meta span {
@@ -869,7 +959,7 @@ const TEAM = [
 }
 
 .region-desc {
-  color: rgba(249, 247, 242, 0.75);
+  color: rgba(253, 251, 247, 0.75);
   margin-bottom: 20px;
 }
 
@@ -888,7 +978,7 @@ const TEAM = [
 }
 
 .region-stat {
-  border-top: 1px solid rgba(249, 247, 242, .2);
+  border-top: 1px solid rgba(253, 251, 247, .2);
   padding-top: 16px;
 }
 
@@ -903,7 +993,7 @@ const TEAM = [
 
 .region-stat .label {
   font-size: 12px;
-  color: rgba(249, 247, 242, .7);
+  color: rgba(253, 251, 247, .7);
   letter-spacing: 0.04em;
 }
 

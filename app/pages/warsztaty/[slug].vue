@@ -413,12 +413,12 @@ const relatedWorkshops = computed(() =>
 /* ─── Lightbox ────────────────────────────────────────────────── */
 .lightbox { position: fixed; inset: 0; z-index: 100; background: rgba(18,32,25,0.94); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; padding: 48px; }
 .lightbox img { max-width: 90vw; max-height: 86vh; object-fit: contain; border-radius: var(--r-sm); box-shadow: var(--shadow-lg); }
-.lightbox-close, .lightbox-nav { position: absolute; background: rgba(249,247,242,0.1); color: #FAF8F2; border: 1px solid rgba(249,247,242,0.2); width: 48px; height: 48px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .2s; font-size: 20px; }
-.lightbox-close:hover, .lightbox-nav:hover { background: rgba(249,247,242,0.2); }
+.lightbox-close, .lightbox-nav { position: absolute; background: rgba(253,251,247,0.1); color: #FDFBF7; border: 1px solid rgba(253,251,247,0.2); width: 48px; height: 48px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .2s; font-size: 20px; }
+.lightbox-close:hover, .lightbox-nav:hover { background: rgba(253,251,247,0.2); }
 .lightbox-close { top: 24px; right: 24px; }
 .lightbox-nav.prev { left: 24px; top: 50%; transform: translateY(-50%); }
 .lightbox-nav.next { right: 24px; top: 50%; transform: translateY(-50%); }
-.lightbox-counter { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); font-family: var(--mono); font-size: 12px; letter-spacing: .12em; color: rgba(249,247,242,.7); text-transform: uppercase; }
+.lightbox-counter { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); font-family: var(--mono); font-size: 12px; letter-spacing: .12em; color: rgba(253,251,247,.7); text-transform: uppercase; }
 
 /* ─── Responsive ──────────────────────────────────────────────── */
 @media (max-width: 1024px) {

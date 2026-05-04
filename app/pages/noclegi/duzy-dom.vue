@@ -456,15 +456,15 @@ useScrollReveal({ threshold: 0.08 })
 .slide { position: absolute; inset: 0; opacity: 0; transition: opacity .55s ease; }
 .slide.active { opacity: 1; }
 .slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.room-badge { position: absolute; top: 20px; left: 20px; z-index: 3; background: rgba(27,48,34,.85); color: #FAF8F2; font-family: var(--mono); font-size: 11px; letter-spacing: .15em; text-transform: uppercase; padding: 8px 14px; border-radius: 100px; }
-.slider-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(250,248,242,.4); background: rgba(27,48,34,.55); color: #FAF8F2; backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 3; font-size: 20px; line-height: 1; transition: background .2s, border-color .2s; }
-.slider-arrow:hover { background: rgba(27,48,34,.85); border-color: rgba(250,248,242,.7); }
+.room-badge { position: absolute; top: 20px; left: 20px; z-index: 3; background: rgba(58,75,32,.85); color: #FDFBF7; font-family: var(--mono); font-size: 11px; letter-spacing: .15em; text-transform: uppercase; padding: 8px 14px; border-radius: 100px; }
+.slider-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(253,251,247,.4); background: rgba(58,75,32,.55); color: #FDFBF7; backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 3; font-size: 20px; line-height: 1; transition: background .2s, border-color .2s; }
+.slider-arrow:hover { background: rgba(58,75,32,.85); border-color: rgba(253,251,247,.7); }
 .slider-arrow.prev { left: 16px; }
 .slider-arrow.next { right: 16px; }
 .slider-dots { position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 3; }
-.slider-dots button { width: 8px; height: 8px; border-radius: 50%; border: none; padding: 0; cursor: pointer; background: rgba(250,248,242,.5); transition: background .2s, transform .2s; }
-.slider-dots button.active { background: #FAF8F2; transform: scale(1.3); }
-.slider-counter { position: absolute; bottom: 18px; right: 20px; z-index: 3; font-family: var(--mono); font-size: 11px; letter-spacing: .12em; color: #FAF8F2; background: rgba(27,48,34,.55); padding: 4px 10px; border-radius: 100px; backdrop-filter: blur(6px); }
+.slider-dots button { width: 8px; height: 8px; border-radius: 50%; border: none; padding: 0; cursor: pointer; background: rgba(253,251,247,.5); transition: background .2s, transform .2s; }
+.slider-dots button.active { background: #FDFBF7; transform: scale(1.3); }
+.slider-counter { position: absolute; bottom: 18px; right: 20px; z-index: 3; font-family: var(--mono); font-size: 11px; letter-spacing: .12em; color: #FDFBF7; background: rgba(58,75,32,.55); padding: 4px 10px; border-radius: 100px; backdrop-filter: blur(6px); }
 
 .room-body { padding: 40px; display: flex; flex-direction: column; }
 .room-name { font-family: var(--serif); font-style: italic; font-weight: 500; font-size: clamp(34px, 3.4vw, 44px); color: var(--brand-primary); line-height: 1; margin-bottom: 8px; letter-spacing: -0.01em; }

@@ -1,6 +1,5 @@
 <script setup lang="ts">
-// Standalone partial — wgraj jako app/components/ContactForm.vue
-// Użycie w dowolnej stronie: <ContactForm />
+const { t } = useLang()
 
 const form = ref({
   name: '',
@@ -14,8 +13,6 @@ const status = ref<'idle' | 'sending' | 'sent' | 'error'>('idle')
 
 async function handleSubmit() {
   status.value = 'sending'
-  // Podmień ten adres na Twój endpoint (np. Resend, Formspree, własne API)
-  // Na razie symulujemy wysyłkę
   await new Promise(r => setTimeout(r, 800))
   status.value = 'sent'
   form.value = { name: '', email: '', subject: '', topic: '', message: '' }
@@ -27,12 +24,15 @@ async function handleSubmit() {
     <div class="container">
       <div class="cf-wrap reveal">
 
-        <!-- ── Lewa strona: info kontaktowe ── -->
+        <!-- ── Left: contact info ── -->
         <div class="cf-left">
-          <span class="cf-eyebrow">Kontakt</span>
-          <h2 class="cf-heading">Napisz do nas — odpowiadamy w 48 godzin.</h2>
+          <span class="cf-eyebrow">{{ t('Kontakt', 'Contact') }}</span>
+          <h2 class="cf-heading">{{ t('Napisz do nas — odpowiadamy w 48 godzin.', 'Write to us — we respond within 48 hours.') }}</h2>
           <p class="cf-sub">
-            Pytanie o wolny termin, pobyt grupowy, warsztat lub wynajem całego Domu? Zostaw wiadomość — wracamy z odpowiedzią najpóźniej w ciągu dwóch dni roboczych.
+            {{ t(
+              'Pytanie o wolny termin, pobyt grupowy, warsztat lub wynajem całego Domu? Zostaw wiadomość — wracamy z odpowiedzią najpóźniej w ciągu dwóch dni roboczych.',
+              'Question about availability, a group stay, workshop or full-house rental? Leave us a message — we reply within two working days.'
+            ) }}
           </p>
           <div class="cf-contact-list">
             <div class="cf-contact-row">
@@ -41,7 +41,7 @@ async function handleSubmit() {
             </div>
             <div class="cf-contact-row">
               <span class="cf-icon"><DhIcon name="compass" :size="22" :stroke="1.4" /></span>
-              <span>+48 757 123 456 · pn–pt, 10:00–18:00</span>
+              <span>+48 757 123 456 · {{ t('pn–pt, 10:00–18:00', 'Mon–Fri, 10:00–18:00') }}</span>
             </div>
             <div class="cf-contact-row">
               <span class="cf-icon"><DhIcon name="seed" :size="22" :stroke="1.4" /></span>
@@ -50,15 +50,14 @@ async function handleSubmit() {
           </div>
         </div>
 
-        <!-- ── Prawa strona: formularz ── -->
+        <!-- ── Right: form ── -->
         <form class="cf-form" @submit.prevent="handleSubmit">
 
-          <!-- Sukces -->
           <div v-if="status === 'sent'" class="cf-success">
             <DhIcon name="leaf" :size="32" :stroke="1.4" />
             <div>
-              <strong>Dziękujemy za wiadomość!</strong>
-              <p>Odpiszemy w ciągu dwóch dni roboczych.</p>
+              <strong>{{ t('Dziękujemy za wiadomość!', 'Thank you for your message!') }}</strong>
+              <p>{{ t('Odpiszemy w ciągu dwóch dni roboczych.', "We'll reply within two working days.") }}</p>
             </div>
           </div>
 
@@ -68,7 +67,7 @@ async function handleSubmit() {
                 v-model="form.name"
                 type="text"
                 name="name"
-                placeholder="Imię i nazwisko"
+                :placeholder="t('Imię i nazwisko', 'Full name')"
                 required
                 :disabled="status === 'sending'"
               />
@@ -76,7 +75,7 @@ async function handleSubmit() {
                 v-model="form.email"
                 type="email"
                 name="email"
-                placeholder="Adres e-mail"
+                :placeholder="t('Adres e-mail', 'Email address')"
                 required
                 :disabled="status === 'sending'"
               />
@@ -86,7 +85,7 @@ async function handleSubmit() {
               v-model="form.subject"
               type="text"
               name="subject"
-              placeholder="Temat (np. pobyt indywidualny, grupa warsztatowa)"
+              :placeholder="t('Temat (np. pobyt indywidualny, grupa warsztatowa)', 'Subject (e.g. individual stay, workshop group)')"
               :disabled="status === 'sending'"
             />
 
@@ -96,30 +95,30 @@ async function handleSubmit() {
               required
               :disabled="status === 'sending'"
             >
-              <option value="" disabled>Czego dotyczy zapytanie?</option>
-              <option value="indywidualny">Pobyt indywidualny</option>
-              <option value="grupowy">Wynajem dla grupy / warsztat</option>
-              <option value="duzy-dom">Duży Dom</option>
-              <option value="lesny-domek">Leśny Domek</option>
-              <option value="studio">Studio z oranżerią</option>
-              <option value="inne">Inne</option>
+              <option value="" disabled>{{ t('Czego dotyczy zapytanie?', 'What is your enquiry about?') }}</option>
+              <option value="indywidualny">{{ t('Pobyt indywidualny', 'Individual stay') }}</option>
+              <option value="grupowy">{{ t('Wynajem dla grupy / warsztat', 'Group rental / workshop') }}</option>
+              <option value="duzy-dom">{{ t('Duży Dom', 'The Big House') }}</option>
+              <option value="lesny-domek">{{ t('Leśny Domek', 'Forest Cottage') }}</option>
+              <option value="studio">{{ t('Studio z oranżerią', 'Studio with conservatory') }}</option>
+              <option value="inne">{{ t('Inne', 'Other') }}</option>
             </select>
 
             <textarea
               v-model="form.message"
               name="message"
               rows="5"
-              placeholder="Twoja wiadomość — napisz kilka słów o terminie, liczbie osób, planach…"
+              :placeholder="t('Twoja wiadomość — napisz kilka słów o terminie, liczbie osób, planach…', 'Your message — tell us about your dates, number of guests, plans…')"
               required
               :disabled="status === 'sending'"
             />
 
             <div class="cf-footer-row">
-              <span class="cf-note">Wysyłając wiadomość akceptujesz politykę prywatności.</span>
+              <span class="cf-note">{{ t('Wysyłając wiadomość akceptujesz politykę prywatności.', 'By sending this message you accept our privacy policy.') }}</span>
               <button class="btn btn-primary" type="submit" :disabled="status === 'sending'">
-                <span v-if="status === 'sending'">Wysyłanie…</span>
+                <span v-if="status === 'sending'">{{ t('Wysyłanie…', 'Sending…') }}</span>
                 <template v-else>
-                  Wyślij wiadomość
+                  {{ t('Wyślij wiadomość', 'Send message') }}
                   <DhIcon name="arrow" :size="16" :stroke="1.6" />
                 </template>
               </button>
@@ -143,7 +142,6 @@ async function handleSubmit() {
   align-items: center;
 }
 
-/* Left side */
 .cf-eyebrow {
   font-family: var(--sans);
   text-transform: uppercase;
@@ -195,11 +193,8 @@ async function handleSubmit() {
   text-decoration: none;
   transition: color .2s;
 }
-.cf-contact-row a:hover {
-  color: var(--accent-earth);
-}
+.cf-contact-row a:hover { color: var(--accent-earth); }
 
-/* Form */
 .cf-form {
   display: flex;
   flex-direction: column;
@@ -230,14 +225,10 @@ async function handleSubmit() {
 
 .cf-form input:focus,
 .cf-form select:focus,
-.cf-form textarea:focus {
-  border-color: var(--brand-primary);
-}
+.cf-form textarea:focus { border-color: var(--brand-primary); }
 
 .cf-form input::placeholder,
-.cf-form textarea::placeholder {
-  color: var(--text-muted);
-}
+.cf-form textarea::placeholder { color: var(--text-muted); }
 
 .cf-form select {
   cursor: pointer;
@@ -269,19 +260,10 @@ async function handleSubmit() {
   margin-top: 4px;
 }
 
-.cf-note {
-  font-size: 12px;
-  color: var(--text-muted);
-}
+.cf-note { font-size: 12px; color: var(--text-muted); }
 
-/* Button: use global .btn / .btn-primary, only override disabled state */
-:deep(.btn-primary:disabled) {
-  opacity: .7;
-  cursor: not-allowed;
-  transform: none;
-}
+:deep(.btn-primary:disabled) { opacity: .7; cursor: not-allowed; transform: none; }
 
-/* Success state */
 .cf-success {
   display: flex;
   align-items: flex-start;
@@ -301,24 +283,11 @@ async function handleSubmit() {
   margin-bottom: 6px;
 }
 
-.cf-success p {
-  color: var(--text-muted);
-  font-size: 14px;
-  margin: 0;
-}
+.cf-success p { color: var(--text-muted); font-size: 14px; margin: 0; }
 
-/* Responsive */
 @media (max-width: 860px) {
-  .cf-wrap {
-    grid-template-columns: 1fr;
-    padding: 48px 32px;
-    gap: 40px;
-  }
-  .cf-row-two {
-    grid-template-columns: 1fr;
-  }
-  .cf-heading {
-    font-size: 32px;
-  }
+  .cf-wrap { grid-template-columns: 1fr; padding: 48px 32px; gap: 40px; }
+  .cf-row-two { grid-template-columns: 1fr; }
+  .cf-heading { font-size: 32px; }
 }
 </style>
