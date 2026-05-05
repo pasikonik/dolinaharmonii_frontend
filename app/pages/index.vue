@@ -254,7 +254,7 @@ const TEAM = computed(() => TEAM_RAW.map(m => ({ name: m.name, role: t(m.role_pl
     </header>
 
     <!-- ─── INTRO ─────────────────────────────────────────────────── -->
-    <section id="dolina" class="cream">
+    <section id="dolina" class="cream" :aria-label="t('O Dolinie', 'About the Valley')">
       <div class="container">
         <div class="intro-grid">
           <div class="intro-text reveal">
@@ -311,7 +311,7 @@ const TEAM = computed(() => TEAM_RAW.map(m => ({ name: m.name, role: t(m.role_pl
     </section>
 
     <!-- ─── WORKSHOPS ─────────────────────────────────────────────── -->
-    <section id="warsztaty">
+    <section id="warsztaty" :aria-label="t('Warsztaty i wydarzenia', 'Workshops and events')">
       <div class="container">
         <div class="workshops-head reveal">
           <div>
@@ -355,7 +355,7 @@ const TEAM = computed(() => TEAM_RAW.map(m => ({ name: m.name, role: t(m.role_pl
     </section>
 
     <!-- ─── ACCOMMODATIONS ────────────────────────────────────────── -->
-    <section id="noclegi" class="cream">
+    <section id="noclegi" class="cream" :aria-label="t('Noclegi', 'Accommodation')">
       <div class="container">
         <div class="section-head reveal">
           <span class="eyebrow">{{ t('Oferta miejsca', 'Our spaces') }}</span>
@@ -405,7 +405,7 @@ const TEAM = computed(() => TEAM_RAW.map(m => ({ name: m.name, role: t(m.role_pl
     </section>
 
     <!-- ─── REGION ─────────────────────────────────────────────────── -->
-    <section id="izery" class="region-section">
+    <section id="izery" class="region-section" :aria-label="t('Magiczne Izery', 'Magical Izeras')">
       <div class="container">
         <div class="region-grid">
           <div class="reveal">
@@ -436,10 +436,10 @@ const TEAM = computed(() => TEAM_RAW.map(m => ({ name: m.name, role: t(m.role_pl
               </div>
             </div>
             <div class="region-cta">
-              <a class="btn btn-primary" href="#">
+              <NuxtLink class="btn btn-primary" to="/dojazd">
                 {{ t('Poznaj region', 'Discover the region') }}
                 <DhIcon name="arrow" :size="18" :stroke="1.6" />
-              </a>
+              </NuxtLink>
             </div>
           </div>
           <div class="reveal region-img-wrap">
@@ -451,7 +451,7 @@ const TEAM = computed(() => TEAM_RAW.map(m => ({ name: m.name, role: t(m.role_pl
     </section>
 
     <!-- ─── GALLERY ────────────────────────────────────────────────── -->
-    <section id="galeria">
+    <section id="galeria" :aria-label="t('Galeria', 'Gallery')">
       <div class="container">
         <div class="section-head reveal">
           <span class="eyebrow">{{ t('Galeria', 'Gallery') }}</span>
@@ -462,13 +462,21 @@ const TEAM = computed(() => TEAM_RAW.map(m => ({ name: m.name, role: t(m.role_pl
           ) }}</p>
         </div>
         <div class="gallery-grid reveal">
-          <img v-for="(g, i) in GALLERY" :key="i" :src="g.src" alt="" :class="g.span" />
+          <NuxtImg
+            v-for="(g, i) in GALLERY"
+            :key="i"
+            :src="g.src"
+            alt=""
+            loading="lazy"
+            sizes="(max-width:768px) 50vw, 25vw"
+            :class="g.span"
+          />
         </div>
       </div>
     </section>
 
     <!-- ─── TEAM ───────────────────────────────────────────────────── -->
-    <section id="zespol" class="cream">
+    <section id="zespol" class="cream" :aria-label="t('Zespół i partnerzy', 'Team and partners')">
       <div class="container">
         <div class="section-head reveal">
           <span class="eyebrow">{{ t('Zespół &amp; partnerzy', 'Team &amp; partners') }}</span>
@@ -480,7 +488,7 @@ const TEAM = computed(() => TEAM_RAW.map(m => ({ name: m.name, role: t(m.role_pl
         </div>
         <div class="team-grid reveal">
           <div v-for="(m, i) in TEAM" :key="i" class="team-member">
-            <img class="photo" :src="m.img" :alt="m.name" />
+            <img class="photo" :src="m.img" :alt="m.name" loading="lazy" />
             <h4>{{ m.name }}</h4>
             <span class="role">{{ m.role }}</span>
           </div>
@@ -508,7 +516,7 @@ const TEAM = computed(() => TEAM_RAW.map(m => ({ name: m.name, role: t(m.role_pl
 /* ─── Hero ──────────────────────────────────────────────────────── */
 .hero {
   position: relative;
-  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -60,7 +60,7 @@ footer {
 .foot-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 64px; }
 h5 { color: var(--bg-primary); font-family: var(--sans); font-size: 12px; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 20px; font-weight: 600; }
 ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
-ul a { color: rgba(253,251,247,0.45); }
+ul a { color: rgba(253,251,247,0.75); }
 ul a:hover { color: var(--cta-main); }
 .foot-brand .logo { font-family: var(--serif); font-style: italic; font-size: 32px; color: var(--bg-primary); margin-bottom: 12px; }
 .foot-bottom { display: flex; justify-content: space-between; padding-top: 32px; border-top: 1px solid rgba(253,251,247,.1); font-size: 12px; color: rgba(253,251,247,.5); font-family: var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }

@@ -2,6 +2,7 @@
 const open = ref(false)
 const route = useRoute()
 const { lang, setLang, t } = useLang()
+const activeSection = ref<string | null>(null)
 
 watch(() => route.fullPath, () => { open.value = false })
 
@@ -9,6 +10,63 @@ function handleSetLang(l: 'pl' | 'en') {
   setLang(l)
   open.value = false
 }
+
+function handleEscKey(e: KeyboardEvent) {
+  if (e.key === 'Escape') open.value = false
+}
+
+const SECTION_IDS = ['dolina', 'noclegi', 'izery']
+let observer: IntersectionObserver | null = null
+
+function setupObserver() {
+  observer?.disconnect()
+  if (typeof IntersectionObserver === 'undefined' || route.path !== '/') return
+
+  const intersecting = new Set<string>()
+
+  observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) intersecting.add(e.target.id)
+        else intersecting.delete(e.target.id)
+      })
+      const active = SECTION_IDS.slice().reverse().find(id => intersecting.has(id))
+      activeSection.value = active ?? null
+    },
+    { rootMargin: '-10% 0px -60% 0px', threshold: 0 }
+  )
+
+  SECTION_IDS.forEach(id => {
+    const el = document.getElementById(id)
+    if (el) observer!.observe(el)
+  })
+}
+
+function isActive(href: string): boolean {
+  if (href.startsWith('/#')) {
+    return route.path === '/' && activeSection.value === href.slice(2)
+  }
+  return route.path === href
+}
+
+onMounted(() => {
+  document.addEventListener('keydown', handleEscKey)
+  nextTick(setupObserver)
+})
+
+watch(() => route.path, () => {
+  if (route.path === '/') nextTick(setupObserver)
+  else {
+    observer?.disconnect()
+    observer = null
+    activeSection.value = null
+  }
+})
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleEscKey)
+  observer?.disconnect()
+})
 </script>
 
 <template>
@@ -19,11 +77,11 @@ function handleSetLang(l: 'pl' | 'en') {
     </NuxtLink>
 
     <ul class="nav-list">
-      <li><NuxtLink to="/#dolina">{{ t('Dolina', 'Valley') }}</NuxtLink></li>
-      <li><NuxtLink to="/warsztaty">{{ t('Warsztaty', 'Workshops') }}</NuxtLink></li>
-      <li><NuxtLink to="/#noclegi">{{ t('Noclegi', 'Stay') }}</NuxtLink></li>
-      <li><NuxtLink to="/#izery">Izery</NuxtLink></li>
-      <li><NuxtLink to="/dojazd">{{ t('Dojazd', 'Getting here') }}</NuxtLink></li>
+      <li><NuxtLink to="/#dolina" active-class="" exact-active-class="" :class="{ active: isActive('/#dolina') }">{{ t('Dolina', 'Valley') }}</NuxtLink></li>
+      <li><NuxtLink to="/warsztaty" active-class="" exact-active-class="" :class="{ active: isActive('/warsztaty') }">{{ t('Warsztaty', 'Workshops') }}</NuxtLink></li>
+      <li><NuxtLink to="/#noclegi" active-class="" exact-active-class="" :class="{ active: isActive('/#noclegi') }">{{ t('Noclegi', 'Stay') }}</NuxtLink></li>
+      <li><NuxtLink to="/#izery" active-class="" exact-active-class="" :class="{ active: isActive('/#izery') }">Izery</NuxtLink></li>
+      <li><NuxtLink to="/dojazd" active-class="" exact-active-class="" :class="{ active: isActive('/dojazd') }">{{ t('Dojazd', 'Getting here') }}</NuxtLink></li>
     </ul>
 
     <span class="lang-switch" aria-label="Language">
@@ -110,6 +168,11 @@ function handleSetLang(l: 'pl' | 'en') {
   text-decoration: none;
 }
 .nav-list li a:hover { background: rgba(139,154,103,0.18); color: var(--brand-deep); }
+.nav-list li a.active {
+  background: rgba(139,154,103,0.22);
+  color: var(--brand-primary);
+  font-weight: 600;
+}
 
 /* Language switcher */
 .lang-switch {
@@ -130,7 +193,8 @@ function handleSetLang(l: 'pl' | 'en') {
   background: transparent;
   border: none;
   cursor: pointer;
-  padding: 5px 6px;
+  padding: 10px 8px;
+  min-height: 44px;
   border-radius: var(--r-pill);
   color: var(--text-muted);
   font-family: var(--mono);

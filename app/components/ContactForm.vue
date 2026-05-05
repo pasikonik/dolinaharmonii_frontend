@@ -61,57 +61,90 @@ async function handleSubmit() {
             </div>
           </div>
 
+          <div v-else-if="status === 'error'" class="cf-error" role="alert">
+            <DhIcon name="leaf" :size="20" :stroke="1.4" />
+            {{ t(
+              'Coś poszło nie tak. Spróbuj ponownie lub napisz bezpośrednio na dolina@harmonii.pl.',
+              'Something went wrong. Please try again or write directly to dolina@harmonii.pl.'
+            ) }}
+          </div>
+
           <template v-else>
             <div class="cf-row-two">
+              <div class="cf-field">
+                <label for="cf-name" class="sr-only">{{ t('Imię i nazwisko', 'Full name') }}</label>
+                <input
+                  id="cf-name"
+                  v-model="form.name"
+                  type="text"
+                  name="name"
+                  :placeholder="t('Imię i nazwisko', 'Full name')"
+                  required
+                  aria-required="true"
+                  :disabled="status === 'sending'"
+                />
+              </div>
+              <div class="cf-field">
+                <label for="cf-email" class="sr-only">{{ t('Adres e-mail', 'Email address') }}</label>
+                <input
+                  id="cf-email"
+                  v-model="form.email"
+                  type="email"
+                  name="email"
+                  :placeholder="t('Adres e-mail', 'Email address')"
+                  required
+                  aria-required="true"
+                  autocomplete="email"
+                  :disabled="status === 'sending'"
+                />
+              </div>
+            </div>
+
+            <div class="cf-field">
+              <label for="cf-subject" class="sr-only">{{ t('Temat', 'Subject') }}</label>
               <input
-                v-model="form.name"
+                id="cf-subject"
+                v-model="form.subject"
                 type="text"
-                name="name"
-                :placeholder="t('Imię i nazwisko', 'Full name')"
-                required
-                :disabled="status === 'sending'"
-              />
-              <input
-                v-model="form.email"
-                type="email"
-                name="email"
-                :placeholder="t('Adres e-mail', 'Email address')"
-                required
+                name="subject"
+                :placeholder="t('Temat (np. pobyt indywidualny, grupa warsztatowa)', 'Subject (e.g. individual stay, workshop group)')"
                 :disabled="status === 'sending'"
               />
             </div>
 
-            <input
-              v-model="form.subject"
-              type="text"
-              name="subject"
-              :placeholder="t('Temat (np. pobyt indywidualny, grupa warsztatowa)', 'Subject (e.g. individual stay, workshop group)')"
-              :disabled="status === 'sending'"
-            />
+            <div class="cf-field">
+              <label for="cf-topic" class="sr-only">{{ t('Czego dotyczy zapytanie?', 'What is your enquiry about?') }}</label>
+              <select
+                id="cf-topic"
+                v-model="form.topic"
+                name="topic"
+                required
+                aria-required="true"
+                :disabled="status === 'sending'"
+              >
+                <option value="" disabled>{{ t('Czego dotyczy zapytanie?', 'What is your enquiry about?') }}</option>
+                <option value="indywidualny">{{ t('Pobyt indywidualny', 'Individual stay') }}</option>
+                <option value="grupowy">{{ t('Wynajem dla grupy / warsztat', 'Group rental / workshop') }}</option>
+                <option value="duzy-dom">{{ t('Duży Dom', 'The Big House') }}</option>
+                <option value="lesny-domek">{{ t('Leśny Domek', 'Forest Cottage') }}</option>
+                <option value="studio">{{ t('Studio z oranżerią', 'Studio with conservatory') }}</option>
+                <option value="inne">{{ t('Inne', 'Other') }}</option>
+              </select>
+            </div>
 
-            <select
-              v-model="form.topic"
-              name="topic"
-              required
-              :disabled="status === 'sending'"
-            >
-              <option value="" disabled>{{ t('Czego dotyczy zapytanie?', 'What is your enquiry about?') }}</option>
-              <option value="indywidualny">{{ t('Pobyt indywidualny', 'Individual stay') }}</option>
-              <option value="grupowy">{{ t('Wynajem dla grupy / warsztat', 'Group rental / workshop') }}</option>
-              <option value="duzy-dom">{{ t('Duży Dom', 'The Big House') }}</option>
-              <option value="lesny-domek">{{ t('Leśny Domek', 'Forest Cottage') }}</option>
-              <option value="studio">{{ t('Studio z oranżerią', 'Studio with conservatory') }}</option>
-              <option value="inne">{{ t('Inne', 'Other') }}</option>
-            </select>
-
-            <textarea
-              v-model="form.message"
-              name="message"
-              rows="5"
-              :placeholder="t('Twoja wiadomość — napisz kilka słów o terminie, liczbie osób, planach…', 'Your message — tell us about your dates, number of guests, plans…')"
-              required
-              :disabled="status === 'sending'"
-            />
+            <div class="cf-field">
+              <label for="cf-message" class="sr-only">{{ t('Twoja wiadomość', 'Your message') }}</label>
+              <textarea
+                id="cf-message"
+                v-model="form.message"
+                name="message"
+                rows="5"
+                :placeholder="t('Twoja wiadomość — napisz kilka słów o terminie, liczbie osób, planach…', 'Your message — tell us about your dates, number of guests, plans…')"
+                required
+                aria-required="true"
+                :disabled="status === 'sending'"
+              />
+            </div>
 
             <div class="cf-footer-row">
               <span class="cf-note">{{ t('Wysyłając wiadomość akceptujesz politykę prywatności.', 'By sending this message you accept our privacy policy.') }}</span>
@@ -218,14 +251,21 @@ async function handleSubmit() {
   border-radius: var(--r-sm);
   background: var(--bg-primary);
   color: var(--text-main);
-  outline: none;
-  transition: border-color .2s;
+  transition: border-color .2s, box-shadow .2s;
   appearance: none;
 }
 
 .cf-form input:focus,
 .cf-form select:focus,
-.cf-form textarea:focus { border-color: var(--brand-primary); }
+.cf-form textarea:focus { border-color: var(--brand-primary); outline: none; }
+
+.cf-form input:focus-visible,
+.cf-form select:focus-visible,
+.cf-form textarea:focus-visible {
+  border-color: var(--brand-primary);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(85, 107, 47, 0.18);
+}
 
 .cf-form input::placeholder,
 .cf-form textarea::placeholder { color: var(--text-muted); }
@@ -284,6 +324,33 @@ async function handleSubmit() {
 }
 
 .cf-success p { color: var(--text-muted); font-size: 14px; margin: 0; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.cf-field { position: relative; }
+
+.cf-error {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: rgba(107, 66, 38, 0.08);
+  border: 1px solid rgba(107, 66, 38, 0.25);
+  border-radius: var(--r-sm);
+  color: var(--accent-earth);
+  font-size: 14px;
+  line-height: 1.5;
+}
 
 @media (max-width: 860px) {
   .cf-wrap { grid-template-columns: 1fr; padding: 48px 32px; gap: 40px; }

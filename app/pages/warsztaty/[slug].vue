@@ -243,19 +243,6 @@ const relatedWorkshops = computed(() =>
           </aside>
         </div>
 
-        <!-- Gallery strip -->
-        <div v-if="galleryImages.length" class="w-gallery-strip" :class="{ 'single': galleryImages.length === 1 }">
-          <div class="gallery-main" @click="openLightbox(0)">
-            <img :src="galleryImages[0]" alt="" />
-          </div>
-          <div v-if="galleryImages.length >= 3" class="right-stack">
-            <div @click="openLightbox(1)"><img :src="galleryImages[1]" alt="" /></div>
-            <div class="gallery-more" @click="openLightbox(2)">
-              <img :src="galleryImages[2]" alt="" />
-              <div v-if="galleryImages.length > 3" class="more-overlay">+ {{ galleryImages.length - 3 }} zdjęć</div>
-            </div>
-          </div>
-        </div>
       </div>
     </header>
 
@@ -326,6 +313,24 @@ const relatedWorkshops = computed(() =>
       </div>
     </section>
 
+    <!-- ─── GALLERY ───────────────────────────────────────────────── -->
+    <section v-if="galleryImages.length" class="w-gallery-section">
+      <div class="container">
+        <div class="w-gallery-strip" :class="{ 'single': galleryImages.length === 1 }">
+          <div class="gallery-main" @click="openLightbox(0)">
+            <img :src="galleryImages[0]" alt="" />
+          </div>
+          <div v-if="galleryImages.length >= 3" class="right-stack">
+            <div @click="openLightbox(1)"><img :src="galleryImages[1]" alt="" /></div>
+            <div class="gallery-more" @click="openLightbox(2)">
+              <img :src="galleryImages[2]" alt="" />
+              <div v-if="galleryImages.length > 3" class="more-overlay">+ {{ galleryImages.length - 3 }} zdjęć</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ─── LIGHTBOX ──────────────────────────────────────────────── -->
     <Teleport to="body">
       <div v-if="lightboxIndex !== null" class="lightbox open" @click="closeLightbox">
@@ -370,7 +375,8 @@ const relatedWorkshops = computed(() =>
 .avail-meta { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); margin-top: 8px; display: flex; justify-content: space-between; }
 
 /* ─── Gallery Strip ───────────────────────────────────────────── */
-.w-gallery-strip { margin-top: 96px; display: grid; grid-template-columns: 2fr 1fr; gap: 8px; height: 460px; }
+.w-gallery-section { padding: 0 0 96px; }
+.w-gallery-strip { display: grid; grid-template-columns: 2fr 1fr; gap: 8px; height: 460px; }
 .w-gallery-strip.single { grid-template-columns: 1fr; }
 .w-gallery-strip > div { overflow: hidden; border-radius: var(--r-sm); position: relative; background: var(--bg-section); cursor: pointer; }
 .w-gallery-strip img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s ease; }
@@ -427,6 +433,7 @@ const relatedWorkshops = computed(() =>
   .book-card { transform: none; }
   .w-body-grid { grid-template-columns: 1fr; gap: 48px; }
   .side { position: static; }
+  .w-gallery-section { padding: 0 0 64px; }
   .w-gallery-strip { height: 360px; }
 }
 
