@@ -70,6 +70,7 @@ const ROOMS = computed(() => [
   {
     name: 'Słoneczny',
     who: '3-osobowy pokój na piętrze',
+    thumb: '/pokoj-sloneczny.avif',
     images: [
       '/sloneczny-1.avif',
       '/sloneczny-2.avif',
@@ -88,6 +89,7 @@ const ROOMS = computed(() => [
   {
     name: 'Leśny',
     who: '2-osobowy pokój na piętrze',
+    thumb: '/pokoj-lesny.avif',
     images: [
       '/lesny-1.avif',
       '/lesny-2.avif',
@@ -107,6 +109,7 @@ const ROOMS = computed(() => [
   {
     name: 'Kwiecisty',
     who: '2/3-osobowy pokój na piętrze',
+    thumb: '/pokoj-kwiecisty.avif',
     images: [
       '/kwiecisty-4.avif',
       '/kwiecisty-1.avif',
@@ -126,6 +129,7 @@ const ROOMS = computed(() => [
   {
     name: 'Etniczny',
     who: '2-osobowy pokój na piętrze',
+    thumb: '/pokuj-etniczny.avif',
     images: [
       '/etniczny-1.avif',
       '/etniczny-2.avif',
@@ -145,6 +149,7 @@ const ROOMS = computed(() => [
   {
     name: 'Magiczny',
     who: 'Największy, 5/6-osobowy pokój na poddaszu',
+    thumb: '/pokoj-magiczny.avif',
     images: [
       '/magiczny-1.avif',
       '/magiczny-2.avif',
@@ -342,8 +347,13 @@ useScrollReveal({ threshold: 0.08 })
 
             <!-- Body -->
             <div class="room-body">
-              <span class="room-who">{{ r.who }}</span>
-              <h3 class="room-name">{{ r.name }}</h3>
+              <div class="room-header">
+                <img class="room-thumb" :src="r.thumb" :alt="r.name" loading="lazy" />
+                <div class="room-header-text">
+                  <span class="room-who">{{ r.who }}</span>
+                  <h3 class="room-name">{{ r.name }}</h3>
+                </div>
+              </div>
               <p class="room-lead">{{ r.lead }}</p>
               <div class="room-feats-list">
                 <div v-for="(f, j) in r.features" :key="j" class="room-feat-item">
@@ -467,8 +477,11 @@ useScrollReveal({ threshold: 0.08 })
 .slider-counter { position: absolute; bottom: 18px; right: 20px; z-index: 3; font-family: var(--mono); font-size: 11px; letter-spacing: .12em; color: #FDFBF7; background: rgba(58,75,32,.55); padding: 4px 10px; border-radius: 100px; backdrop-filter: blur(6px); }
 
 .room-body { padding: 40px; display: flex; flex-direction: column; }
-.room-name { font-family: var(--serif); font-style: italic; font-weight: 500; font-size: clamp(34px, 3.4vw, 44px); color: var(--brand-primary); line-height: 1; margin-bottom: 8px; letter-spacing: -0.01em; }
-.room-who { font-family: var(--mono); font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--accent-earth); margin-bottom: 20px; display: block; }
+.room-header { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; }
+.room-thumb { width: 100px; height: 100px; border-radius: var(--r-md); object-fit: cover; flex-shrink: 0; box-shadow: var(--shadow-sm); }
+.room-header-text { display: flex; flex-direction: column; gap: 6px; }
+.room-name { font-family: var(--serif); font-style: italic; font-weight: 500; font-size: clamp(34px, 3.4vw, 44px); color: var(--brand-primary); line-height: 1; margin-bottom: 0; letter-spacing: -0.01em; }
+.room-who { font-family: var(--mono); font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--accent-earth); margin-bottom: 0; display: block; }
 .room-lead { font-family: var(--serif); font-size: 17px; line-height: 1.5; color: var(--text-main); margin-bottom: 24px; max-width: 520px; }
 .room-feats-list { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px; margin-bottom: 24px; }
 .room-feat-item { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--text-muted); line-height: 1.4; }

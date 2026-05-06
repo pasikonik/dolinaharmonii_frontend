@@ -37,7 +37,7 @@
 
   --serif: 'Playfair Display', 'Lora', 'Cormorant Garamond', Georgia, serif;
   --sans: 'Montserrat', 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
-  --mono: 'JetBrains Mono', 'IBM Plex Mono', monospace;
+  --mono: 'Montserrat', 'Inter', -apple-system, sans-serif;
 
   /* Generous, organic radii */
   --r-sm: 10px;
@@ -148,10 +148,21 @@ a:hover { color: var(--brand-deep); }
 }
 
 .btn-primary {
+  background: var(--brand-primary);
+  color: var(--bg-primary);
+}
+.btn-primary:hover {
+  background: var(--brand-deep);
+  color: var(--bg-primary);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-gold {
   background: var(--cta-main);
   color: var(--brand-deep);
 }
-.btn-primary:hover {
+.btn-gold:hover {
   background: var(--cta-main-hover);
   color: var(--brand-deep);
   transform: translateY(-1px);
@@ -160,12 +171,12 @@ a:hover { color: var(--brand-deep); }
 
 .btn-secondary {
   background: transparent;
-  border: 1px solid var(--accent-earth);
-  color: var(--accent-earth);
+  border: 1.5px solid var(--cta-main);
+  color: var(--cta-main);
 }
 .btn-secondary:hover {
-  background: var(--accent-earth);
-  color: var(--bg-primary);
+  background: var(--cta-main);
+  color: var(--brand-deep);
 }
 
 .btn-glass {

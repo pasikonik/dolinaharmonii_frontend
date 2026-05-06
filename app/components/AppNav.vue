@@ -212,11 +212,11 @@ onUnmounted(() => {
 
 /* CTA */
 .nav-cta {
-  background: var(--cta-main);
-  color: var(--brand-deep);
-  padding: 8px 16px;
+  background: transparent;
+  color: var(--brand-primary);
+  padding: 7px 16px;
   border-radius: var(--r-pill);
-  border: none;
+  border: 1.5px solid var(--brand-primary);
   font-family: var(--sans);
   font-weight: 600;
   font-size: 12px;
@@ -224,9 +224,9 @@ onUnmounted(() => {
   margin-left: 6px;
   flex-shrink: 0;
   text-decoration: none;
-  transition: background .2s ease;
+  transition: background .2s ease, color .2s ease;
 }
-.nav-cta:hover { background: var(--cta-main-hover); color: var(--brand-deep); }
+.nav-cta:hover { background: var(--brand-primary); color: var(--bg-primary); }
 
 /* Mobile toggle */
 .nav-toggle {

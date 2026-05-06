@@ -64,7 +64,46 @@ useHead({
 
 useScrollReveal({ rootMargin: '0px 0px -60px 0px' })
 
-const yearsOpen = new Date().getFullYear() - 2017
+const yearsOpen = new Date().getFullYear() - 1995
+
+const BLESSINGS = [
+  {
+    img: '/blessing-ustronnosc.avif',
+    name_pl: 'Ustronność', name_en: 'Seclusion',
+    desc_pl: 'Nasze miejsce leży na wzgórzach poza wsią Kopaniec, do której szosą mamy 1,5 km. Otaczają nas rozległe lasy i łąki, a ślady cywilizacji widać dopiero na horyzoncie.',
+    desc_en: 'Our place sits on the hills above Kopaniec village, 1.5 km away by road. Vast forests and meadows surround us; the traces of civilisation appear only on the distant horizon.',
+  },
+  {
+    img: '/blessing-woda.avif',
+    name_pl: 'Woda ze źródła', name_en: 'Spring water',
+    desc_pl: 'Z naszych kranów leci woda mineralna. Serio! Na początku lat 90. funkcjonowała tutaj fabryka wód mineralnych. Pamiętajcie, by nie zabierać ze sobą zapasu wody w plastiku!',
+    desc_en: 'Mineral water flows straight from our taps. Seriously! In the early 90s there was a mineral water factory here. No need to bring plastic bottles.',
+  },
+  {
+    img: '/blessing-przytulnosc.avif',
+    name_pl: 'Przytulność', name_en: 'Cosiness',
+    desc_pl: 'Pragniemy, by atmosfera naszego domu sprzyjała swobodnej regeneracji, więc stopniowo odmieniamy wnętrza i otaczającą nas przestrzeń, wzbogacając je w rozmaite skarby.',
+    desc_en: 'We want the atmosphere of our home to encourage free-flowing recovery, so we gradually transform the interiors and the surrounding space, filling them with various treasures.',
+  },
+  {
+    img: '/blessing-natura.avif',
+    name_pl: 'Moc natury', name_en: 'Power of nature',
+    desc_pl: 'Magiczne zachody słońca i obfitość łąk i lasów, w których rosną zioła, jeżyny, maliny i dorodne grzyby — to jedynie odrobina tego, czym obdarowuje nas tu codziennie przyroda.',
+    desc_en: 'Magical sunsets and an abundance of meadows and forests filled with herbs, blackberries, raspberries and mushrooms — just a fraction of what nature gifts us here each day.',
+  },
+  {
+    img: '/blessing-wifi.avif',
+    name_pl: 'Wi-Fi w lesie', name_en: 'Wi-Fi in the forest',
+    desc_pl: 'Jest u nas Wi-Fi, ale nie bije ono rekordów prędkości. Gościom polecamy jednak cyfrowy detoks i podłączenie się do prawdziwej sieci — Natury.',
+    desc_en: "We do have Wi-Fi, though it won't break any speed records. We warmly recommend a digital detox and connecting to the real network — Nature.",
+  },
+  {
+    img: '/blessing-food.avif',
+    name_pl: 'Lokalna żywność', name_en: 'Local food',
+    desc_pl: 'Stopniowo powiększamy nasze ogrody, by coraz więcej posiłków powstawało z własnych plonów, uzupełniając kuchnię produktami spoza gospodarstwa. Krok po kroku ku samowystarczalności.',
+    desc_en: 'We steadily expand our gardens so that more and more meals come from our own harvest. Step by step towards self-sufficiency.',
+  },
+]
 
 const STATIC_WORKSHOPS_RAW = [
   {
@@ -214,6 +253,59 @@ const TEAM_RAW = [
 
 const TEAM = computed(() => TEAM_RAW.map(m => ({ name: m.name, role: t(m.role_pl, m.role_en), img: m.img })))
 
+const { data: instaData } = await useAsyncData('instagram', () => $fetch('/api/instagram'))
+const instaLive = computed(() => (instaData.value as any)?.live === true)
+const instaPosts = computed(() => (instaData.value as any)?.posts ?? [])
+
+const FAQ_DATA = [
+  {
+    cat_pl: 'Pobyt i rezerwacja', cat_en: 'Stay & booking',
+    items: [
+      { q_pl: 'Jak zarezerwować pobyt?', q_en: 'How do I book a stay?', a_pl: 'Wyślij wiadomość przez formularz kontaktowy lub napisz na dolina@harmonii.pl. Podaj termin, liczbę osób i wybrany obiekt — wrócimy z odpowiedzią w ciągu 48 godzin.', a_en: "Send us a message via the contact form or write to dolina@harmonii.pl. Include your preferred dates, number of guests and chosen building — we'll reply within 48 hours." },
+      { q_pl: 'Jaki jest minimalny czas pobytu?', q_en: 'What is the minimum stay?', a_pl: 'W sezonie (maj–październik) minimalny pobyt to 2 noce. Poza sezonem przyjmujemy też pobyty jednodniowe — napisz do nas, a ustalimy szczegóły.', a_en: "During the season (May–October) the minimum stay is 2 nights. Off-season we also accept one-night stays — contact us and we'll work out the details." },
+      { q_pl: 'Czy mogę przyjechać z dziećmi?', q_en: 'Can I bring children?', a_pl: 'Tak — Leśny Domek i Studio z oranżerią są idealne dla rodzin. Duży Dom i warsztaty grupowe są zarezerwowane dla dorosłych lub starszych dzieci (12+), by zapewnić spokój innym gościom.', a_en: 'Yes — the Forest Cottage and Studio with Orangery are ideal for families. The Big House and group workshops are reserved for adults or older children (12+) to ensure quiet for other guests.' },
+      { q_pl: 'Czy można przyjechać ze zwierzęciem?', q_en: 'Can I bring a pet?', a_pl: 'Przyjmujemy grzeczne psy w Leśnym Domku i Studiu z oranżerią. W Dużym Domu zwierzęta nie są dozwolone ze względu na uczestników warsztatów i alergie. Prosimy o wcześniejszą informację.', a_en: 'Well-behaved dogs are welcome in the Forest Cottage and Studio. Pets are not allowed in the Big House due to workshop participants and allergies. Please let us know in advance.' },
+    ],
+  },
+  {
+    cat_pl: 'Warsztaty i wydarzenia', cat_en: 'Workshops & events',
+    items: [
+      { q_pl: 'Dla kogo są warsztaty?', q_en: 'Who are the workshops for?', a_pl: 'Większość jest otwarta dla zupełnych początkujących — nigdy nie zakładamy wcześniejszego doświadczenia. Każdy warsztat ma własny opis i poziom zaawansowania — sprawdź przed zapisem.', a_en: "Most are open to complete beginners — we never assume prior experience. Each workshop has its own description and level — check before signing up." },
+      { q_pl: 'Co jest wliczone w cenę warsztatu?', q_en: 'What is included in the workshop price?', a_pl: 'Cena obejmuje udział w programie, zakwaterowanie, pełne wyżywienie wegetariańskie oraz materiały warsztatowe. Dojazd organizujesz we własnym zakresie.', a_en: 'The price covers participation in the programme, accommodation, full vegetarian board and workshop materials. Travel is at your own expense.' },
+      { q_pl: 'Czy mogę wynająć obiekt na własny warsztat?', q_en: 'Can I rent the space for my own workshop?', a_pl: 'Tak! Duży Dom z salą warsztatową można wynająć dla grup 10–14 osób. Oferujemy pełne zakwaterowanie, wyżywienie i przestrzeń do prowadzenia zajęć. Napisz do nas z opisem swojego projektu.', a_en: 'Yes! The Big House with its workshop hall can be rented for groups of 10–14. We offer full board, accommodation and space to run your sessions. Write to us with a description of your project.' },
+      { q_pl: 'Jak odwołać lub zmienić rezerwację?', q_en: 'How do I cancel or change a booking?', a_pl: 'Odwołanie do 14 dni przed terminem — zwrot 100%. Od 7 do 14 dni — zwrot 50%. Poniżej 7 dni — brak zwrotu, chyba że uda nam się zapełnić miejsce. Zmiana terminu jest bezpłatna przy dostępności.', a_en: 'Cancellation up to 14 days before — full refund. 7–14 days — 50% refund. Less than 7 days — no refund unless we can fill the spot. Date changes are free subject to availability.' },
+    ],
+  },
+  {
+    cat_pl: 'Dojazd i parking', cat_en: 'Getting here',
+    items: [
+      { q_pl: 'Skąd najłatwiej dojechać?', q_en: 'What is the easiest way to get here?', a_pl: 'Samochodem z Jeleniej Góry (ok. 18 km, 25 min) lub pociągiem do Piechowic (6 km od Doliny) prosto z Wrocławia. Szczegółowe wskazówki znajdziesz na stronie Dojazd.', a_en: 'By car from Jelenia Góra (approx. 18 km, 25 min) or by train to Piechowice (6 km from the Valley) direct from Wrocław. Full directions are on the Getting Here page.' },
+      { q_pl: 'Czy jest bezpłatny parking?', q_en: 'Is there free parking?', a_pl: 'Tak, bezpłatny parking przy Dużym Domu mieści ok. 8 samochodów. Przy pełnym obłożeniu prosimy o kontakt — wskażemy dodatkowe miejsce w pobliżu.', a_en: 'Yes, free parking next to the Big House for about 8 cars. At full capacity please contact us — we can point you to additional parking nearby.' },
+      { q_pl: 'Czy jest możliwość odbioru z dworca?', q_en: 'Can you pick me up from the station?', a_pl: 'Nie oferujemy transferów, ale chętnie pomożemy znaleźć taksówkę lub lokalny bus. Z Piechowic można też dojść do nas pieszo wzdłuż znakowanego szlaku (ok. 30 min).', a_en: "We don't offer transfers, but we're happy to help you find a taxi or local bus. From Piechowice you can also walk along the marked trail (approx. 30 min)." },
+    ],
+  },
+  {
+    cat_pl: 'Wyżywienie i alergie', cat_en: 'Food & allergies',
+    items: [
+      { q_pl: 'Jakie jest wyżywienie?', q_en: 'What kind of food do you serve?', a_pl: 'Kuchnia Doliny jest w większości wegetariańska, sezonowa i oparta na lokalnych produktach. Śniadania, obiady i kolacje przygotowujemy ze świeżych składników — część pochodzi z naszego ogrodu.', a_en: 'The Valley kitchen is mostly vegetarian, seasonal and based on local produce. Breakfasts, lunches and dinners are made from fresh ingredients — some from our own garden.' },
+      { q_pl: 'Czy uwzględniacie alergie i diety specjalne?', q_en: 'Do you cater for allergies and special diets?', a_pl: 'Tak — poinformuj nas przy rezerwacji o alergiach lub restrykcjach dietetycznych. Obsługujemy diety wegetariańskie, wegańskie i bezglutenowe.', a_en: "Yes — please let us know about allergies or dietary restrictions when booking. We cater for vegetarian, vegan and gluten-free diets." },
+      { q_pl: 'Czy woda z kranu jest zdatna do picia?', q_en: 'Is the tap water drinkable?', a_pl: 'Jak najbardziej — i to mineralna, ze źródła! W latach 90. działała tu fabryka wód mineralnych. Prosimy, by nie przywozić wody w plastikowych butelkach.', a_en: "Absolutely — and it's mineral spring water! In the 1990s there was a mineral water factory here. Please don't bring water in plastic bottles." },
+    ],
+  },
+]
+
+const activeFaqCat = ref(0)
+const openFaqItem = ref<number | null>(null)
+
+function switchFaqCat(i: number) {
+  activeFaqCat.value = i
+  openFaqItem.value = null
+}
+function toggleFaqItem(i: number) {
+  openFaqItem.value = openFaqItem.value === i ? null : i
+}
+const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
+
 </script>
 
 <template>
@@ -281,8 +373,9 @@ const TEAM = computed(() => TEAM_RAW.map(m => ({ name: m.name, role: t(m.role_pl
               <div
                 v-for="s in [
                   { n: String(yearsOpen), l: t('lat tworzenia miejsca', 'years building this place') },
-                  { n: '40+', l: t('warsztatów rocznie', 'workshops a year') },
-                  { n: '3', l: t('budynki, 7 pokoi', 'buildings, 7 rooms') }
+                  { n: '69', l: t('Hektarów', 'Hectares') },
+                  { n: '26', l: t('Miejsc noclegowych', 'Sleeping places') },
+                  { n: '1,5', l: t('Km do najbliższej wioski', 'Km to nearest village') },
                 ]"
                 :key="s.n">
                 <div class="stat-num">{{ s.n }}</div>
@@ -307,6 +400,39 @@ const TEAM = computed(() => TEAM_RAW.map(m => ({ name: m.name, role: t(m.role_pl
             </div>
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- ─── BLESSINGS ────────────────────────────────────────────── -->
+    <section class="blessings-section" :aria-label="t('Błogosławieństwa Doliny Harmonii', 'Blessings of Harmony Valley')">
+      <div class="blessings-glow" />
+      <div class="container blessings-inner">
+
+        <div class="blessings-head reveal">
+          <div>
+            <span class="eyebrow blessings-eyebrow">{{ t('Co wyjątkowego jest w tym miejscu?', 'What makes this place special?') }}</span>
+            <h2 class="blessings-title">{{ t('Błogosławieństwa\nDoliny Harmonii.', 'Blessings of\nHarmony Valley.') }}</h2>
+          </div>
+          <div class="blessings-counter">{{ BLESSINGS.length }} {{ t('darów miejsca', 'gifts of place') }}</div>
+        </div>
+
+        <div class="blessings-grid">
+          <div
+            v-for="(b, i) in BLESSINGS"
+            :key="i"
+            class="blessing-item reveal"
+            :class="{ 'is-left': i % 2 === 0 }"
+            :style="{ transitionDelay: `${i * 60}ms` }"
+          >
+            <div class="blessing-num">{{ String(i + 1).padStart(2, '0') }}</div>
+            <img :src="b.img" alt="" class="blessing-icon" loading="lazy" />
+            <div class="blessing-text">
+              <h4 class="blessing-name">{{ t(b.name_pl, b.name_en) }}</h4>
+              <p class="blessing-desc">{{ t(b.desc_pl, b.desc_en) }}</p>
+            </div>
+          </div>
+        </div>
+
       </div>
     </section>
 
@@ -436,7 +562,7 @@ const TEAM = computed(() => TEAM_RAW.map(m => ({ name: m.name, role: t(m.role_pl
               </div>
             </div>
             <div class="region-cta">
-              <NuxtLink class="btn btn-primary" to="/dojazd">
+              <NuxtLink class="btn btn-gold" to="/dojazd">
                 {{ t('Poznaj region', 'Discover the region') }}
                 <DhIcon name="arrow" :size="18" :stroke="1.6" />
               </NuxtLink>
@@ -498,9 +624,100 @@ const TEAM = computed(() => TEAM_RAW.map(m => ({ name: m.name, role: t(m.role_pl
           <div class="partners-list">
             <span>Fundacja Harmonia Kultury</span>
             <span>· Magiczne Izery</span>
-            <span>· Slow Hood Karkonosze</span>
             <span>· Izerski Park Ciemnego Nieba</span>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── FAQ ─────────────────────────────────────────────────────── -->
+    <section class="faq-section" :aria-label="t('Najczęstsze pytania', 'Frequently asked questions')">
+      <div class="container">
+        <div class="section-head faq-head reveal">
+          <span class="eyebrow">{{ t('Najczęstsze pytania', 'Frequently asked questions') }}</span>
+          <h2>{{ t('Wszystko, co chcesz wiedzieć.', 'Everything you want to know.') }}</h2>
+        </div>
+
+        <div class="faq-tabs reveal">
+          <button
+            v-for="(cat, i) in FAQ_DATA"
+            :key="i"
+            class="faq-tab"
+            :class="{ active: activeFaqCat === i }"
+            @click="switchFaqCat(i)"
+          >
+            {{ t(cat.cat_pl, cat.cat_en) }}
+          </button>
+        </div>
+
+        <div class="faq-card reveal">
+          <div
+            v-for="(item, i) in activeFaqItems"
+            :key="`${activeFaqCat}-${i}`"
+            class="faq-item"
+            :class="{ 'not-last': i < activeFaqItems.length - 1 }"
+          >
+            <button class="faq-q" @click="toggleFaqItem(i)" :aria-expanded="openFaqItem === i">
+              <span :class="{ 'faq-q-text--open': openFaqItem === i }">{{ t(item.q_pl, item.q_en) }}</span>
+              <span class="faq-toggle" :class="{ 'faq-toggle--open': openFaqItem === i }">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                  <line x1="6" y1="1" x2="6" y2="11" />
+                  <line x1="1" y1="6" x2="11" y2="6" />
+                </svg>
+              </span>
+            </button>
+            <div class="faq-a" :class="{ 'faq-a--open': openFaqItem === i }">
+              <p>{{ t(item.a_pl, item.a_en) }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-footer reveal">
+          <p class="faq-footer-text">{{ t('Nie znalazłeś odpowiedzi? Napisz do nas.', "Didn't find your answer? Write to us.") }}</p>
+          <NuxtLink class="btn btn-secondary" to="/#rezerwacja">
+            {{ t('Zadaj pytanie', 'Ask a question') }}
+            <DhIcon name="arrow" :size="16" :stroke="1.6" />
+          </NuxtLink>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── INSTAGRAM ───────────────────────────────────────────────── -->
+    <section v-if="instaLive" class="insta-section" :aria-label="t('Instagram', 'Instagram')">
+      <div class="container">
+        <div class="insta-head reveal">
+          <div>
+            <span class="eyebrow">Instagram</span>
+            <h2>@dolina.harmonii</h2>
+          </div>
+          <a
+            class="insta-follow"
+            href="https://www.instagram.com/dolina.harmonii/"
+            target="_blank"
+            rel="noopener"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+              <circle cx="12" cy="12" r="4"/>
+              <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+            </svg>
+            {{ t('Obserwuj nas', 'Follow us') }}
+          </a>
+        </div>
+        <div class="insta-grid reveal">
+          <a
+            v-for="post in instaPosts"
+            :key="post.id"
+            :href="post.url"
+            target="_blank"
+            rel="noopener"
+            class="insta-post"
+          >
+            <img :src="post.img" alt="" loading="lazy" />
+            <div class="insta-overlay">
+              <p>{{ post.caption }}</p>
+            </div>
+          </a>
         </div>
       </div>
     </section>
@@ -636,8 +853,9 @@ const TEAM = computed(() => TEAM_RAW.map(m => ({ name: m.name, role: t(m.role_pl
 
 .intro-stats {
   margin-top: 32px;
-  display: flex;
-  gap: 24px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px 16px;
   padding-top: 24px;
   border-top: 1px solid var(--line);
 }
@@ -1106,8 +1324,315 @@ const TEAM = computed(() => TEAM_RAW.map(m => ({ name: m.name, role: t(m.role_pl
   font-style: italic;
 }
 
+/* ─── FAQ ───────────────────────────────────────────────────────── */
+.faq-section { background: var(--bg-sage); }
+
+.faq-head { text-align: center; margin-bottom: 48px; }
+
+.faq-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+.faq-tab {
+  padding: 10px 22px;
+  border-radius: var(--r-pill);
+  border: 1.5px solid var(--line);
+  background: var(--bg-primary);
+  color: var(--text-main);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+
+.faq-tab.active {
+  border-color: transparent;
+  background: var(--brand-primary);
+  color: var(--bg-primary);
+  font-weight: 600;
+}
+
+.faq-card {
+  max-width: 800px;
+  margin: 0 auto;
+  background: var(--bg-primary);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--line);
+  padding: 8px 48px;
+  box-shadow: var(--shadow-sm);
+}
+
+.faq-item.not-last { border-bottom: 1px solid var(--line); }
+
+.faq-q {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px 0;
+  gap: 24px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.faq-q-text--open { color: var(--brand-primary); }
+
+.faq-q span:first-child {
+  font-family: var(--sans);
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  color: var(--text-main);
+  line-height: 1.4;
+  transition: color .2s ease;
+}
+
+.faq-toggle {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border: 1.5px solid var(--line);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  transition: all .2s ease;
+}
+
+.faq-toggle--open {
+  border-color: var(--brand-primary);
+  color: var(--brand-primary);
+  transform: rotate(45deg);
+}
+
+.faq-a {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .35s cubic-bezier(.4,0,.2,1);
+}
+
+.faq-a--open { max-height: 400px; }
+
+.faq-a p {
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--text-muted);
+  padding: 0 0 24px;
+  margin: 0;
+}
+
+.faq-footer {
+  text-align: center;
+  margin-top: 56px;
+}
+
+.faq-footer-text {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 18px;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+
+/* ─── Blessings ─────────────────────────────────────────────────── */
+.blessings-section {
+  background: var(--brand-deep);
+  padding: 80px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.blessings-glow {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 80% at 90% 110%, rgba(85,107,47,0.28) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 50% at 5% -10%, rgba(85,107,47,0.18) 0%, transparent 55%);
+  pointer-events: none;
+}
+
+.blessings-inner { position: relative; z-index: 1; }
+
+.blessings-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 40px;
+  margin-bottom: 56px;
+  flex-wrap: wrap;
+}
+
+.blessings-eyebrow { color: var(--cta-main); }
+
+.blessings-title {
+  color: var(--bg-primary);
+  margin-top: 12px;
+  line-height: 1.05;
+  white-space: pre-line;
+}
+
+.blessings-counter {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(253,251,247,0.3);
+  line-height: 1.4;
+  text-align: right;
+  padding-bottom: 4px;
+}
+
+.blessings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-top: 1px solid rgba(253,251,247,0.10);
+}
+
+.blessing-item {
+  display: grid;
+  grid-template-columns: 48px 72px 1fr;
+  align-items: start;
+  gap: 0 20px;
+  padding: 28px 0;
+  border-bottom: 1px solid rgba(253,251,247,0.10);
+}
+
+.blessing-item.is-left {
+  border-right: 1px solid rgba(253,251,247,0.10);
+  padding-right: 40px;
+}
+
+.blessing-item:not(.is-left) { padding-left: 40px; }
+
+.blessing-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: rgba(253,251,247,0.28);
+  padding-top: 4px;
+  user-select: none;
+}
+
+.blessing-icon {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  opacity: 0.88;
+  margin-top: 2px;
+}
+
+.blessing-name {
+  font-family: var(--serif);
+  font-size: 19px;
+  font-style: italic;
+  font-weight: 500;
+  color: var(--bg-primary);
+  margin: 0 0 8px;
+  line-height: 1.15;
+}
+
+.blessing-desc {
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: rgba(253,251,247,0.60);
+  margin: 0;
+}
+
+/* ─── Instagram ─────────────────────────────────────────────────── */
+.insta-section { background: var(--bg-primary); }
+
+.insta-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 40px;
+}
+
+.insta-follow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: var(--r-pill);
+  border: 1.5px solid var(--brand-primary);
+  color: var(--brand-primary);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  transition: background .2s, color .2s;
+  flex-shrink: 0;
+}
+.insta-follow:hover {
+  background: var(--brand-primary);
+  color: var(--bg-primary);
+}
+
+.insta-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+}
+
+.insta-post {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: var(--r-sm);
+  display: block;
+}
+
+.insta-post img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .5s ease;
+}
+
+.insta-post:hover img { transform: scale(1.06); }
+
+.insta-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(27, 48, 34, 0.75);
+  display: flex;
+  align-items: flex-end;
+  padding: 16px;
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+
+.insta-post:hover .insta-overlay { opacity: 1; }
+
+.insta-overlay p {
+  font-size: 11px;
+  line-height: 1.5;
+  color: rgba(253, 251, 247, 0.9);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  line-clamp: 3;
+  overflow: hidden;
+}
+
 /* ─── Responsive ────────────────────────────────────────────────── */
 @media (max-width: 1024px) {
+  .blessings-grid { grid-template-columns: 1fr; }
+  .blessing-item.is-left { border-right: none; padding-right: 0; }
+  .blessing-item:not(.is-left) { padding-left: 0; }
+
+  .insta-grid { grid-template-columns: repeat(3, 1fr); }
+
   .intro-grid,
   .region-grid,
   .accommodation,
@@ -1130,13 +1655,22 @@ const TEAM = computed(() => TEAM_RAW.map(m => ({ name: m.name, role: t(m.role_pl
 }
 
 @media (max-width: 720px) {
+  .faq-card { padding: 8px 20px; }
+  .faq-q span:first-child { font-size: 16px; }
+
+  .blessing-item { grid-template-columns: 36px 56px 1fr; gap: 0 14px; }
+  .blessings-head { flex-direction: column; align-items: flex-start; gap: 16px; }
+
+  .insta-grid { grid-template-columns: repeat(2, 1fr); gap: 4px; }
+  .insta-head { flex-direction: column; align-items: flex-start; gap: 16px; }
+
   .workshop-grid { grid-template-columns: 1fr; }
   .team-grid { grid-template-columns: 1fr 1fr; gap: 20px; }
   .gallery-grid { grid-template-columns: 1fr 1fr; grid-auto-rows: 180px; }
   .gallery-grid .span-2-col,
   .gallery-grid .span-2-row { grid-column: auto; grid-row: auto; }
-  .intro-stats { flex-wrap: wrap; gap: 16px; }
-  .stat-num { font-size: 28px; }
+  .intro-stats { grid-template-columns: repeat(2, 1fr); gap: 16px 12px; }
+  .stat-num { font-size: 26px; }
   .acc-features { grid-template-columns: 1fr; }
   .acc-text h3 { font-size: 36px; }
   .region-stats { grid-template-columns: 1fr; }

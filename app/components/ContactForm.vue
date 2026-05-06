@@ -4,7 +4,6 @@ const { t } = useLang()
 const form = ref({
   name: '',
   email: '',
-  subject: '',
   topic: '',
   message: '',
 })
@@ -15,7 +14,7 @@ async function handleSubmit() {
   status.value = 'sending'
   await new Promise(r => setTimeout(r, 800))
   status.value = 'sent'
-  form.value = { name: '', email: '', subject: '', topic: '', message: '' }
+  form.value = { name: '', email: '', topic: '', message: '' }
 }
 </script>
 
@@ -52,6 +51,7 @@ async function handleSubmit() {
 
         <!-- ── Right: form ── -->
         <form class="cf-form" @submit.prevent="handleSubmit">
+          <div class="cf-form-title">{{ t('Formularz kontaktowy', 'Contact form') }}</div>
 
           <div v-if="status === 'sent'" class="cf-success">
             <DhIcon name="leaf" :size="32" :stroke="1.4" />
@@ -98,18 +98,6 @@ async function handleSubmit() {
                   :disabled="status === 'sending'"
                 />
               </div>
-            </div>
-
-            <div class="cf-field">
-              <label for="cf-subject" class="sr-only">{{ t('Temat', 'Subject') }}</label>
-              <input
-                id="cf-subject"
-                v-model="form.subject"
-                type="text"
-                name="subject"
-                :placeholder="t('Temat (np. pobyt indywidualny, grupa warsztatowa)', 'Subject (e.g. individual stay, workshop group)')"
-                :disabled="status === 'sending'"
-              />
             </div>
 
             <div class="cf-field">
@@ -232,6 +220,17 @@ async function handleSubmit() {
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.cf-form-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 4px;
 }
 
 .cf-row-two {
