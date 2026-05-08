@@ -326,7 +326,10 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
           Kopaniec · {{ t('Góry Izerskie', 'Izera Mountains') }}
           <span class="line"></span>
         </div>
-        <h1 class="hero-tagline">{{ t('Dolina Harmonii — miejsce naturalnych mocy', 'Dolina Harmonii — a place of natural power') }}</h1>
+        <h1 class="hero-tagline">
+          <span class="hero-tagline-main">{{ t('Dolina Harmonii', 'Dolina Harmonii') }}</span>
+          <span class="hero-tagline-sub">{{ t('miejsce naturalnych mocy', 'a place of natural power') }}</span>
+        </h1>
         <div class="hero-ctas">
           <NuxtLink class="btn btn-primary" to="#noclegi">
             {{ t('Zobacz noclegi', 'Explore stays') }}
@@ -790,13 +793,26 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
 .hero-tagline {
   font-family: var(--serif);
   font-style: italic;
-  font-size: clamp(28px, 3.2vw, 44px);
-  line-height: 1.2;
   font-weight: 400;
   max-width: 680px;
   margin: 0 auto 40px;
   color: #FAF8F2;
   text-shadow: 0 2px 30px rgba(58, 75, 32, .4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.hero-tagline-main {
+  font-size: clamp(36px, 4.2vw, 58px);
+  line-height: 1.1;
+}
+
+.hero-tagline-sub {
+  font-size: clamp(18px, 2vw, 28px);
+  line-height: 1.3;
+  opacity: 0.85;
 }
 
 .hero-ctas {

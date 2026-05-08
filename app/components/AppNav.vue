@@ -15,7 +15,7 @@ function handleEscKey(e: KeyboardEvent) {
   if (e.key === 'Escape') open.value = false
 }
 
-const SECTION_IDS = ['dolina', 'noclegi', 'izery']
+const SECTION_IDS = ['noclegi']
 let observer: IntersectionObserver | null = null
 
 function setupObserver() {
@@ -77,10 +77,9 @@ onUnmounted(() => {
     </NuxtLink>
 
     <ul class="nav-list">
-      <li><NuxtLink to="/#dolina" active-class="" exact-active-class="" :class="{ active: isActive('/#dolina') }">{{ t('Dolina', 'Valley') }}</NuxtLink></li>
       <li><NuxtLink to="/warsztaty" active-class="" exact-active-class="" :class="{ active: isActive('/warsztaty') }">{{ t('Warsztaty', 'Workshops') }}</NuxtLink></li>
       <li><NuxtLink to="/#noclegi" active-class="" exact-active-class="" :class="{ active: isActive('/#noclegi') }">{{ t('Noclegi', 'Stay') }}</NuxtLink></li>
-      <li><NuxtLink to="/#izery" active-class="" exact-active-class="" :class="{ active: isActive('/#izery') }">Izery</NuxtLink></li>
+      <li><NuxtLink to="/fundacja" active-class="" exact-active-class="" :class="{ active: isActive('/fundacja') }">{{ t('Fundacja', 'Foundation') }}</NuxtLink></li>
       <li><NuxtLink to="/dojazd" active-class="" exact-active-class="" :class="{ active: isActive('/dojazd') }">{{ t('Dojazd', 'Getting here') }}</NuxtLink></li>
     </ul>
 

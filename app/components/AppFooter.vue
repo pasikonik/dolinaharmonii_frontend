@@ -36,6 +36,7 @@ const { t } = useLang()
           <h5>{{ t('Praktyka', 'Practice') }}</h5>
           <ul>
             <li><NuxtLink to="/warsztaty">{{ t('Warsztaty', 'Workshops') }}</NuxtLink></li>
+            <li><NuxtLink to="/fundacja">{{ t('Fundacja', 'Foundation') }}</NuxtLink></li>
             <li><NuxtLink to="/#izery">{{ t('Magiczne Izery', 'Magical Izery') }}</NuxtLink></li>
             <li><NuxtLink to="/#galeria">{{ t('Galeria', 'Gallery') }}</NuxtLink></li>
           </ul>
