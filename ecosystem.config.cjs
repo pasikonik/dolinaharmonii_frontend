@@ -18,7 +18,7 @@ module.exports = {
       user: 'debian',
       host: 'vps-ea2cb317.vps.ovh.net',
       ref: 'origin/main',
-      repo: 'git@github.com:TWOJE_REPO.git',
+      repo: 'git@github.com:pasikonik/dolinaharmonii_frontend.git',
       path: '/home/debian/apps/dolinaharmonii_frontend',
       'post-deploy': 'pnpm install && pnpm build && pm2 reload ecosystem.config.js --env production'
     }
