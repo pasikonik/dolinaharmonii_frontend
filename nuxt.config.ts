@@ -1,7 +1,7 @@
 // nuxt.config.ts
 declare const process: { env: Record<string, string | undefined> }
 
-const directusUrl = process.env.DIRECTUS_URL ?? 'http://localhost:8055'
+const directusUrl = (process.env.DIRECTUS_URL ?? 'http://localhost:8055').replace(/\/$/, '')
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-01-01',

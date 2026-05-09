@@ -172,7 +172,7 @@ const displayWorkshops = computed(() => {
     name: w.title,
     cat: typeof w.category === 'object' ? w.category?.name : w.category,
     icon: categoryIcon(w.category),
-    img: w.cover_image ? getImageUrl(w.cover_image, { width: 1000, format: 'webp' }) : FALLBACK_IMG,
+    img: w.cover_image ? getImageUrl(w.cover_image, { width: 1000, fit: 'cover' }) : FALLBACK_IMG,
     dur: calcDuration(w.start_date, w.end_date),
     date: w.start_date ? new Date(w.start_date).toLocaleDateString(lang.value === 'en' ? 'en-GB' : 'pl-PL', { month: 'long', year: 'numeric' }) : '',
     desc: w.short_description,

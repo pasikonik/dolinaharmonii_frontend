@@ -3,8 +3,9 @@ import type { Category, DirectusResponse, Pricing, Workshop } from '~~/types/dir
 interface ImageOptions {
   width?: number
   height?: number
-  format?: 'webp' | 'avif' | 'jpg' | 'png'
+  format?: 'avif' | 'webp' | 'jpg' | 'png'
   quality?: number
+  fit?: 'cover' | 'contain' | 'fill' | 'inside' | 'outside'
 }
 
 export function useDirectus() {
@@ -64,11 +65,12 @@ export function useDirectus() {
     const params = new URLSearchParams()
     if (options.width) params.set('width', String(options.width))
     if (options.height) params.set('height', String(options.height))
-    params.set('format', options.format ?? 'webp')
-    params.set('quality', String(options.quality ?? 80))
+    if (options.fit) params.set('fit', options.fit)
+    params.set('format', options.format ?? 'avif')
+    params.set('quality', String(options.quality ?? 75))
+    params.set('withoutEnlargement', 'true')
 
-    const qs = params.toString()
-    return `${baseURL}/assets/${fileId}${qs ? `?${qs}` : ''}`
+    return `${baseURL}/assets/${fileId}?${params.toString()}`
   }
 
   return {

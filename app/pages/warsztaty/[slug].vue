@@ -109,12 +109,12 @@ const lightboxIndex = ref<number | null>(null)
 const galleryImages = computed(() => {
   const imgs: string[] = []
   if (workshop.value?.cover_image) {
-    imgs.push(getImageUrl(workshop.value.cover_image, { width: 1400, format: 'webp' }))
+    imgs.push(getImageUrl(workshop.value.cover_image, { width: 1400, fit: 'cover' }))
   }
   if (Array.isArray(workshop.value?.gallery)) {
     for (const item of workshop.value.gallery) {
       const fileId = typeof item === 'object' && item !== null ? item.directus_files_id : item
-      if (fileId) imgs.push(getImageUrl(fileId, { width: 1400, format: 'webp' }))
+      if (fileId) imgs.push(getImageUrl(fileId, { width: 1400, fit: 'cover' }))
     }
   }
   return imgs
@@ -180,7 +180,7 @@ const relatedWorkshops = computed(() =>
     slug: w.slug,
     title: w.title,
     date: w.start_date ? new Date(w.start_date).toLocaleDateString('pl-PL', { month: 'long', year: 'numeric' }) : '',
-    img: w.cover_image ? getImageUrl(w.cover_image, { width: 400, format: 'webp' }) : '',
+    img: w.cover_image ? getImageUrl(w.cover_image, { width: 400, fit: 'cover' }) : '',
   })) ?? []
 )
 </script>
@@ -266,7 +266,7 @@ const relatedWorkshops = computed(() =>
                 <img
                   v-if="instructor.photo"
                   class="photo"
-                  :src="getImageUrl(instructor.photo, { width: 200, format: 'webp' })"
+                  :src="getImageUrl(instructor.photo, { width: 200, height: 200, fit: 'cover' })"
                   :alt="instructor.name"
                 />
                 <div class="inst-info">
