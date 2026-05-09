@@ -20,10 +20,11 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            cd ~/apps/dolinaharmonii-frontend
+            cd ~/apps/dolinaharmonii_frontend
             git pull origin main
             export NVM_DIR="$HOME/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # Ładowanie Node.js
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            export PATH="$HOME/.local/share/pnpm:$PATH"
             pnpm install
             pnpm run build
             pm2 restart ecosystem.config.js --env production

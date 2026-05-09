@@ -196,7 +196,7 @@ const relatedWorkshops = computed(() =>
             <div v-if="category" class="cat-row">
               <span class="cat-pill">
                 <DhIcon
-                  :name="category.icon ? category.icon.split(':').pop()! : 'meditation'"
+                  name="meditation"
                   :size="16" :stroke="1.4"
                 />
                 {{ category.name }}

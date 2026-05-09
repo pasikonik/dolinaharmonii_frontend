@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { Workshop } from '~~/types/directus'
 import { DEFAULT_PRICING } from '~~/types/directus'
 
 const { getWorkshops, getImageUrl, getPricing } = useDirectus()
@@ -115,17 +114,11 @@ function calcDuration(start?: string | null, end?: string | null): string {
   return days === 1 ? '1 dzień' : `${days} dni`
 }
 
-function categoryIcon(cat: Workshop['category']): string {
-  if (typeof cat !== 'object' || !cat?.icon) return 'meditation'
-  return cat.icon.includes(':') ? (cat.icon.split(':')[1] ?? 'meditation') : cat.icon
-}
-
 const displayWorkshops = computed(() =>
   workshops.value.map(w => ({
     slug: w.slug,
     name: w.title,
     cat: typeof w.category === 'object' ? w.category?.name : w.category,
-    icon: categoryIcon(w.category),
     img: w.cover_image ? getImageUrl(w.cover_image, { width: 1000, fit: 'cover' }) : FALLBACK_IMG,
     dur: calcDuration(w.start_date, w.end_date),
     date: w.start_date ? new Date(w.start_date).toLocaleDateString(lang.value === 'en' ? 'en-GB' : 'pl-PL', { month: 'long', year: 'numeric' }) : '',
@@ -422,7 +415,7 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
                 <div class="head-row">
                   <span class="chip">{{ w.cat }}</span>
                   <span class="icon-wrap">
-                    <DhIcon :name="w.icon" :size="36" :stroke="1.4" />
+                    <DhIcon name="meditation" :size="36" :stroke="1.4" />
                   </span>
                 </div>
                 <h4>{{ w.name }}</h4>

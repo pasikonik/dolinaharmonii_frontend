@@ -23,7 +23,6 @@ export function useDirectus() {
         'category.id',
         'category.name',
         'category.slug',
-        'category.icon',
         'instructors.instructors_id.id',
         'instructors.instructors_id.name',
         'instructors.instructors_id.photo',
