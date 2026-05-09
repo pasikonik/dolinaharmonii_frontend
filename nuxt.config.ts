@@ -40,9 +40,6 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    // Server-only — never exposed to the browser
-    directusToken: process.env.DIRECTUS_TOKEN,
-
     public: {
       directusUrl,
     },

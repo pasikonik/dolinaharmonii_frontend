@@ -10,15 +10,9 @@ interface ImageOptions {
 export function useDirectus() {
   const config = useRuntimeConfig()
   const baseURL = config.public.directusUrl
-  const token = config.directusToken
-
-  const headers: Record<string, string> = {}
-  if (token && import.meta.server) {
-    headers.Authorization = `Bearer ${token}`
-  }
 
   function get<T>(endpoint: string, params?: Record<string, unknown>): Promise<T> {
-    return $fetch<T>(`${baseURL}${endpoint}`, { params, headers })
+    return $fetch<T>(`${baseURL}${endpoint}`, { params })
   }
 
   function getWorkshops(params?: Record<string, unknown>) {
