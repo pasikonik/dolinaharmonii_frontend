@@ -5,7 +5,7 @@ import { DEFAULT_PRICING } from '~~/types/directus'
 const { getWorkshops, getImageUrl, getPricing } = useDirectus()
 const { lang, t } = useLang()
 
-const { data } = await useAsyncData('workshops-home', () => getWorkshops({ limit: 3 }))
+const { data, error: workshopsError } = await useAsyncData('workshops-home', () => getWorkshops({ limit: 3 }))
 const workshops = computed(() => data.value?.data ?? [])
 
 const { data: pricingData } = await useAsyncData('prices', async () => {
@@ -105,52 +105,6 @@ const BLESSINGS = [
   },
 ]
 
-const STATIC_WORKSHOPS_RAW = [
-  {
-    slug: 'mindfulness-w-naturze',
-    name_pl: 'Mindfulness w naturze', name_en: 'Mindfulness in Nature',
-    cat_pl: 'mindfulness', cat_en: 'mindfulness',
-    icon: 'meditation',
-    img: 'https://images.unsplash.com/photo-1545389336-cf090694435e?auto=format&fit=crop&w=1000&q=80',
-    dur_pl: '3 dni', dur_en: '3 days',
-    date_pl: 'Maj 2026', date_en: 'May 2026',
-    desc_pl: 'Praktyka uważnej obecności na łące, w lesie i przy ognisku — w towarzystwie cykli pór roku.',
-    desc_en: 'A practice of mindful presence on the meadow, in the forest and by the fire — attuned to the cycles of the seasons.',
-  },
-  {
-    slug: 'cisza-i-medytacja',
-    name_pl: 'Cisza i medytacja', name_en: 'Silence & Meditation',
-    cat_pl: 'medytacja', cat_en: 'meditation',
-    icon: 'candle',
-    img: 'https://images.unsplash.com/photo-1591291621164-2c6367723315?auto=format&fit=crop&w=1000&q=80',
-    dur_pl: '5 dni', dur_en: '5 days',
-    date_pl: 'Czerwiec', date_en: 'June',
-    desc_pl: 'Pięciodniowe odosobnienie w ciszy z prowadzeniem zen i tradycji wglądu. Dla początkujących i wracających.',
-    desc_en: 'A five-day silent retreat led in the Zen and Insight traditions. Open to beginners and returning practitioners.',
-  },
-  {
-    slug: 'rekodzielo-z-izerow',
-    name_pl: 'Rękodzieło z Izerów', name_en: 'Izera Crafts',
-    cat_pl: 'rękodzieło', cat_en: 'crafts',
-    icon: 'craft',
-    img: 'https://images.unsplash.com/photo-1452860606245-08befc0ff44b?auto=format&fit=crop&w=1000&q=80',
-    dur_pl: 'Weekend', dur_en: 'Weekend',
-    date_pl: 'Lipiec', date_en: 'July',
-    desc_pl: 'Filcowanie wełną, plecionkarstwo, wypał ceramiki — z lokalnymi rękodzielniczkami.',
-    desc_en: 'Wool felting, basketry, ceramic firing — with local craftswomen from the Izera foothills.',
-  },
-]
-
-const STATIC_WORKSHOPS = computed(() => STATIC_WORKSHOPS_RAW.map(w => ({
-  slug: w.slug,
-  name: t(w.name_pl, w.name_en),
-  cat: t(w.cat_pl, w.cat_en),
-  icon: w.icon,
-  img: w.img,
-  dur: t(w.dur_pl, w.dur_en),
-  date: t(w.date_pl, w.date_en),
-  desc: t(w.desc_pl, w.desc_en),
-})))
 
 const FALLBACK_IMG = '/duzy_dom.avif'
 
@@ -166,8 +120,8 @@ function categoryIcon(cat: Workshop['category']): string {
   return cat.icon.includes(':') ? (cat.icon.split(':')[1] ?? 'meditation') : cat.icon
 }
 
-const displayWorkshops = computed(() => {
-  if (workshops.value.length > 0) return workshops.value.map(w => ({
+const displayWorkshops = computed(() =>
+  workshops.value.map(w => ({
     slug: w.slug,
     name: w.title,
     cat: typeof w.category === 'object' ? w.category?.name : w.category,
@@ -177,8 +131,7 @@ const displayWorkshops = computed(() => {
     date: w.start_date ? new Date(w.start_date).toLocaleDateString(lang.value === 'en' ? 'en-GB' : 'pl-PL', { month: 'long', year: 'numeric' }) : '',
     desc: w.short_description,
   }))
-  return STATIC_WORKSHOPS.value
-})
+)
 
 const ACCOM_RAW = [
   {
@@ -454,32 +407,40 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
             ) }}
           </p>
         </div>
-        <div class="workshop-grid">
-          <NuxtLink v-for="(w, i) in displayWorkshops" :key="i" :to="`/warsztaty/${w.slug}`"
-            class="workshop-card reveal" :style="{ transitionDelay: `${i * 60}ms` }">
-            <img class="img" :src="w.img" :alt="w.name" />
-            <div class="body">
-              <div class="head-row">
-                <span class="chip">{{ w.cat }}</span>
-                <span class="icon-wrap">
-                  <DhIcon :name="w.icon" :size="36" :stroke="1.4" />
-                </span>
-              </div>
-              <h4>{{ w.name }}</h4>
-              <p>{{ w.desc }}</p>
-              <div class="meta">
-                <span v-if="w.dur">{{ w.dur }}</span>
-                <span v-if="w.date">· {{ w.date }}</span>
-              </div>
-            </div>
-          </NuxtLink>
+        <div v-if="workshopsError" class="workshops-notice">
+          <DhIcon name="leaf" :size="32" :stroke="1.2" class="notice-icon" />
+          <p class="notice-title">{{ t('Nie udało się pobrać warsztatów', 'Workshops unavailable') }}</p>
+          <p class="notice-desc">{{ t('Sprawdź ponownie za chwilę lub napisz do nas bezpośrednio.', 'Please try again in a moment or contact us directly.') }}</p>
+          <a href="mailto:dolina@harmonii.pl" class="btn btn-secondary">dolina@harmonii.pl</a>
         </div>
-        <div class="all-workshops-cta">
-          <NuxtLink class="btn btn-secondary" to="/warsztaty">
-            {{ t('Wszystkie warsztaty', 'All workshops') }}
-            <DhIcon name="arrow" :size="18" :stroke="1.6" />
-          </NuxtLink>
-        </div>
+        <template v-else>
+          <div class="workshop-grid">
+            <NuxtLink v-for="(w, i) in displayWorkshops" :key="i" :to="`/warsztaty/${w.slug}`"
+              class="workshop-card reveal" :style="{ transitionDelay: `${i * 60}ms` }">
+              <img class="img" :src="w.img" :alt="w.name" />
+              <div class="body">
+                <div class="head-row">
+                  <span class="chip">{{ w.cat }}</span>
+                  <span class="icon-wrap">
+                    <DhIcon :name="w.icon" :size="36" :stroke="1.4" />
+                  </span>
+                </div>
+                <h4>{{ w.name }}</h4>
+                <p>{{ w.desc }}</p>
+                <div class="meta">
+                  <span v-if="w.dur">{{ w.dur }}</span>
+                  <span v-if="w.date">· {{ w.date }}</span>
+                </div>
+              </div>
+            </NuxtLink>
+          </div>
+          <div class="all-workshops-cta">
+            <NuxtLink class="btn btn-secondary" to="/warsztaty">
+              {{ t('Wszystkie warsztaty', 'All workshops') }}
+              <DhIcon name="arrow" :size="18" :stroke="1.6" />
+            </NuxtLink>
+          </div>
+        </template>
       </div>
     </section>
 
@@ -1034,6 +995,23 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
   text-align: center;
   margin-top: 56px;
 }
+
+.workshops-notice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 64px 32px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--bg-card);
+  text-align: center;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.workshops-notice .notice-icon { color: var(--accent-earth); opacity: 0.6; }
+.workshops-notice .notice-title { font-family: var(--serif); font-size: 22px; color: var(--brand-primary); margin: 0; }
+.workshops-notice .notice-desc { font-size: 15px; color: var(--text-muted); line-height: 1.6; margin: 0; }
 
 /* ─── Accommodations ────────────────────────────────────────────── */
 .accommodation {
