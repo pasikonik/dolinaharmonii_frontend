@@ -12,52 +12,49 @@ useSeoMeta({
   twitterCard: 'summary_large_image',
 })
 
-// ─── DATA ──────────────────────────────────────────────────────────────────
 type Mode = 'individual' | 'group'
 
 interface Workshop {
-  id: string
-  slug: string
-  name_pl: string
-  name_en: string
-  startISO: string
-  endISO: string
-  cat_pl: string
-  cat_en: string
-  spots: number
-  taken: number
-  price: string
-  instr: string
-  img: string
+  id: string; slug: string
+  name_pl: string; name_en: string
+  cat_pl: string;  cat_en: string
+  start: Date; end: Date
+  spots: number; taken: number
+  price: string; instr: string; img: string
 }
-
 interface GroupRental {
   id: string
-  name_pl: string
-  name_en: string
-  startISO: string
-  endISO: string
-  type_pl: string
-  type_en: string
+  name_pl: string; name_en: string
+  type_pl: string; type_en: string
+  start: Date; end: Date
 }
 
+function iso(d: Date) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+function parseISO(s: string) {
+  const [y, m, d] = s.split('-').map(Number) as [number, number, number]
+  return new Date(y, m - 1, d)
+}
+const D = parseISO
+
 const WORKSHOPS: Workshop[] = [
-  { id: 'mindful-natura', slug: 'mindfulness-w-naturze',  name_pl: 'Mindfulness w naturze',   name_en: 'Mindfulness in Nature',  startISO: '2026-05-08', endISO: '2026-05-10', cat_pl: 'Mindfulness', cat_en: 'Mindfulness', spots: 12, taken: 8,  price: '1 480 zł', instr: 'Joanna Lis',       img: 'https://images.unsplash.com/photo-1545389336-cf090694435e?auto=format&fit=crop&w=400&q=80' },
-  { id: 'forest-bathing', slug: 'forest-bathing',         name_pl: 'Forest bathing',          name_en: 'Forest Bathing',         startISO: '2026-05-24', endISO: '2026-05-25', cat_pl: 'Natura',      cat_en: 'Nature',      spots: 14, taken: 0,  price: '680 zł',   instr: 'Tomasz Bór',       img: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=400&q=80' },
-  { id: 'cisza',          slug: 'cisza-i-medytacja',      name_pl: 'Cisza i medytacja',       name_en: 'Silence & Meditation',   startISO: '2026-06-12', endISO: '2026-06-16', cat_pl: 'Mindfulness', cat_en: 'Mindfulness', spots: 10, taken: 4,  price: '2 200 zł', instr: 'Marek Wojciech',   img: 'https://images.unsplash.com/photo-1591291621164-2c6367723315?auto=format&fit=crop&w=400&q=80' },
-  { id: 'pol-odosob',     slug: 'letnie-polodosobnienie', name_pl: 'Letnie półodosobnienie',  name_en: 'Summer Half-Retreat',    startISO: '2026-07-05', endISO: '2026-07-11', cat_pl: 'Mindfulness', cat_en: 'Mindfulness', spots: 14, taken: 5,  price: '2 600 zł', instr: 'Marek Wojciech',   img: 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=400&q=80' },
-  { id: 'rzezba',         slug: 'rzezba-w-drewnie',       name_pl: 'Rzeźba w drewnie',        name_en: 'Wood Carving',           startISO: '2026-08-07', endISO: '2026-08-09', cat_pl: 'Drewno',      cat_en: 'Wood',        spots: 8,  taken: 7,  price: '1 380 zł', instr: 'Anna Mróz',        img: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=400&q=80' },
-  { id: 'ziola',          slug: 'ziola-i-ogrod',          name_pl: 'Zioła i ogród',           name_en: 'Herbs & Garden',         startISO: '2026-08-20', endISO: '2026-08-23', cat_pl: 'Ogród',       cat_en: 'Garden',      spots: 12, taken: 8,  price: '1 680 zł', instr: 'Ewa Jagoda',       img: 'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?auto=format&fit=crop&w=400&q=80' },
-  { id: 'pisanie',        slug: 'pisanie-z-natury',       name_pl: 'Pisanie z natury',        name_en: 'Writing from Nature',    startISO: '2026-09-11', endISO: '2026-09-13', cat_pl: 'Natura',      cat_en: 'Nature',      spots: 12, taken: 3,  price: '1 100 zł', instr: 'Hanna Sosnowska',  img: 'https://images.unsplash.com/photo-1455218873509-8097305ee378?auto=format&fit=crop&w=400&q=80' },
-  { id: 'kregi',          slug: 'krag-jogi-kobiecej',     name_pl: 'Krąg jogi kobiecej',      name_en: "Women's Yoga Circle",    startISO: '2026-09-25', endISO: '2026-09-27', cat_pl: 'Joga',        cat_en: 'Yoga',        spots: 10, taken: 6,  price: '1 200 zł', instr: 'Joanna Lis',       img: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=400&q=80' },
-  { id: 'joga-sauna',     slug: 'joga-i-sauna',           name_pl: 'Joga i sauna',            name_en: 'Yoga & Sauna',           startISO: '2026-10-18', endISO: '2026-10-20', cat_pl: 'Joga',        cat_en: 'Yoga',        spots: 12, taken: 12, price: '980 zł',   instr: 'Ewa Jagoda',       img: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=400&q=80' },
+  { id: 'mindful-natura', slug: 'mindfulness-w-naturze',  name_pl: 'Mindfulness w naturze',  name_en: 'Mindfulness in Nature', cat_pl: 'Mindfulness', cat_en: 'Mindfulness', start: D('2026-05-08'), end: D('2026-05-10'), spots: 12, taken: 8,  price: '1 480 zł', instr: 'Joanna Lis',      img: 'https://images.unsplash.com/photo-1545389336-cf090694435e?auto=format&fit=crop&w=400&q=80' },
+  { id: 'forest-bathing', slug: 'forest-bathing',         name_pl: 'Forest bathing',         name_en: 'Forest Bathing',        cat_pl: 'Natura',      cat_en: 'Nature',      start: D('2026-05-24'), end: D('2026-05-25'), spots: 14, taken: 0,  price: '680 zł',   instr: 'Tomasz Bór',      img: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=400&q=80' },
+  { id: 'cisza',          slug: 'cisza-i-medytacja',      name_pl: 'Cisza i medytacja',      name_en: 'Silence & Meditation',  cat_pl: 'Mindfulness', cat_en: 'Mindfulness', start: D('2026-06-12'), end: D('2026-06-16'), spots: 10, taken: 4,  price: '2 200 zł', instr: 'Marek Wojciech',  img: 'https://images.unsplash.com/photo-1591291621164-2c6367723315?auto=format&fit=crop&w=400&q=80' },
+  { id: 'pol-odosob',     slug: 'letnie-polodosobnienie', name_pl: 'Letnie półodosobnienie', name_en: 'Summer Half-Retreat',   cat_pl: 'Mindfulness', cat_en: 'Mindfulness', start: D('2026-07-05'), end: D('2026-07-11'), spots: 14, taken: 5,  price: '2 600 zł', instr: 'Marek Wojciech',  img: 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=400&q=80' },
+  { id: 'rzezba',         slug: 'rzezba-w-drewnie',       name_pl: 'Rzeźba w drewnie',       name_en: 'Wood Carving',          cat_pl: 'Drewno',      cat_en: 'Wood',        start: D('2026-08-07'), end: D('2026-08-09'), spots: 8,  taken: 7,  price: '1 380 zł', instr: 'Anna Mróz',       img: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=400&q=80' },
+  { id: 'ziola',          slug: 'ziola-i-ogrod',          name_pl: 'Zioła i ogród',          name_en: 'Herbs & Garden',        cat_pl: 'Ogród',       cat_en: 'Garden',      start: D('2026-08-20'), end: D('2026-08-23'), spots: 12, taken: 8,  price: '1 680 zł', instr: 'Ewa Jagoda',      img: 'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?auto=format&fit=crop&w=400&q=80' },
+  { id: 'pisanie',        slug: 'pisanie-z-natury',       name_pl: 'Pisanie z natury',       name_en: 'Writing from Nature',   cat_pl: 'Natura',      cat_en: 'Nature',      start: D('2026-09-11'), end: D('2026-09-13'), spots: 12, taken: 3,  price: '1 100 zł', instr: 'Hanna Sosnowska', img: 'https://images.unsplash.com/photo-1455218873509-8097305ee378?auto=format&fit=crop&w=400&q=80' },
+  { id: 'kregi',          slug: 'krag-jogi-kobiecej',     name_pl: 'Krąg jogi kobiecej',     name_en: "Women's Yoga Circle",   cat_pl: 'Joga',        cat_en: 'Yoga',        start: D('2026-09-25'), end: D('2026-09-27'), spots: 10, taken: 6,  price: '1 200 zł', instr: 'Joanna Lis',      img: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=400&q=80' },
+  { id: 'joga-sauna',     slug: 'joga-i-sauna',           name_pl: 'Joga i sauna',           name_en: 'Yoga & Sauna',          cat_pl: 'Joga',        cat_en: 'Yoga',        start: D('2026-10-18'), end: D('2026-10-20'), spots: 12, taken: 12, price: '980 zł',   instr: 'Ewa Jagoda',      img: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=400&q=80' },
 ]
 
 const GROUP_RENTALS: GroupRental[] = [
-  { id: 'g1', name_pl: 'Joga z Wrocławia · grupa zamknięta', name_en: 'Yoga from Wrocław · closed group', startISO: '2026-05-16', endISO: '2026-05-19', type_pl: 'Wynajem całości', type_en: 'Whole-property rental' },
-  { id: 'g2', name_pl: 'Spotkanie rodzinne · 18 osób',       name_en: 'Family gathering · 18 guests',     startISO: '2026-06-26', endISO: '2026-06-28', type_pl: 'Wynajem całości', type_en: 'Whole-property rental' },
-  { id: 'g3', name_pl: 'Korporacyjny offsite',                name_en: 'Corporate offsite',                startISO: '2026-07-22', endISO: '2026-07-26', type_pl: 'Wynajem całości', type_en: 'Whole-property rental' },
-  { id: 'g4', name_pl: 'Chór kameralny · zjazd',              name_en: 'Chamber choir · gathering',        startISO: '2026-09-04', endISO: '2026-09-07', type_pl: 'Wynajem całości', type_en: 'Whole-property rental' },
+  { id: 'g1', name_pl: 'Joga z Wrocławia · grupa zamknięta', name_en: 'Yoga from Wrocław · closed group', type_pl: 'Wynajem całości', type_en: 'Whole-property rental', start: D('2026-05-16'), end: D('2026-05-19') },
+  { id: 'g2', name_pl: 'Spotkanie rodzinne · 18 osób',       name_en: 'Family gathering · 18 guests',     type_pl: 'Wynajem całości', type_en: 'Whole-property rental', start: D('2026-06-26'), end: D('2026-06-28') },
+  { id: 'g3', name_pl: 'Korporacyjny offsite',                name_en: 'Corporate offsite',                type_pl: 'Wynajem całości', type_en: 'Whole-property rental', start: D('2026-07-22'), end: D('2026-07-26') },
+  { id: 'g4', name_pl: 'Chór kameralny · zjazd',              name_en: 'Chamber choir · gathering',        type_pl: 'Wynajem całości', type_en: 'Whole-property rental', start: D('2026-09-04'), end: D('2026-09-07') },
 ]
 
 // Real rooms from the Duży Dom page
@@ -70,7 +67,6 @@ const ROOMS = [
 ]
 const ROOM_COUNT = ROOMS.length
 
-const MONTHS_PL = ['styczeń','luty','marzec','kwiecień','maj','czerwiec','lipiec','sierpień','wrzesień','październik','listopad','grudzień']
 const MONTHS_PL_GEN = ['stycznia','lutego','marca','kwietnia','maja','czerwca','lipca','sierpnia','września','października','listopada','grudnia']
 const MONTHS_EN = ['January','February','March','April','May','June','July','August','September','October','November','December']
 const WEEKDAYS_FULL_PL = ['poniedziałek','wtorek','środa','czwartek','piątek','sobota','niedziela']
@@ -79,37 +75,31 @@ const WEEKDAYS_SHORT_PL = ['Pn','Wt','Śr','Cz','Pt','So','Nd']
 const WEEKDAYS_SHORT_EN = ['Mo','Tu','We','Th','Fr','Sa','Su']
 
 const SEASON_MONTHS = [
-  { year: 2026, month: 4,  label_pl: 'Maj',          label_en: 'May',       short_pl: 'Maj',  short_en: 'May' },
-  { year: 2026, month: 5,  label_pl: 'Czerwiec',     label_en: 'June',      short_pl: 'Cze',  short_en: 'Jun' },
-  { year: 2026, month: 6,  label_pl: 'Lipiec',       label_en: 'July',      short_pl: 'Lip',  short_en: 'Jul' },
-  { year: 2026, month: 7,  label_pl: 'Sierpień',     label_en: 'August',    short_pl: 'Sie',  short_en: 'Aug' },
-  { year: 2026, month: 8,  label_pl: 'Wrzesień',     label_en: 'September', short_pl: 'Wrz',  short_en: 'Sep' },
-  { year: 2026, month: 9,  label_pl: 'Październik',  label_en: 'October',   short_pl: 'Paź',  short_en: 'Oct' },
+  { year: 2026, month: 4, label_pl: 'Maj',         label_en: 'May',       short_pl: 'Maj', short_en: 'May' },
+  { year: 2026, month: 5, label_pl: 'Czerwiec',    label_en: 'June',      short_pl: 'Cze', short_en: 'Jun' },
+  { year: 2026, month: 6, label_pl: 'Lipiec',      label_en: 'July',      short_pl: 'Lip', short_en: 'Jul' },
+  { year: 2026, month: 7, label_pl: 'Sierpień',    label_en: 'August',    short_pl: 'Sie', short_en: 'Aug' },
+  { year: 2026, month: 8, label_pl: 'Wrzesień',    label_en: 'September', short_pl: 'Wrz', short_en: 'Sep' },
+  { year: 2026, month: 9, label_pl: 'Październik', label_en: 'October',   short_pl: 'Paź', short_en: 'Oct' },
 ]
+const WORKSHOP_MONTHS = new Set(WORKSHOPS.map(w => `${w.start.getFullYear()}-${w.start.getMonth()}`))
 
-// ─── HELPERS ───────────────────────────────────────────────────────────────
+// Anchor inside the demo season (May–Oct 2026) so the calendar always has live cells.
 function makeToday() {
-  // Use real today, but anchor inside the demo season (May–Oct 2026) if needed.
   const real = new Date()
   real.setHours(0, 0, 0, 0)
   const seasonStart = new Date(2026, 4, 1)
   return real < seasonStart ? seasonStart : real
 }
 const TODAY = makeToday()
+const TODAY_ISO = iso(TODAY)
 
-function iso(d: Date) {
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
-}
-function parseISO(s: string) {
-  const [y, m, d] = s.split('-').map(Number) as [number, number, number]
-  return new Date(y, m - 1, d)
-}
-function dateInRange(d: Date, startISO: string, endISO: string) {
+function inRange(d: Date, start: Date, end: Date) {
   const t = d.getTime()
-  return t >= parseISO(startISO).getTime() && t <= parseISO(endISO).getTime()
+  return t >= start.getTime() && t <= end.getTime()
 }
+// Monday = 0 .. Sunday = 6
 function getWeekdayIdx(d: Date) {
-  // Monday = 0 .. Sunday = 6
   return (d.getDay() + 6) % 7
 }
 function dayHash(d: Date) {
@@ -117,84 +107,57 @@ function dayHash(d: Date) {
 }
 
 type DayStatus = 'past' | 'workshop' | 'group-booked' | 'available' | 'partial' | 'limited' | 'full'
-interface DayInfo {
-  status: DayStatus
-  workshop?: Workshop
-  group?: GroupRental
-  free?: number
-  total?: number
-}
+type DayInfo =
+  | { status: 'past' }
+  | { status: 'workshop'; workshop: Workshop }
+  | { status: 'group-booked'; group: GroupRental }
+  | { status: 'available' | 'partial' | 'limited' | 'full'; free: number; total: number }
 
-function getDayStatus(d: Date, mode: Mode): DayInfo {
+function getDayStatus(d: Date, m: Mode): DayInfo {
   if (d < TODAY) return { status: 'past' }
-
-  const ws = WORKSHOPS.find(w => dateInRange(d, w.startISO, w.endISO))
+  const ws = WORKSHOPS.find(w => inRange(d, w.start, w.end))
   if (ws) return { status: 'workshop', workshop: ws }
-
-  const gr = GROUP_RENTALS.find(g => dateInRange(d, g.startISO, g.endISO))
+  const gr = GROUP_RENTALS.find(g => inRange(d, g.start, g.end))
   if (gr) return { status: 'group-booked', group: gr }
-
-  if (mode === 'group') {
-    return { status: 'available' }
-  }
+  if (m === 'group') return { status: 'available', free: ROOM_COUNT, total: ROOM_COUNT }
 
   const h = dayHash(d)
-  const wd = getWeekdayIdx(d)
-  const weekend = wd === 4 || wd === 5
-  let booked: number
-  if (weekend) booked = 2 + (h % 4)
-  else booked = h % 4
-  const free = ROOM_COUNT - booked
-
-  if (free <= 0) return { status: 'full', free: 0, total: ROOM_COUNT }
-  if (free <= 1) return { status: 'limited', free, total: ROOM_COUNT }
-  if (free <= 3) return { status: 'partial', free, total: ROOM_COUNT }
-  return { status: 'available', free, total: ROOM_COUNT }
+  const weekend = getWeekdayIdx(d) >= 4
+  const booked = weekend ? 2 + (h % 4) : h % 4
+  const free = Math.max(0, ROOM_COUNT - booked)
+  const total = ROOM_COUNT
+  if (free === 0) return { status: 'full', free, total }
+  if (free === 1) return { status: 'limited', free, total }
+  if (free <= 3) return { status: 'partial', free, total }
+  return { status: 'available', free, total }
 }
 
 function getRoomOccupancyForDay(d: Date) {
+  const weekend = getWeekdayIdx(d) >= 4
   return ROOMS.map(r => {
     const h = (dayHash(d) + r.id.charCodeAt(0) * 11) % 100
-    const wd = getWeekdayIdx(d)
-    const weekend = wd === 4 || wd === 5
-    const taken = weekend ? h > 35 : h > 65
-    return { ...r, taken }
+    return { ...r, taken: weekend ? h > 35 : h > 65 }
   })
 }
 
-function monthLabel(m: typeof SEASON_MONTHS[number]) {
-  return lang.value === 'en' ? m.label_en : m.label_pl
+// PL/EN field picker for objects with `<field>_pl` / `<field>_en` keys.
+function pick(obj: object, field: string): string {
+  return (obj as Record<string, string>)[`${field}_${lang.value}`]!
 }
-function monthShort(m: typeof SEASON_MONTHS[number]) {
-  return lang.value === 'en' ? m.short_en : m.short_pl
+
+function formatRange(s: Date, e: Date) {
+  const isEn = lang.value === 'en'
+  const months = isEn ? MONTHS_EN : MONTHS_PL_GEN
+  const dash = isEn ? '–' : '—'
+  const sd = s.getDate(), ed = e.getDate()
+  const sm = months[s.getMonth()], em = months[e.getMonth()]
+  if (s.getMonth() === e.getMonth()) return `${sd}${dash}${ed} ${em}`
+  return `${sd} ${sm} ${dash} ${ed} ${em}`
 }
 function weekdayShortList() {
   return lang.value === 'en' ? WEEKDAYS_SHORT_EN : WEEKDAYS_SHORT_PL
 }
-function workshopName(w: Workshop) { return lang.value === 'en' ? w.name_en : w.name_pl }
-function workshopCat(w: Workshop) { return lang.value === 'en' ? w.cat_en : w.cat_pl }
-function groupName(g: GroupRental) { return lang.value === 'en' ? g.name_en : g.name_pl }
-function groupType(g: GroupRental) { return lang.value === 'en' ? g.type_en : g.type_pl }
 
-function formatRangePL(s: Date, e: Date) {
-  const sd = s.getDate(), ed = e.getDate()
-  const sm = MONTHS_PL_GEN[s.getMonth()]
-  const em = MONTHS_PL_GEN[e.getMonth()]
-  if (s.getMonth() === e.getMonth()) return `${sd}—${ed} ${em}`
-  return `${sd} ${sm} — ${ed} ${em}`
-}
-function formatRangeEN(s: Date, e: Date) {
-  const sd = s.getDate(), ed = e.getDate()
-  const sm = MONTHS_EN[s.getMonth()]
-  const em = MONTHS_EN[e.getMonth()]
-  if (s.getMonth() === e.getMonth()) return `${sd}–${ed} ${em}`
-  return `${sd} ${sm} – ${ed} ${em}`
-}
-function formatRange(s: Date, e: Date) {
-  return lang.value === 'en' ? formatRangeEN(s, e) : formatRangePL(s, e)
-}
-
-// ─── STATE ─────────────────────────────────────────────────────────────────
 const mode = ref<Mode>('individual')
 const monthIdx = ref(0)
 const selectedISO = ref<string | null>(null)
@@ -204,186 +167,121 @@ watch([mode, monthIdx], () => { selectedISO.value = null })
 const currentMonth = computed(() => SEASON_MONTHS[monthIdx.value]!)
 
 interface CalCell {
-  date: Date | null
-  info?: DayInfo
-  isToday?: boolean
-  selected?: boolean
-  meta?: string
-  isWorkshopStart?: boolean
-  isGroupStart?: boolean
   key: string
+  date: Date | null
+  dISO: string | null
+  info: DayInfo | null
+  isToday: boolean
+  meta: string
 }
+
+function metaFor(info: DayInfo): string {
+  if (mode.value === 'individual') {
+    switch (info.status) {
+      case 'available':
+      case 'partial':       return t(`${info.free}/${ROOM_COUNT} wolnych`, `${info.free}/${ROOM_COUNT} free`)
+      case 'limited':       return t(`${info.free} z ${ROOM_COUNT}`, `${info.free} of ${ROOM_COUNT}`)
+      case 'full':          return t('brak', 'none')
+      case 'workshop':
+      case 'group-booked':  return t('warsztat', 'workshop')
+      default:              return ''
+    }
+  }
+  switch (info.status) {
+    case 'available':     return t('wolne', 'free')
+    case 'workshop':      return pick(info.workshop, 'cat').toLowerCase()
+    case 'group-booked':  return t('warsztat', 'workshop')
+    default:              return ''
+  }
+}
+
+const blankCell = (key: string): CalCell => ({ key, date: null, dISO: null, info: null, isToday: false, meta: '' })
 
 const cells = computed<CalCell[]>(() => {
   const m = currentMonth.value
-  const first = new Date(m.year, m.month, 1)
-  const last = new Date(m.year, m.month + 1, 0)
-  const leadingBlanks = getWeekdayIdx(first)
-  const total = last.getDate()
+  const leadingBlanks = getWeekdayIdx(new Date(m.year, m.month, 1))
+  const totalDays = new Date(m.year, m.month + 1, 0).getDate()
   const out: CalCell[] = []
-  for (let i = 0; i < leadingBlanks; i++) out.push({ date: null, key: `b-${i}` })
-  for (let day = 1; day <= total; day++) {
+  for (let i = 0; i < leadingBlanks; i++) out.push(blankCell(`b-${i}`))
+  for (let day = 1; day <= totalDays; day++) {
     const d = new Date(m.year, m.month, day)
     const info = getDayStatus(d, mode.value)
     const dISO = iso(d)
-    const isToday = dISO === iso(TODAY)
-    const selected = dISO === selectedISO.value
-
-    let meta = ''
-    if (mode.value === 'individual') {
-      if (info.status === 'available' || info.status === 'partial') meta = lang.value === 'en' ? `${info.free}/${ROOM_COUNT} free` : `${info.free}/${ROOM_COUNT} wolnych`
-      else if (info.status === 'limited') meta = lang.value === 'en' ? `${info.free} of ${ROOM_COUNT}` : `${info.free} z ${ROOM_COUNT}`
-      else if (info.status === 'full') meta = lang.value === 'en' ? 'none' : 'brak'
-      else if (info.status === 'workshop') meta = lang.value === 'en' ? 'workshop' : 'warsztat'
-      else if (info.status === 'group-booked') meta = lang.value === 'en' ? 'group' : 'grupa'
-    } else {
-      if (info.status === 'available') meta = lang.value === 'en' ? 'free' : 'wolne'
-      else if (info.status === 'workshop') meta = workshopCat(info.workshop!).toLowerCase()
-      else if (info.status === 'group-booked') meta = lang.value === 'en' ? 'group' : 'grupa'
-    }
-
-    out.push({
-      date: d,
-      info,
-      isToday,
-      selected,
-      meta,
-      isWorkshopStart: info.status === 'workshop' && info.workshop!.startISO === dISO,
-      isGroupStart: info.status === 'group-booked' && info.group!.startISO === dISO,
-      key: `d-${day}`,
-    })
+    out.push({ key: `d-${day}`, date: d, dISO, info, isToday: dISO === TODAY_ISO, meta: metaFor(info) })
   }
-  while (out.length % 7 !== 0) out.push({ date: null, key: `t-${out.length}` })
-  while (out.length < 42) out.push({ date: null, key: `t-${out.length}` })
+  while (out.length < 42) out.push(blankCell(`t-${out.length}`))
   return out
 })
 
 const selectedDate = computed(() => selectedISO.value ? parseISO(selectedISO.value) : null)
 const selectedInfo = computed<DayInfo | null>(() => selectedDate.value ? getDayStatus(selectedDate.value, mode.value) : null)
+const selectedWorkshop = computed(() => selectedInfo.value?.status === 'workshop' ? selectedInfo.value.workshop : null)
+const selectedGroup = computed(() => selectedInfo.value?.status === 'group-booked' ? selectedInfo.value.group : null)
+const selectedFree = computed(() => {
+  const i = selectedInfo.value
+  return i && 'free' in i ? { free: i.free, total: i.total } : null
+})
 const selectedRooms = computed(() => {
-  if (!selectedDate.value || !selectedInfo.value) return null
-  if (mode.value !== 'individual') return null
-  if (!['available', 'partial', 'limited', 'full'].includes(selectedInfo.value.status)) return null
-  return getRoomOccupancyForDay(selectedDate.value)
+  const d = selectedDate.value
+  if (!d || mode.value !== 'individual' || !selectedFree.value) return null
+  return getRoomOccupancyForDay(d)
 })
 
 const selectedMonthLabel = computed(() => {
-  if (!selectedDate.value) return ''
-  return lang.value === 'en' ? MONTHS_EN[selectedDate.value.getMonth()] : MONTHS_PL_GEN[selectedDate.value.getMonth()]
+  const d = selectedDate.value
+  return d ? (lang.value === 'en' ? MONTHS_EN : MONTHS_PL_GEN)[d.getMonth()] : ''
 })
 const selectedDayName = computed(() => {
-  if (!selectedDate.value) return ''
-  const idx = getWeekdayIdx(selectedDate.value)
-  return lang.value === 'en' ? WEEKDAYS_FULL_EN[idx] : WEEKDAYS_FULL_PL[idx]
+  const d = selectedDate.value
+  return d ? (lang.value === 'en' ? WEEKDAYS_FULL_EN : WEEKDAYS_FULL_PL)[getWeekdayIdx(d)] : ''
 })
 
-function statusLabel(s: DayStatus) {
+function statusLabel(s: DayStatus): string {
   const m = mode.value
-  if (lang.value === 'en') {
-    const map: Record<DayStatus, string> = {
-      available: m === 'individual' ? 'Rooms available' : 'Valley free',
-      partial: 'Partial availability',
-      limited: 'Last spots',
-      full: 'Fully booked',
-      workshop: 'Workshop in progress',
-      'group-booked': 'Group rental',
-      past: 'Past date',
-    }
-    return map[s]
+  switch (s) {
+    case 'available':    return m === 'individual' ? t('Dostępne pokoje', 'Rooms available') : t('Dolina wolna', 'Valley free')
+    case 'partial':      return t('Częściowa dostępność', 'Partial availability')
+    case 'limited':      return t('Ostatnie miejsca', 'Last spots')
+    case 'full':         return t('Brak miejsc', 'Fully booked')
+    case 'workshop':     return t('Trwa warsztat', 'Workshop in progress')
+    case 'group-booked': return t('Wynajem grupy', 'Group rental')
+    case 'past':         return t('Termin miniony', 'Past date')
   }
-  const map: Record<DayStatus, string> = {
-    available: m === 'individual' ? 'Dostępne pokoje' : 'Dolina wolna',
-    partial: 'Częściowa dostępność',
-    limited: 'Ostatnie miejsca',
-    full: 'Brak miejsc',
-    workshop: 'Trwa warsztat',
-    'group-booked': 'Wynajem grupy',
-    past: 'Termin miniony',
-  }
-  return map[s]
 }
 
-// Month stats for sidebar
 const monthStats = computed(() => {
-  const m = currentMonth.value
-  const totalDays = new Date(m.year, m.month + 1, 0).getDate()
-  let workshopDays = 0, groupDays = 0, freeDays = 0
-  for (let d = 1; d <= totalDays; d++) {
-    const dt = new Date(m.year, m.month, d)
-    if (dt < TODAY) continue
-    const info = getDayStatus(dt, mode.value)
-    if (info.status === 'workshop') workshopDays++
-    else if (info.status === 'group-booked') groupDays++
+  let workshopDays = 0, freeDays = 0
+  for (const c of cells.value) {
+    if (!c.info || c.info.status === 'past') continue
+    if (c.info.status === 'workshop' || c.info.status === 'group-booked') workshopDays++
     else freeDays++
   }
-  return { workshopDays, groupDays, freeDays }
+  return { workshopDays, freeDays }
 })
 
-// Month pills: month dot if any workshop starts in that month
 function monthHasWorkshop(m: typeof SEASON_MONTHS[number]) {
-  return WORKSHOPS.some(w => {
-    const ws = parseISO(w.startISO)
-    return ws.getFullYear() === m.year && ws.getMonth() === m.month
-  })
+  return WORKSHOP_MONTHS.has(`${m.year}-${m.month}`)
 }
 
-// Legend
 const legendItems = computed(() => {
   if (mode.value === 'individual') {
-    return lang.value === 'en' ? [
-      { c: 'available',    ll: 'Free rooms',    ld: `4–${ROOM_COUNT} of ${ROOM_COUNT}` },
-      { c: 'partial',      ll: 'Partial',       ld: `2–3 of ${ROOM_COUNT}` },
-      { c: 'limited',      ll: 'Last spots',    ld: `1 of ${ROOM_COUNT}` },
-      { c: 'full',         ll: 'Fully booked',  ld: `0 of ${ROOM_COUNT}` },
-      { c: 'workshop',     ll: 'Workshop',      ld: 'no individual stays' },
-      { c: 'group-booked', ll: 'Group rental',  ld: 'whole property' },
-    ] : [
-      { c: 'available',    ll: 'Wolne pokoje',     ld: `4–${ROOM_COUNT} z ${ROOM_COUNT}` },
-      { c: 'partial',      ll: 'Częściowo',        ld: `2–3 z ${ROOM_COUNT}` },
-      { c: 'limited',      ll: 'Ostatnie miejsca', ld: `1 z ${ROOM_COUNT}` },
-      { c: 'full',         ll: 'Brak miejsc',      ld: `0 z ${ROOM_COUNT}` },
-      { c: 'workshop',     ll: 'Trwa warsztat',    ld: 'brak rezerwacji indyw.' },
-      { c: 'group-booked', ll: 'Wynajem grupy',    ld: 'cały obiekt' },
+    return [
+      { c: 'available',    ll: t('Wolne pokoje',     'Free rooms'),    ld: t(`4–${ROOM_COUNT} z ${ROOM_COUNT}`,     `4–${ROOM_COUNT} of ${ROOM_COUNT}`) },
+      { c: 'partial',      ll: t('Częściowo',        'Partial'),       ld: t(`2–3 z ${ROOM_COUNT}`,                 `2–3 of ${ROOM_COUNT}`) },
+      { c: 'limited',      ll: t('Ostatnie miejsca', 'Last spots'),    ld: t(`1 z ${ROOM_COUNT}`,                   `1 of ${ROOM_COUNT}`) },
+      { c: 'full',         ll: t('Brak miejsc',      'Fully booked'),  ld: t(`0 z ${ROOM_COUNT}`,                   `0 of ${ROOM_COUNT}`) },
+      { c: 'workshop',     ll: t('Warsztat / wynajem', 'Workshop / rental'), ld: t('brak rezerwacji indyw.', 'no individual stays') },
     ]
   }
-  return lang.value === 'en' ? [
-    { c: 'bookable',     ll: 'Valley free',   ld: 'min. 3 nights' },
-    { c: 'workshop',     ll: 'Our workshop',  ld: 'unavailable' },
-    { c: 'group-booked', ll: 'Other group',   ld: 'unavailable' },
-  ] : [
-    { c: 'bookable',     ll: 'Dolina wolna',  ld: 'min. 3 doby' },
-    { c: 'workshop',     ll: 'Nasz warsztat', ld: 'niedostępne' },
-    { c: 'group-booked', ll: 'Inna grupa',    ld: 'niedostępne' },
+  return [
+    { c: 'bookable', ll: t('Dolina wolna',        'Valley free'),        ld: t('min. 3 doby',  'min. 3 nights') },
+    { c: 'workshop', ll: t('Warsztaty / grupy', 'Workshops / groups'), ld: t('niedostępne', 'unavailable') },
   ]
 })
 
-// Upcoming list (workshops + group rentals)
-type UpcomingItem =
-  | { kind: 'workshop'; date: Date; endDate: Date; data: Workshop }
-  | { kind: 'group';    date: Date; endDate: Date; data: GroupRental }
-
-const upcoming = computed<UpcomingItem[]>(() => {
-  const items: UpcomingItem[] = []
-  WORKSHOPS.forEach(w => {
-    const d = parseISO(w.startISO)
-    if (d >= TODAY) items.push({ kind: 'workshop', date: d, endDate: parseISO(w.endISO), data: w })
-  })
-  GROUP_RENTALS.forEach(g => {
-    const d = parseISO(g.startISO)
-    if (d >= TODAY) items.push({ kind: 'group', date: d, endDate: parseISO(g.endISO), data: g })
-  })
-  items.sort((a, b) => a.date.getTime() - b.date.getTime())
-  return items.slice(0, 8)
-})
-
-function shortMonthGen(d: Date) {
-  return lang.value === 'en' ? MONTHS_EN[d.getMonth()]!.slice(0, 3) : MONTHS_PL_GEN[d.getMonth()]!.slice(0, 3)
-}
-
-// Actions
 function selectDay(c: CalCell) {
-  if (!c.date || !c.info || c.info.status === 'past') return
-  selectedISO.value = iso(c.date)
+  if (!c.date || !c.dISO || !c.info || c.info.status === 'past') return
+  selectedISO.value = c.dISO
 }
 function goMonth(i: number) {
   monthIdx.value = Math.max(0, Math.min(SEASON_MONTHS.length - 1, i))
@@ -407,12 +305,6 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [mode, monthIdx] })
             'See when rooms are free in the valley or when you can rent the whole property for your own workshop.'
           ) }}</p>
         </div>
-        <div class="stats">
-          <div class="s"><div class="n"><em>{{ t('maj', 'May') }}</em>—{{ t('paź', 'Oct') }}</div><div class="l">{{ t('sezon otwarty', 'season open') }}</div></div>
-          <div class="s"><div class="n">{{ WORKSHOPS.length }}</div><div class="l">{{ t('naszych warsztatów', 'our workshops') }}</div></div>
-          <div class="s"><div class="n">{{ ROOM_COUNT }}</div><div class="l">{{ t('pokoi w dużym domu', 'rooms in the big house') }}</div></div>
-          <div class="s"><div class="n">14</div><div class="l">{{ t('miejsc dla grupy', 'spots for a group') }}</div></div>
-        </div>
       </div>
     </section>
 
@@ -433,7 +325,7 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [mode, monthIdx] })
           <button
             role="tab"
             :aria-selected="mode === 'group'"
-            :class="{ active: mode === 'group', group: mode === 'group' }"
+            :class="{ active: mode === 'group' }"
             @click="mode = 'group'"
           >
             <span class="ic"><DhIcon name="meditation" :size="18" :stroke="1.4" /></span>
@@ -442,7 +334,7 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [mode, monthIdx] })
         </div>
 
         <!-- ─── MODE DESCRIPTION ────────────────────────────────── -->
-        <div class="mode-desc reveal" :class="{ group: mode === 'group' }">
+        <div class="mode-desc reveal">
           <div class="ic-wrap">
             <DhIcon :name="mode === 'individual' ? 'hands' : 'meditation'" :size="22" :stroke="1.4" />
           </div>
@@ -472,7 +364,7 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [mode, monthIdx] })
             <button :disabled="monthIdx === 0" :aria-label="t('Poprzedni miesiąc', 'Previous month')" @click="goMonth(monthIdx - 1)">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
             </button>
-            <div class="current">{{ monthLabel(currentMonth) }} {{ currentMonth.year }}</div>
+            <div class="current">{{ pick(currentMonth, 'label') }} {{ currentMonth.year }}</div>
             <button :disabled="monthIdx === SEASON_MONTHS.length - 1" :aria-label="t('Następny miesiąc', 'Next month')" @click="goMonth(monthIdx + 1)">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
             </button>
@@ -483,7 +375,7 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [mode, monthIdx] })
               :class="{ active: i === monthIdx }"
               @click="goMonth(i)"
             >
-              {{ monthShort(m) }}
+              {{ pick(m, 'short') }}
               <span v-if="monthHasWorkshop(m)" class="dot" />
             </button>
           </div>
@@ -505,16 +397,14 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [mode, monthIdx] })
                   type="button"
                   class="cal-day"
                   :class="[
-                    c.info!.status,
-                    { today: c.isToday, selected: c.selected }
+                    c.info?.status,
+                    { today: c.isToday, selected: c.dISO === selectedISO }
                   ]"
-                  :disabled="c.info!.status === 'past'"
+                  :disabled="c.info?.status === 'past'"
                   @click="selectDay(c)"
                 >
                   <div class="num">{{ c.date.getDate() }}</div>
                   <div class="meta">{{ c.meta }}</div>
-                  <div v-if="c.isWorkshopStart && c.info!.workshop" class="ws-ribbon" :title="workshopName(c.info!.workshop)">{{ workshopName(c.info!.workshop) }}</div>
-                  <div v-else-if="c.isGroupStart && c.info!.group" class="ws-ribbon" :title="groupName(c.info!.group)">{{ groupName(c.info!.group) }}</div>
                 </button>
               </template>
             </div>
@@ -552,34 +442,33 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [mode, monthIdx] })
                     <div class="d-day">{{ selectedDayName }}</div>
                   </div>
                 </div>
-                <span class="status-badge" :class="selectedInfo!.status">
+                <span class="status-badge" :class="selectedInfo?.status">
                   <span class="dot-cur" />
-                  {{ statusLabel(selectedInfo!.status) }}
+                  {{ selectedInfo ? statusLabel(selectedInfo.status) : '' }}
                 </span>
 
                 <div class="d-body">
-                  <!-- WORKSHOP -->
-                  <template v-if="selectedInfo!.status === 'workshop'">
+                  <template v-if="selectedWorkshop">
                     <p>{{ t(
                       'W tym dniu trwa nasz warsztat. Dolina jest zamknięta dla pojedynczych rezerwacji noclegowych — zapraszamy, jeśli chcesz dołączyć do programu.',
                       'Our workshop is running on this day. The valley is closed to individual bookings — you are welcome to join the programme.'
                     ) }}</p>
-                    <NuxtLink :to="`/warsztaty/${selectedInfo!.workshop!.slug}`" class="workshop-card">
-                      <img :src="selectedInfo!.workshop!.img" alt="" loading="lazy" />
+                    <NuxtLink :to="`/warsztaty/${selectedWorkshop.slug}`" class="workshop-card">
+                      <img :src="selectedWorkshop.img" alt="" loading="lazy" />
                       <div class="info">
-                        <h5>{{ workshopName(selectedInfo!.workshop!) }}</h5>
-                        <p>{{ workshopCat(selectedInfo!.workshop!) }} · {{ t('prow.', 'led by') }} {{ selectedInfo!.workshop!.instr }}</p>
+                        <h5>{{ pick(selectedWorkshop, 'name') }}</h5>
+                        <p>{{ pick(selectedWorkshop, 'cat') }} · {{ t('prow.', 'led by') }} {{ selectedWorkshop.instr }}</p>
                         <p>
-                          {{ selectedInfo!.workshop!.spots - selectedInfo!.workshop!.taken }}
+                          {{ selectedWorkshop.spots - selectedWorkshop.taken }}
                           {{ t('z', 'of') }}
-                          {{ selectedInfo!.workshop!.spots }}
+                          {{ selectedWorkshop.spots }}
                           {{ t('wolnych', 'free') }} ·
-                          {{ selectedInfo!.workshop!.price }}
+                          {{ selectedWorkshop.price }}
                         </p>
                       </div>
                     </NuxtLink>
                     <div class="actions">
-                      <NuxtLink class="btn btn-primary" :to="`/warsztaty/${selectedInfo!.workshop!.slug}`">
+                      <NuxtLink class="btn btn-primary" :to="`/warsztaty/${selectedWorkshop.slug}`">
                         {{ t('Zobacz warsztat', 'View workshop') }}
                         <DhIcon name="arrow" :size="12" :stroke="1.6" />
                       </NuxtLink>
@@ -587,8 +476,7 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [mode, monthIdx] })
                     </div>
                   </template>
 
-                  <!-- GROUP BOOKED -->
-                  <template v-else-if="selectedInfo!.status === 'group-booked'">
+                  <template v-else-if="selectedGroup">
                     <p>
                       {{ t('W tym terminie dolina jest', 'On this date the valley is') }}
                       <strong>{{ t('w całości wynajęta', 'fully rented') }}</strong>
@@ -602,8 +490,8 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [mode, monthIdx] })
                         <DhIcon name="meditation" :size="24" :stroke="1.4" />
                       </div>
                       <div class="info">
-                        <h5>{{ groupName(selectedInfo!.group!) }}</h5>
-                        <p>{{ groupType(selectedInfo!.group!) }} · {{ formatRange(parseISO(selectedInfo!.group!.startISO), parseISO(selectedInfo!.group!.endISO)) }}</p>
+                        <h5>{{ pick(selectedGroup, 'name') }}</h5>
+                        <p>{{ pick(selectedGroup, 'type') }} · {{ formatRange(selectedGroup.start, selectedGroup.end) }}</p>
                       </div>
                     </div>
                     <div class="actions">
@@ -611,11 +499,10 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [mode, monthIdx] })
                     </div>
                   </template>
 
-                  <!-- INDIVIDUAL: rooms grid (not full) -->
-                  <template v-else-if="selectedRooms && selectedInfo!.status !== 'full'">
+                  <template v-else-if="selectedRooms && selectedFree && selectedInfo?.status !== 'full'">
                     <p>
                       {{ t('Wolne pokoje w Dużym Domu:', 'Free rooms in the Big House:') }}
-                      <strong>{{ selectedInfo!.free }} {{ t('z', 'of') }} {{ selectedInfo!.total }}</strong>.
+                      <strong>{{ selectedFree.free }} {{ t('z', 'of') }} {{ selectedFree.total }}</strong>.
                       {{ t('Cena za pokój:', 'Per room:') }}
                       <strong>{{ t('od 320 zł / doba', 'from 320 zł / night') }}</strong>
                       {{ t('(śniadanie wliczone).', '(breakfast included).') }}
@@ -639,8 +526,7 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [mode, monthIdx] })
                     </div>
                   </template>
 
-                  <!-- FULL -->
-                  <template v-else-if="selectedInfo!.status === 'full'">
+                  <template v-else-if="selectedInfo?.status === 'full'">
                     <p>{{ t(
                       'Wszystkie pokoje są w tym dniu zajęte. Sprawdź sąsiednie terminy — okolice tygodnia mają zwykle większą dostępność.',
                       'All rooms are taken on this day. Check neighbouring dates — weekdays usually have more availability.'
@@ -650,8 +536,7 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [mode, monthIdx] })
                     </div>
                   </template>
 
-                  <!-- GROUP MODE: available -->
-                  <template v-else-if="mode === 'group' && selectedInfo!.status === 'available'">
+                  <template v-else-if="mode === 'group' && selectedInfo?.status === 'available'">
                     <p>
                       {{ t('Dolina jest', 'The valley is') }}
                       <strong>{{ t('otwarta do wynajmu', 'open for rental') }}</strong>
@@ -690,15 +575,11 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [mode, monthIdx] })
 
             <!-- Month stats -->
             <div class="side-card">
-              <h3>{{ monthLabel(currentMonth) }} {{ t('w skrócie', 'at a glance') }}</h3>
+              <h3>{{ pick(currentMonth, 'label') }} {{ t('w skrócie', 'at a glance') }}</h3>
               <div class="month-stats">
                 <div class="stat-row">
-                  <span>{{ t('Dni z naszymi warsztatami', 'Days with our workshops') }}</span>
+                  <span>{{ t('Dni z warsztatami i grupami', 'Days with workshops / groups') }}</span>
                   <strong>{{ monthStats.workshopDays }}</strong>
-                </div>
-                <div class="stat-row">
-                  <span>{{ t('Dni wynajęte przez grupy', 'Days booked by groups') }}</span>
-                  <strong>{{ monthStats.groupDays }}</strong>
                 </div>
                 <div class="stat-row last">
                   <span>{{ mode === 'individual' ? t('Dni z dostępnymi pokojami', 'Days with rooms available') : t('Dni wolne do wynajmu', 'Days free for rental') }}</span>
@@ -707,60 +588,6 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [mode, monthIdx] })
               </div>
             </div>
 
-          </div>
-        </div>
-
-        <!-- ─── UPCOMING ─────────────────────────────────────────── -->
-        <div class="upcoming">
-          <div class="upcoming-head">
-            <h2>{{ t('Najbliższe terminy', 'Upcoming dates') }}</h2>
-            <NuxtLink class="btn btn-secondary" to="/warsztaty">
-              {{ t('Pełen kalendarz warsztatów', 'Full workshop calendar') }}
-              <DhIcon name="arrow" :size="14" :stroke="1.6" />
-            </NuxtLink>
-          </div>
-          <div class="upcoming-list">
-            <template v-for="(it, i) in upcoming" :key="i">
-              <NuxtLink v-if="it.kind === 'workshop'" :to="`/warsztaty/${it.data.slug}`" class="up-row">
-                <div class="day-block">
-                  {{ it.date.getDate() }}
-                  <small>{{ shortMonthGen(it.date) }} {{ it.date.getFullYear() }}</small>
-                </div>
-                <div class="nm-col">
-                  <div class="nm">{{ workshopName(it.data) }}</div>
-                  <div class="nm-sub">{{ formatRange(it.date, it.endDate) }} · {{ t('prow.', 'led by') }} {{ it.data.instr }}</div>
-                </div>
-                <span class="pill workshop">
-                  <DhIcon name="meditation" :size="12" :stroke="1.6" />
-                  {{ t('Warsztat', 'Workshop') }} · {{ workshopCat(it.data) }}
-                </span>
-                <div class="price-mini">
-                  {{ it.data.price }}
-                  <small>
-                    {{ it.data.spots - it.data.taken === 0
-                       ? t('brak miejsc', 'fully booked')
-                       : `${it.data.spots - it.data.taken} ${t('z', 'of')} ${it.data.spots} ${t('wolnych', 'free')}` }}
-                  </small>
-                </div>
-                <div class="cta-mini">{{ t('Szczegóły', 'Details') }} →</div>
-              </NuxtLink>
-              <div v-else class="up-row static">
-                <div class="day-block">
-                  {{ it.date.getDate() }}
-                  <small>{{ shortMonthGen(it.date) }} {{ it.date.getFullYear() }}</small>
-                </div>
-                <div class="nm-col">
-                  <div class="nm">{{ groupName(it.data) }}</div>
-                  <div class="nm-sub">{{ formatRange(it.date, it.endDate) }} · {{ groupType(it.data) }}</div>
-                </div>
-                <span class="pill group">
-                  <DhIcon name="hands" :size="12" :stroke="1.6" />
-                  {{ t('Grupa zamknięta', 'Closed group') }}
-                </span>
-                <div class="price-mini muted">{{ t('niedostępne', 'unavailable') }}</div>
-                <div class="cta-mini muted">—</div>
-              </div>
-            </template>
           </div>
         </div>
 
@@ -775,7 +602,7 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [mode, monthIdx] })
             ) }}</p>
           </div>
           <div class="actions">
-            <a class="btn btn-gold" href="mailto:dolina@harmonii.pl">dolina@harmonii.pl <DhIcon name="arrow" :size="12" :stroke="1.6" /></a>
+            <a class="btn btn-gold" href="mailto:dolinaharmonii@gmail.com">dolinaharmonii@gmail.com <DhIcon name="arrow" :size="12" :stroke="1.6" /></a>
             <NuxtLink class="btn btn-glass" to="/dojazd">{{ t('Dojazd', 'Getting here') }}</NuxtLink>
           </div>
         </div>
@@ -812,22 +639,6 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [mode, monthIdx] })
   color: rgba(253,251,247,0.72);
   line-height: 1.5;
 }
-.cal-hero .stats {
-  display: flex; gap: 56px; margin-top: 40px;
-  padding-top: 24px;
-  border-top: 1px solid rgba(253,251,247,0.15);
-  flex-wrap: wrap;
-}
-.cal-hero .stats .s .n {
-  font-family: var(--serif); font-size: 32px; color: var(--bg-primary);
-  line-height: 1; font-weight: 500;
-}
-.cal-hero .stats .s .n em { color: var(--cta-main); font-style: normal; }
-.cal-hero .stats .s .l {
-  font-family: var(--mono); font-size: 10px; letter-spacing: .12em;
-  text-transform: uppercase; color: rgba(253,251,247,0.5); margin-top: 8px;
-}
-
 /* ─── MODE SWITCH ───────────────────────────────────────────── */
 .mode-switch {
   display: inline-flex;
@@ -854,10 +665,6 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [mode, monthIdx] })
   color: var(--bg-primary);
   box-shadow: 0 2px 8px rgba(85,107,47,0.25);
 }
-.mode-switch button.active.group {
-  background: var(--accent-earth);
-  box-shadow: 0 2px 8px rgba(107,66,38,0.25);
-}
 .mode-switch .ic { width: 18px; height: 18px; display: inline-flex; }
 
 /* ─── MODE DESCRIPTION ──────────────────────────────────────── */
@@ -870,7 +677,6 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [mode, monthIdx] })
   margin-bottom: 40px;
   display: flex; gap: 24px; align-items: flex-start;
 }
-.mode-desc.group { border-left-color: var(--accent-earth); }
 .mode-desc .ic-wrap {
   flex-shrink: 0;
   width: 48px; height: 48px;
@@ -878,10 +684,6 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [mode, monthIdx] })
   background: rgba(139,154,103,0.18);
   color: var(--brand-primary);
   display: flex; align-items: center; justify-content: center;
-}
-.mode-desc.group .ic-wrap {
-  background: rgba(107,66,38,0.12);
-  color: var(--accent-earth);
 }
 .mode-desc .txt h3 {
   font-family: var(--serif); font-size: 22px; font-style: italic;
@@ -1069,8 +871,8 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [mode, monthIdx] })
 .cal-day.workshop .meta { color: rgba(253,251,247,0.85); font-weight: 600; }
 
 .cal-day.group-booked {
-  background: var(--accent-earth);
-  border-color: var(--accent-earth-deep);
+  background: var(--brand-primary);
+  border-color: var(--brand-deep);
 }
 .cal-day.group-booked .num { color: var(--bg-primary); }
 .cal-day.group-booked .meta { color: rgba(253,251,247,0.85); font-weight: 600; }
@@ -1081,23 +883,6 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [mode, monthIdx] })
 }
 .cal-day.full .num { color: var(--bg-primary); }
 .cal-day.full .meta { color: rgba(253,251,247,0.85); font-weight: 600; }
-
-.cal-day .ws-ribbon {
-  position: absolute;
-  left: 4px; right: 4px;
-  bottom: 6px;
-  font-family: var(--sans);
-  font-size: 9px;
-  line-height: 1.2;
-  font-weight: 600;
-  letter-spacing: .02em;
-  color: rgba(253,251,247,0.92);
-  text-transform: uppercase;
-  text-align: left;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
 
 /* ─── SIDEBAR ───────────────────────────────────────────────── */
 .cal-sidebar {
@@ -1145,7 +930,7 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [mode, monthIdx] })
 .legend-swatch.partial      { background: rgba(217,174,86,0.12); border-color: rgba(217,174,86,0.40); }
 .legend-swatch.limited      { background: rgba(201,123,74,0.14); border-color: rgba(201,123,74,0.42); }
 .legend-swatch.workshop     { background: var(--brand-primary); border-color: var(--brand-deep); }
-.legend-swatch.group-booked { background: var(--accent-earth); border-color: var(--accent-earth-deep); }
+.legend-swatch.group-booked { background: var(--brand-primary); border-color: var(--brand-deep); }
 .legend-swatch.full         { background: var(--text-muted); border-color: var(--text-main); }
 .legend-swatch.bookable     { background: rgba(139,154,103,0.10); border-color: rgba(139,154,103,0.35); }
 .legend-item .ll { font-weight: 500; }
@@ -1194,7 +979,7 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [mode, monthIdx] })
 .status-badge.partial      { background: rgba(217,174,86,0.20); color: var(--gold-muted); }
 .status-badge.limited      { background: rgba(201,123,74,0.22); color: #8C3D17; }
 .status-badge.workshop     { background: var(--brand-primary); color: var(--bg-primary); }
-.status-badge.group-booked { background: var(--accent-earth); color: var(--bg-primary); }
+.status-badge.group-booked { background: var(--brand-primary); color: var(--bg-primary); }
 .status-badge.full         { background: var(--text-muted); color: var(--bg-primary); }
 
 .day-detail .d-body p {
@@ -1285,84 +1070,6 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [mode, monthIdx] })
 .stat-row span { color: var(--text-muted); }
 .stat-row strong.hl { color: var(--brand-primary); }
 
-/* ─── UPCOMING ──────────────────────────────────────────────── */
-.upcoming { margin-top: 80px; }
-.upcoming-head {
-  display: flex; justify-content: space-between; align-items: end;
-  margin-bottom: 28px; gap: 16px; flex-wrap: wrap;
-}
-.upcoming-head h2 {
-  font-style: italic; font-size: clamp(28px, 3vw, 40px);
-}
-.upcoming-list {
-  display: flex; flex-direction: column; gap: 12px;
-}
-.up-row {
-  display: grid;
-  grid-template-columns: 90px 1fr 200px 160px 120px;
-  gap: 24px; align-items: center;
-  padding: 20px 24px;
-  background: var(--bg-card);
-  border: 1px solid var(--line);
-  border-radius: var(--r-md);
-  text-decoration: none; color: inherit;
-  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
-}
-a.up-row:hover {
-  border-color: var(--brand-primary);
-  transform: translateX(3px);
-  box-shadow: var(--shadow-sm);
-}
-.up-row.static { cursor: default; }
-.up-row .day-block {
-  font-family: var(--serif); font-size: 28px; line-height: 1;
-  color: var(--brand-deep); font-weight: 500;
-}
-.up-row .day-block small {
-  display: block;
-  font-family: var(--mono); font-size: 10px;
-  color: var(--text-muted); letter-spacing: .12em;
-  text-transform: uppercase; margin-top: 6px;
-}
-.up-row .nm-col .nm {
-  font-family: var(--serif); font-size: 20px;
-  color: var(--brand-primary); margin-bottom: 4px;
-}
-.up-row .nm-col .nm-sub {
-  font-family: var(--mono); font-size: 10px; letter-spacing: .12em;
-  text-transform: uppercase; color: var(--text-muted);
-}
-.up-row .pill {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 6px 12px;
-  border-radius: var(--r-pill);
-  font-size: 11px; font-weight: 600;
-  letter-spacing: .04em;
-}
-.up-row .pill.workshop { background: rgba(85,107,47,0.15); color: var(--brand-deep); }
-.up-row .pill.group    { background: rgba(107,66,38,0.15); color: var(--accent-earth-deep); }
-.up-row .price-mini {
-  font-family: var(--serif); font-size: 22px;
-  color: var(--brand-primary); text-align: right;
-}
-.up-row .price-mini small {
-  display: block; font-family: var(--mono); font-size: 10px;
-  color: var(--text-muted); letter-spacing: .08em;
-  text-transform: uppercase; margin-top: 4px;
-  font-family: var(--mono);
-}
-.up-row .price-mini.muted {
-  font-size: 14px; color: var(--text-muted);
-  font-family: var(--mono); letter-spacing: .06em;
-  text-transform: uppercase;
-}
-.up-row .cta-mini {
-  text-align: right; font-family: var(--mono); font-size: 11px;
-  letter-spacing: .1em; text-transform: uppercase;
-  color: var(--accent-earth);
-}
-.up-row .cta-mini.muted { color: var(--text-muted); }
-
 /* ─── CTA BAR ───────────────────────────────────────────────── */
 .cta-bar {
   margin-top: 80px;
@@ -1407,8 +1114,6 @@ a.up-row:hover {
   .cal-layout { grid-template-columns: 1fr; }
   .cal-sidebar { position: static; }
   .month-nav { flex-wrap: wrap; }
-  .up-row { grid-template-columns: 70px 1fr; }
-  .up-row > *:nth-child(n+3) { display: none; }
 }
 @media (max-width: 720px) {
   .cal-hero { padding: 130px 0 56px; }
@@ -1418,7 +1123,6 @@ a.up-row:hover {
   .cal-day { padding: 6px; }
   .cal-day .num { font-size: 16px; }
   .cal-day .meta { font-size: 8px; }
-  .cal-day .ws-ribbon { display: none; }
   .month-nav .current { font-size: 28px; min-width: auto; }
   .mode-switch { width: 100%; }
   .mode-switch button { padding: 12px 14px; font-size: 12px; flex: 1; justify-content: center; }

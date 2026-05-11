@@ -72,7 +72,7 @@ onUnmounted(() => {
 <template>
   <nav class="nav-pill" :class="{ 'is-open': open }">
     <NuxtLink class="brand" to="/" @click="open = false">
-      <DhIcon name="seed" :size="24" :stroke="1.4" />
+      <DhIcon name="seed" :size="32" :stroke="1.4" />
       <span class="brand-name">Dolina Harmonii</span>
     </NuxtLink>
 
