@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'dolina-front',
-      port: '3000',,
+      port: '3000',
       
       script: './.output/server/index.mjs',
       instances: 'max',
