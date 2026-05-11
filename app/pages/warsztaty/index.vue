@@ -195,10 +195,14 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [view, cat, month, q, sort] })
               <div><div class="fk">{{ t('Cena', 'Price') }}</div><div class="fv">1 480 zł</div></div>
               <div><div class="fk">{{ t('Wolne', 'Available') }}</div><div class="fv">{{ t('4 z 12 miejsc', '4 of 12 spots') }}</div></div>
             </div>
-            <div style="display:flex;gap:12px">
+            <div style="display:flex;gap:12px;flex-wrap:wrap">
               <NuxtLink class="btn btn-secondary" to="/warsztaty/mindfulness-w-naturze">
                 {{ t('Szczegóły', 'Details') }}
                 <DhIcon name="arrow" :size="14" :stroke="1.6" />
+              </NuxtLink>
+              <NuxtLink class="btn btn-primary" to="/kalendarz">
+                <DhIcon name="calendar" :size="14" :stroke="1.6" />
+                {{ t('Kalendarz dostępności', 'Availability calendar') }}
               </NuxtLink>
             </div>
           </div>

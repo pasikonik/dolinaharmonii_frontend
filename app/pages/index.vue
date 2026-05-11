@@ -432,6 +432,10 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
               {{ t('Wszystkie warsztaty', 'All workshops') }}
               <DhIcon name="arrow" :size="18" :stroke="1.6" />
             </NuxtLink>
+            <NuxtLink class="btn btn-primary" to="/kalendarz">
+              <DhIcon name="calendar" :size="18" :stroke="1.6" />
+              {{ t('Kalendarz dostępności', 'Availability calendar') }}
+            </NuxtLink>
           </div>
         </template>
       </div>
@@ -985,7 +989,10 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
 }
 
 .all-workshops-cta {
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
   margin-top: 56px;
 }
 
