@@ -8,6 +8,12 @@ interface ImageOptions {
   fit?: 'cover' | 'contain' | 'fill' | 'inside' | 'outside'
 }
 
+interface Availability {
+  room_id: string
+  start_date: string
+  end_date: string
+}
+
 export function useDirectus() {
   const config = useRuntimeConfig()
   const baseURL = config.public.directusUrl
@@ -30,6 +36,13 @@ export function useDirectus() {
       filter: { status: { _eq: 'published' } },
       sort: 'start_date',
       ...params,
+    })
+  }
+
+  function getAvailability(roomId: string) {
+    return get<DirectusResponse<Availability[]>>('/items/room_availability', {
+      filter: { room_id: { _eq: roomId } },
+      fields: ['start_date', 'end_date'],
     })
   }
 
@@ -78,5 +91,6 @@ export function useDirectus() {
     getCategories,
     getPricing,
     getImageUrl,
+    getAvailability,
   }
 }
