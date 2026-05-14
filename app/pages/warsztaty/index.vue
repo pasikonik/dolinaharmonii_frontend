@@ -184,7 +184,7 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [view, cat, month, q, sort] })
               <DhIcon name="star" :size="12" :stroke="1.6" />
               {{ t('Najbliższe wydarzenie', 'Next event') }}
             </span>
-            <img src="https://images.unsplash.com/photo-1545389336-cf090694435e?auto=format&fit=crop&w=1400&q=80" alt="" />
+            <NuxtImg src="https://images.unsplash.com/photo-1545389336-cf090694435e?auto=format&fit=crop&w=1400&q=80" alt="" />
           </div>
           <div class="feat-body">
             <span class="eyebrow">Mindfulness</span>
@@ -296,7 +296,7 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [view, cat, month, q, sort] })
             :style="{ transitionDelay: `${i * 30}ms` }"
           >
             <div class="img-wrap">
-              <img :src="w.img" :alt="w.name" loading="lazy" />
+              <NuxtImg :src="w.img" :alt="w.name" loading="lazy" />
               <span class="month-tag">{{ w.day }} {{ monthShort(w) }}</span>
             </div>
             <div class="wks-info-col">
@@ -309,7 +309,7 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [view, cat, month, q, sort] })
               <p class="wrow-desc">{{ w.desc }}</p>
               <div class="row-meta">
                 <span class="instr-line">
-                  <img :src="getPerson(w.instr).photo" :alt="getPerson(w.instr).name" loading="lazy" />
+                  <NuxtImg :src="getPerson(w.instr).photo" :alt="getPerson(w.instr).name" loading="lazy" />
                   {{ getPerson(w.instr).name }}
                 </span>
               </div>
@@ -338,7 +338,7 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [view, cat, month, q, sort] })
             :style="{ transitionDelay: `${i * 30}ms` }"
           >
             <div class="card-ph">
-              <img :src="w.img" :alt="w.name" loading="lazy" />
+              <NuxtImg :src="w.img" :alt="w.name" loading="lazy" />
               <span class="month-tag">{{ monthShort(w) }}</span>
               <span class="cat-tag">
                 <DhIcon :name="w.icon" :size="12" :stroke="1.6" />
@@ -350,7 +350,7 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [view, cat, month, q, sort] })
               <h3>{{ w.name }}</h3>
               <p class="card-desc">{{ w.desc }}</p>
               <div class="card-instr">
-                <img :src="getPerson(w.instr).photo" :alt="getPerson(w.instr).name" loading="lazy" />
+                <NuxtImg :src="getPerson(w.instr).photo" :alt="getPerson(w.instr).name" loading="lazy" />
                 {{ t('Prow.', 'Led by') }} {{ getPerson(w.instr).name }}
               </div>
               <div class="card-foot">
@@ -385,7 +385,7 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [view, cat, month, q, sort] })
                   </span>
                 </div>
                 <div class="cal-instr">
-                  <img :src="getPerson(w.instr).photo" :alt="getPerson(w.instr).name" loading="lazy" />
+                  <NuxtImg :src="getPerson(w.instr).photo" :alt="getPerson(w.instr).name" loading="lazy" />
                   <span>{{ getPerson(w.instr).name }}</span>
                 </div>
                 <div class="cal-price">{{ w.price }}</div>

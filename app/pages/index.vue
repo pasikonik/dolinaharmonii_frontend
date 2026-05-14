@@ -4,19 +4,25 @@ import { DEFAULT_PRICING } from '~~/types/directus'
 const { getWorkshops, getImageUrl, getPricing, getMainGallery } = useDirectus()
 const { lang, t } = useLang()
 
-const { data, error: workshopsError } = await useAsyncData('workshops-home', () => getWorkshops({ limit: 3 }))
-const workshops = computed(() => data.value?.data ?? [])
-
-const { data: pricingData } = await useAsyncData('prices', async () => {
-  try { return await getPricing() } catch { return null }
+const { data: homeData, error: homeError } = await useAsyncData('home-data', async () => {
+  const [workshopsRes, pricingRes, galleryRes] = await Promise.all([
+    getWorkshops({ limit: 3 }).catch(() => null),
+    getPricing().catch(() => null),
+    getMainGallery().catch(() => null)
+  ])
+  return {
+    workshops: workshopsRes?.data ?? [],
+    pricing: pricingRes?.data ?? null,
+    gallery: galleryRes?.data ?? []
+  }
 })
-const p = computed(() => pricingData.value?.data ?? DEFAULT_PRICING)
 
-const { data: galleryData } = await useAsyncData('main-gallery', async () => {
-  try { return await getMainGallery() } catch { return null }
-})
+const workshopsError = homeError
+const workshops = computed(() => homeData.value?.workshops ?? [])
+const p = computed(() => homeData.value?.pricing ?? DEFAULT_PRICING)
+
 const galleryImages = computed(() =>
-  (galleryData.value?.data ?? []).map(g => ({
+  (homeData.value?.gallery ?? []).map(g => ({
     thumb: getImageUrl(g.image, { width: 800 }),
     full:  getImageUrl(g.image, { width: 1800, quality: 85 }),
     title: g.title ?? '',
@@ -224,7 +230,7 @@ const TEAM_RAW = [
 
 const TEAM = computed(() => TEAM_RAW.map(m => ({ name: m.name, role: t(m.role_pl, m.role_en), img: m.img })))
 
-const { data: instaData } = await useAsyncData('instagram', () => $fetch('/api/instagram'))
+const { data: instaData } = useLazyAsyncData('instagram', () => $fetch('/api/instagram'))
 const instaLive = computed(() => (instaData.value as any)?.live === true)
 const instaPosts = computed(() => (instaData.value as any)?.posts ?? [])
 
@@ -358,7 +364,7 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
             </div>
           </div>
           <div class="reveal intro-image-wrap">
-            <img src="/dom-4.avif"
+            <NuxtImg src="/dom-4.avif"
               :alt="t('Wnętrze drewnianego domu', 'Interior of the wooden house')" class="intro-main-img" />
             <div class="intro-badge">
               <div class="badge-head">
@@ -399,7 +405,7 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
             :style="{ transitionDelay: `${i * 60}ms` }"
           >
             <div class="blessing-num">{{ String(i + 1).padStart(2, '0') }}</div>
-            <img :src="b.img" alt="" class="blessing-icon" loading="lazy" />
+            <NuxtImg :src="b.img" alt="" class="blessing-icon" loading="lazy" />
             <div class="blessing-text">
               <h4 class="blessing-name">{{ t(b.name_pl, b.name_en) }}</h4>
               <p class="blessing-desc">{{ t(b.desc_pl, b.desc_en) }}</p>
@@ -435,7 +441,7 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
           <div class="workshop-grid">
             <NuxtLink v-for="(w, i) in displayWorkshops" :key="i" :to="`/warsztaty/${w.slug}`"
               class="workshop-card reveal" :style="{ transitionDelay: `${i * 60}ms` }">
-              <img class="img" :src="w.img" :alt="w.name" />
+              <NuxtImg class="img" :src="w.img" :alt="w.name" />
               <div class="body">
                 <div class="head-row">
                   <span class="chip">{{ w.cat }}</span>
@@ -479,8 +485,8 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
         </div>
         <div v-for="(a, i) in ACCOMMODATIONS" :key="i" class="accommodation reveal" :class="{ reverse: i % 2 === 1 }">
           <div class="acc-imgs">
-            <img class="main" :src="a.main" :alt="a.name" />
-            <img class="small" :src="a.small" alt="" />
+            <NuxtImg class="main" :src="a.main" :alt="a.name" />
+            <NuxtImg class="small" :src="a.small" alt="" />
           </div>
           <div class="acc-text">
             <span class="num">{{ a.num }}</span>
@@ -555,7 +561,7 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
             </div>
           </div>
           <div class="reveal region-img-wrap">
-            <img src="/kopaniec.avif"
+            <NuxtImg src="/kopaniec.avif"
               :alt="t('Góry Izerskie', 'Izera Mountains')" />
           </div>
         </div>
@@ -582,7 +588,7 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
             :aria-label="g.title || t('Otwórz zdjęcie', 'Open image')"
             @click="openLightbox(i)"
           >
-            <img :src="g.thumb" :alt="g.title" loading="lazy" />
+            <NuxtImg :src="g.thumb" :alt="g.title" loading="lazy" />
           </button>
         </div>
         <div v-if="galleryImages.length" class="gallery-cta reveal">
@@ -599,7 +605,7 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
     <Teleport to="body">
       <div v-if="lightboxIndex !== null" class="lightbox open" @click="closeLightbox">
         <button class="lightbox-nav prev" :aria-label="t('Poprzednie', 'Previous')" @click.stop="prevImg">‹</button>
-        <img :src="galleryImages[lightboxIndex].full" :alt="galleryImages[lightboxIndex].title" @click.stop />
+        <NuxtImg :src="galleryImages[lightboxIndex]?.full" :alt="galleryImages[lightboxIndex]?.title" @click.stop />
         <button class="lightbox-nav next" :aria-label="t('Następne', 'Next')" @click.stop="nextImg">›</button>
         <button class="lightbox-close" :aria-label="t('Zamknij', 'Close')" @click="closeLightbox">×</button>
         <div class="lightbox-counter">{{ lightboxIndex + 1 }} / {{ galleryImages.length }}</div>
@@ -619,7 +625,7 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
         </div>
         <div class="team-grid reveal">
           <div v-for="(m, i) in TEAM" :key="i" class="team-member">
-            <img class="photo" :src="m.img" :alt="m.name" loading="lazy" />
+            <NuxtImg class="photo" :src="m.img" :alt="m.name" loading="lazy" />
             <h4>{{ m.name }}</h4>
             <span class="role">{{ m.role }}</span>
           </div>
@@ -718,7 +724,7 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
             rel="noopener"
             class="insta-post"
           >
-            <img :src="post.img" alt="" loading="lazy" />
+            <NuxtImg :src="post.img" alt="" loading="lazy" />
             <div class="insta-overlay">
               <p>{{ post.caption }}</p>
             </div>

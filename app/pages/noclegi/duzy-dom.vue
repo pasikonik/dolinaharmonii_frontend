@@ -226,7 +226,7 @@ useScrollReveal({ threshold: 0.08 })
   <div class="duzy-dom-page">
     <!-- ─── HERO ──────────────────────────────────────────────────── -->
     <header class="hero-sub">
-      <img class="bg" src="https://images.unsplash.com/photo-1542718610-a1d656d1884c?auto=format&fit=crop&w=2000&q=80" alt="" />
+      <NuxtImg class="bg" src="https://images.unsplash.com/photo-1542718610-a1d656d1884c?auto=format&fit=crop&w=2000&q=80" alt="" />
       <div class="container">
         <div class="crumb">Noclegi / Obiekt 01</div>
         <h1>Duży Dom</h1>
@@ -272,9 +272,9 @@ useScrollReveal({ threshold: 0.08 })
           </div>
           <div class="reveal">
             <div class="img-stack">
-              <img class="tall" src="/kwiecisty-4.avif" alt="Pokój Kwiecisty — wnętrze" />
-              <img src="/magiczny-1.avif" alt="Pokój Magiczny — poddasze" />
-              <img src="/sloneczny-1.avif" alt="Pokój Słoneczny" />
+              <NuxtImg class="tall" src="/kwiecisty-4.avif" alt="Pokój Kwiecisty — wnętrze" />
+              <NuxtImg src="/magiczny-1.avif" alt="Pokój Magiczny — poddasze" />
+              <NuxtImg src="/sloneczny-1.avif" alt="Pokój Słoneczny" />
             </div>
           </div>
         </div>
@@ -324,7 +324,7 @@ useScrollReveal({ threshold: 0.08 })
                 class="slide"
                 :class="{ active: k === sliderIndexes[i] }"
               >
-                <img
+                <NuxtImg
                   v-if="shouldRender(i, k)"
                   :src="src"
                   :alt="`${r.name} — zdjęcie ${k+1}`"
@@ -348,7 +348,7 @@ useScrollReveal({ threshold: 0.08 })
             <!-- Body -->
             <div class="room-body">
               <div class="room-header">
-                <img class="room-thumb" :src="r.thumb" :alt="r.name" loading="lazy" />
+                <NuxtImg class="room-thumb" :src="r.thumb" :alt="r.name" loading="lazy" />
                 <div class="room-header-text">
                   <span class="room-who">{{ r.who }}</span>
                   <h3 class="room-name">{{ r.name }}</h3>

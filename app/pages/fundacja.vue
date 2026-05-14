@@ -365,7 +365,7 @@ const activePillar = computed(() => COMPASS[activeCompass.value])
             >
               <span class="tab-num">0{{ i + 1 }}</span>
               <span class="tab-ic">
-                <img :src="p.img" :alt="t(p.title_pl, p.title_en)" loading="lazy" />
+                <NuxtImg :src="p.img" :alt="t(p.title_pl, p.title_en)" loading="lazy" />
               </span>
               <span class="tab-title">{{ t(p.title_pl, p.title_en) }}</span>
               <span class="tab-arrow" aria-hidden="true">→</span>
@@ -375,7 +375,7 @@ const activePillar = computed(() => COMPASS[activeCompass.value])
           <article class="compass-panel" :key="activeCompass">
             <div class="panel-head">
               <span class="panel-icon">
-                <img :src="activePillar!.img" :alt="t(activePillar!.title_pl, activePillar!.title_en)" />
+                <NuxtImg :src="activePillar!.img" :alt="t(activePillar!.title_pl, activePillar!.title_en)" />
               </span>
               <div>
                 <span class="panel-eyebrow">0{{ activeCompass + 1 }} · {{ t('Kierunkowskaz', 'Waymark') }}</span>

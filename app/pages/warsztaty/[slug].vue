@@ -263,7 +263,7 @@ const relatedWorkshops = computed(() =>
             <div v-if="instructor" class="instructor-card reveal">
               <span class="inst-label">Prowadzący</span>
               <div class="inst-head">
-                <img
+                <NuxtImg
                   v-if="instructor.photo"
                   class="photo"
                   :src="getImageUrl(instructor.photo, { width: 200, height: 200, fit: 'cover' })"
@@ -300,7 +300,7 @@ const relatedWorkshops = computed(() =>
                   :to="`/warsztaty/${w.slug}`"
                   class="related-item"
                 >
-                  <img v-if="w.img" :src="w.img" alt="" />
+                  <NuxtImg v-if="w.img" :src="w.img" alt="" />
                   <div class="related-meta">
                     <div class="related-title">{{ w.title }}</div>
                     <div class="related-date">{{ w.date }}</div>
@@ -318,12 +318,12 @@ const relatedWorkshops = computed(() =>
       <div class="container">
         <div class="w-gallery-strip" :class="{ 'single': galleryImages.length === 1 }">
           <div class="gallery-main" @click="openLightbox(0)">
-            <img :src="galleryImages[0]" alt="" />
+            <NuxtImg :src="galleryImages[0]" alt="" />
           </div>
           <div v-if="galleryImages.length >= 3" class="right-stack">
-            <div @click="openLightbox(1)"><img :src="galleryImages[1]" alt="" /></div>
+            <div @click="openLightbox(1)"><NuxtImg :src="galleryImages[1]" alt="" /></div>
             <div class="gallery-more" @click="openLightbox(2)">
-              <img :src="galleryImages[2]" alt="" />
+              <NuxtImg :src="galleryImages[2]" alt="" />
               <div v-if="galleryImages.length > 3" class="more-overlay">+ {{ galleryImages.length - 3 }} zdjęć</div>
             </div>
           </div>
@@ -335,7 +335,7 @@ const relatedWorkshops = computed(() =>
     <Teleport to="body">
       <div v-if="lightboxIndex !== null" class="lightbox open" @click="closeLightbox">
         <button class="lightbox-nav prev" @click.stop="prevImg">‹</button>
-        <img :src="galleryImages[lightboxIndex]" alt="" @click.stop />
+        <NuxtImg :src="galleryImages[lightboxIndex]" alt="" @click.stop />
         <button class="lightbox-nav next" @click.stop="nextImg">›</button>
         <button class="lightbox-close" @click="closeLightbox">×</button>
         <div class="lightbox-counter">{{ lightboxIndex + 1 }} / {{ galleryImages.length }}</div>

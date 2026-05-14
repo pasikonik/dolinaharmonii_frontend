@@ -1,4 +1,4 @@
-export default defineEventHandler(async () => {
+export default defineCachedEventHandler(async () => {
   const token = process.env.INSTAGRAM_ACCESS_TOKEN
 
   if (!token) {
@@ -30,4 +30,4 @@ export default defineEventHandler(async () => {
   catch {
     return { live: false, posts: [] }
   }
-})
+}, { maxAge: 3600 })
