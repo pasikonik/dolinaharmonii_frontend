@@ -218,7 +218,7 @@ const ACCOMMODATIONS = computed(() => ACCOM_RAW.map(a => ({
 const TEAM_RAW = [
   { name: 'Danuta', role_pl: 'Założycielka', role_en: 'Founder', img: '/dana.avif' },
   { name: 'Filip', role_pl: 'Gospodarz', role_en: 'Host', img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80' },
-  { name: 'Kulka', role_pl: 'Gospodarz', role_en: 'Host', img: '/kulka.avif' },
+  { name: 'Kulka', role_pl: 'Gospodyni', role_en: 'Host', img: '/kulka.avif' },
   { name: 'Jędrzej', role_pl: 'Cieśla', role_en: 'Carpenter', img: '/Jedrzej.avif' },
 ]
 
@@ -435,19 +435,23 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
           <div class="workshop-grid">
             <NuxtLink v-for="(w, i) in displayWorkshops" :key="i" :to="`/warsztaty/${w.slug}`"
               class="workshop-card reveal" :style="{ transitionDelay: `${i * 60}ms` }">
-              <img class="img" :src="w.img" :alt="w.name" />
+              <div class="img-wrap">
+                <img :src="w.img" :alt="w.name" loading="lazy" />
+                <span v-if="w.cat" class="cat-chip">{{ w.cat }}</span>
+                <span v-if="w.date" class="date-chip">
+                  <DhIcon name="calendar" :size="12" :stroke="1.6" />
+                  {{ w.date }}
+                </span>
+              </div>
               <div class="body">
-                <div class="head-row">
-                  <span class="chip">{{ w.cat }}</span>
-                  <span class="icon-wrap">
-                    <DhIcon name="meditation" :size="36" :stroke="1.4" />
-                  </span>
-                </div>
                 <h4>{{ w.name }}</h4>
                 <p>{{ w.desc }}</p>
-                <div class="meta">
-                  <span v-if="w.dur">{{ w.dur }}</span>
-                  <span v-if="w.date">· {{ w.date }}</span>
+                <div class="foot">
+                  <span v-if="w.dur" class="dur">{{ w.dur }}</span>
+                  <span class="more">
+                    {{ t('Zobacz warsztat', 'View workshop') }}
+                    <DhIcon name="arrow" :size="14" :stroke="1.6" />
+                  </span>
                 </div>
               </div>
             </NuxtLink>
@@ -969,67 +973,171 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: transform .3s, box-shadow .3s;
   text-decoration: none;
   color: inherit;
   cursor: pointer;
+  position: relative;
+  isolation: isolate;
+  box-shadow: var(--shadow-sm);
+  transition: transform .35s cubic-bezier(.2,.7,.2,1),
+              box-shadow .35s cubic-bezier(.2,.7,.2,1),
+              border-color .35s ease;
+}
+
+.workshop-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, transparent 30%, rgba(85,107,47,0.55) 70%, rgba(217,174,86,0.55) 100%);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+          mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  opacity: 0;
+  transition: opacity .35s ease;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .workshop-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-6px);
+  box-shadow: 0 14px 28px rgba(85,107,47,0.14), 0 28px 60px rgba(58,75,32,0.18);
+  border-color: transparent;
 }
+.workshop-card:hover::before { opacity: 1; }
 
-.workshop-card .img {
-  aspect-ratio: 4/5;
+/* ── Image area (landscape-friendly) ─────────────────────────── */
+.workshop-card .img-wrap {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--bg-section);
+}
+.workshop-card .img-wrap img {
   width: 100%;
+  height: 100%;
   object-fit: cover;
+  transform: scale(1.01);
+  transition: transform .8s cubic-bezier(.2,.7,.2,1);
+}
+.workshop-card:hover .img-wrap img { transform: scale(1.06); }
+
+.workshop-card .img-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(18,32,25,0.28) 0%, transparent 35%, transparent 65%, rgba(18,32,25,0.42) 100%);
+  pointer-events: none;
 }
 
+/* Overlay chips on the image */
+.workshop-card .cat-chip,
+.workshop-card .date-chip {
+  position: absolute;
+  z-index: 2;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: var(--r-pill);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.workshop-card .cat-chip {
+  top: 14px;
+  left: 14px;
+  background: rgba(253,251,247,0.92);
+  color: var(--brand-deep);
+  border: 1px solid rgba(85,107,47,0.18);
+}
+.workshop-card .date-chip {
+  top: 14px;
+  right: 14px;
+  background: rgba(58,75,32,0.72);
+  color: var(--bg-primary);
+  border: 1px solid rgba(253,251,247,0.18);
+}
+
+/* ── Body ────────────────────────────────────────────────────── */
 .workshop-card .body {
-  padding: 24px;
+  padding: 24px 24px 22px;
   display: flex;
   flex-direction: column;
   gap: 10px;
   flex: 1;
 }
 
-.workshop-card .head-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-}
-
-.workshop-card .icon-wrap {
-  width: 36px;
-  height: 36px;
-  color: var(--brand-primary);
-  flex-shrink: 0;
-}
-
 .workshop-card h4 {
   font-family: var(--serif);
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 500;
+  line-height: 1.15;
   margin: 0;
+  color: var(--brand-deep);
+  transition: color .25s ease;
 }
-
-.workshop-card .meta {
-  display: flex;
-  gap: 16px;
-  font-size: 12px;
-  color: var(--text-muted);
-  font-family: var(--mono);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-top: 4px;
-}
+.workshop-card:hover h4 { color: var(--brand-primary); }
 
 .workshop-card p {
   font-size: 14px;
   color: var(--text-muted);
-  line-height: 1.5;
+  line-height: 1.55;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  line-clamp: 3;
+  overflow: hidden;
+}
+
+.workshop-card .foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.workshop-card .dur {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.workshop-card .more {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--brand-primary);
+  transition: color .25s ease, gap .25s ease;
+}
+.workshop-card .more :deep(svg) { transition: transform .35s cubic-bezier(.2,.7,.2,1); }
+.workshop-card:hover .more { color: var(--cta-main); gap: 10px; }
+.workshop-card:hover .more :deep(svg) { transform: translateX(2px); }
+
+.workshop-card:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 3px;
 }
 
 .all-workshops-cta {
