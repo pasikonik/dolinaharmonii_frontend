@@ -31,6 +31,22 @@ export interface Category {
   slug: string
 }
 
+export interface RoomAvailability {
+  id: number
+  start_date: string
+  end_date: string
+  source: string | null
+  room: string
+}
+
+export interface MainGalleryItem {
+  id: number
+  sort: number | null
+  image: string
+  title: string | null
+  category: string | null
+}
+
 export interface Instructor {
   id: string
   name: string

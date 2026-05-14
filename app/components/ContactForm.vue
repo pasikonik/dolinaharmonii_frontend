@@ -26,7 +26,7 @@ async function handleSubmit() {
         <!-- ── Left: contact info ── -->
         <div class="cf-left">
           <span class="cf-eyebrow">{{ t('Kontakt', 'Contact') }}</span>
-          <h2 class="cf-heading">{{ t('Napisz do nas — odpowiadamy w 48 godzin.', 'Write to us — we respond within 48 hours.') }}</h2>
+          <h2 class="cf-heading">{{ t('Napisz do nas.', 'Write to us.') }}</h2>
           <p class="cf-sub">
             {{ t(
               'Pytanie o wolny termin, pobyt grupowy, warsztat lub wynajem całego Domu? Zostaw wiadomość — wracamy z odpowiedzią najpóźniej w ciągu dwóch dni roboczych.',
@@ -34,24 +34,24 @@ async function handleSubmit() {
             ) }}
           </p>
           <div class="cf-contact-list">
+            <a class="cf-contact-row" href="mailto:dolina@harmonii.pl">
+              <span class="cf-icon"><DhIcon name="leaf" :size="18" :stroke="1.6" /></span>
+              <span class="cf-contact-text">dolina@harmonii.pl</span>
+            </a>
             <div class="cf-contact-row">
-              <span class="cf-icon"><DhIcon name="leaf" :size="22" :stroke="1.4" /></span>
-              <a href="mailto:dolina@harmonii.pl">dolina@harmonii.pl</a>
+              <span class="cf-icon"><DhIcon name="candle" :size="18" :stroke="1.6" /></span>
+              <span class="cf-contact-text">+48 757 123 456 · {{ t('pn–pt, 10:00–18:00', 'Mon–Fri, 10:00–18:00') }}</span>
             </div>
             <div class="cf-contact-row">
-              <span class="cf-icon"><DhIcon name="compass" :size="22" :stroke="1.4" /></span>
-              <span>+48 757 123 456 · {{ t('pn–pt, 10:00–18:00', 'Mon–Fri, 10:00–18:00') }}</span>
-            </div>
-            <div class="cf-contact-row">
-              <span class="cf-icon"><DhIcon name="seed" :size="22" :stroke="1.4" /></span>
-              <span>Kopaniec 67A · 58-512 Stara Kamienica</span>
+              <span class="cf-icon"><DhIcon name="seed" :size="18" :stroke="1.6" /></span>
+              <span class="cf-contact-text">Kopaniec 67A · 58-512 Stara Kamienica</span>
             </div>
           </div>
         </div>
 
-        <!-- ── Right: form ── -->
+        <!-- ── Right: form card ── -->
         <form class="cf-form" @submit.prevent="handleSubmit">
-          <div class="cf-form-title">{{ t('Formularz kontaktowy', 'Contact form') }}</div>
+          <h3 class="cf-form-title">{{ t('Formularz kontaktowy', 'Contact form') }}</h3>
 
           <div v-if="status === 'sent'" class="cf-success">
             <DhIcon name="leaf" :size="32" :stroke="1.4" />
@@ -72,26 +72,26 @@ async function handleSubmit() {
           <template v-else>
             <div class="cf-row-two">
               <div class="cf-field">
-                <label for="cf-name" class="sr-only">{{ t('Imię i nazwisko', 'Full name') }}</label>
+                <label for="cf-name" class="cf-label">{{ t('Imię i nazwisko', 'Full name') }}</label>
                 <input
                   id="cf-name"
                   v-model="form.name"
                   type="text"
                   name="name"
-                  :placeholder="t('Imię i nazwisko', 'Full name')"
+                  placeholder="Jan Kowalski"
                   required
                   aria-required="true"
                   :disabled="status === 'sending'"
                 />
               </div>
               <div class="cf-field">
-                <label for="cf-email" class="sr-only">{{ t('Adres e-mail', 'Email address') }}</label>
+                <label for="cf-email" class="cf-label">{{ t('Adres e-mail', 'Email address') }}</label>
                 <input
                   id="cf-email"
                   v-model="form.email"
                   type="email"
                   name="email"
-                  :placeholder="t('Adres e-mail', 'Email address')"
+                  placeholder="jan@example.com"
                   required
                   aria-required="true"
                   autocomplete="email"
@@ -101,7 +101,7 @@ async function handleSubmit() {
             </div>
 
             <div class="cf-field">
-              <label for="cf-topic" class="sr-only">{{ t('Czego dotyczy zapytanie?', 'What is your enquiry about?') }}</label>
+              <label for="cf-topic" class="cf-label">{{ t('Czego dotyczy zapytanie?', 'What is your enquiry about?') }}</label>
               <select
                 id="cf-topic"
                 v-model="form.topic"
@@ -110,7 +110,7 @@ async function handleSubmit() {
                 aria-required="true"
                 :disabled="status === 'sending'"
               >
-                <option value="" disabled>{{ t('Czego dotyczy zapytanie?', 'What is your enquiry about?') }}</option>
+                <option value="" disabled>{{ t('Wybierz temat…', 'Choose a topic…') }}</option>
                 <option value="indywidualny">{{ t('Pobyt indywidualny', 'Individual stay') }}</option>
                 <option value="grupowy">{{ t('Wynajem dla grupy / warsztat', 'Group rental / workshop') }}</option>
                 <option value="duzy-dom">{{ t('Duży Dom', 'The Big House') }}</option>
@@ -121,13 +121,13 @@ async function handleSubmit() {
             </div>
 
             <div class="cf-field">
-              <label for="cf-message" class="sr-only">{{ t('Twoja wiadomość', 'Your message') }}</label>
+              <label for="cf-message" class="cf-label">{{ t('Wiadomość', 'Message') }}</label>
               <textarea
                 id="cf-message"
                 v-model="form.message"
                 name="message"
                 rows="5"
-                :placeholder="t('Twoja wiadomość — napisz kilka słów o terminie, liczbie osób, planach…', 'Your message — tell us about your dates, number of guests, plans…')"
+                :placeholder="t('Napisz kilka słów o terminie, liczbie osób, planach…', 'Tell us about your dates, number of guests, plans…')"
                 required
                 aria-required="true"
                 :disabled="status === 'sending'"
@@ -135,12 +135,12 @@ async function handleSubmit() {
             </div>
 
             <div class="cf-footer-row">
-              <span class="cf-note">{{ t('Wysyłając wiadomość akceptujesz politykę prywatności.', 'By sending this message you accept our privacy policy.') }}</span>
-              <button class="btn btn-primary" type="submit" :disabled="status === 'sending'">
+              <span class="cf-note">{{ t('Wysyłając akceptujesz politykę prywatności.', 'By sending this you accept our privacy policy.') }}</span>
+              <button class="btn btn-gold" type="submit" :disabled="status === 'sending'">
                 <span v-if="status === 'sending'">{{ t('Wysyłanie…', 'Sending…') }}</span>
                 <template v-else>
                   {{ t('Wyślij wiadomość', 'Send message') }}
-                  <DhIcon name="arrow" :size="16" :stroke="1.6" />
+                  <DhIcon name="arrow" :size="14" :stroke="1.6" />
                 </template>
               </button>
             </div>
@@ -154,96 +154,126 @@ async function handleSubmit() {
 
 <style scoped>
 .cf-wrap {
-  background: var(--bg-sage);
+  background: var(--brand-deep);
   border-radius: var(--r-lg);
   padding: 72px 64px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 64px;
   align-items: center;
+  position: relative;
+  overflow: hidden;
 }
 
+/* ── Left side (dark green panel) ─────────────────────────────── */
 .cf-eyebrow {
   font-family: var(--sans);
   text-transform: uppercase;
   letter-spacing: 0.18em;
   font-size: 12px;
   font-weight: 600;
-  color: var(--accent-earth);
+  color: var(--cta-main);
 }
 
 .cf-heading {
   font-family: var(--serif);
-  font-size: 44px;
-  color: var(--brand-primary);
-  font-weight: 500;
-  line-height: 1.1;
+  font-style: italic;
+  font-size: 56px;
+  color: var(--bg-primary);
+  font-weight: 600;
+  line-height: 1.05;
   letter-spacing: -0.01em;
-  margin: 16px 0;
+  margin: 16px 0 20px;
 }
 
 .cf-sub {
-  color: var(--text-muted);
+  color: rgba(253, 251, 247, 0.72);
   max-width: 420px;
-  margin-bottom: 32px;
+  margin: 0 0 36px;
   line-height: 1.6;
+  font-size: 15px;
 }
 
 .cf-contact-list {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
   font-size: 14px;
-  color: var(--brand-primary);
 }
 
 .cf-contact-row {
   display: flex;
   align-items: center;
-  gap: 12px;
-}
-
-.cf-icon {
-  color: var(--accent-earth);
-  flex-shrink: 0;
-  display: flex;
-}
-
-.cf-contact-row a {
-  color: var(--brand-primary);
+  gap: 14px;
   text-decoration: none;
+  color: rgba(253, 251, 247, 0.88);
   transition: color .2s;
 }
-.cf-contact-row a:hover { color: var(--accent-earth); }
+.cf-contact-row[href]:hover { color: var(--cta-main); }
+.cf-contact-row[href]:hover .cf-icon { border-color: var(--cta-main); color: var(--cta-main); }
 
+.cf-icon {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(253, 251, 247, 0.06);
+  border: 1px solid rgba(253, 251, 247, 0.18);
+  color: var(--cta-main);
+  transition: border-color .2s, color .2s;
+}
+
+.cf-contact-text {
+  color: inherit;
+}
+
+/* ── Right side (cream form card) ─────────────────────────────── */
 .cf-form {
+  background: var(--bg-section);
+  border-radius: var(--r-md);
+  padding: 36px 40px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 18px;
+  box-shadow: var(--shadow-md);
 }
 
 .cf-form-title {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--text-muted);
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--accent-earth);
+  margin: 0;
   padding-bottom: 16px;
   border-bottom: 1px solid var(--line);
-  margin-bottom: 4px;
 }
 
 .cf-row-two {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: 16px;
+}
+
+.cf-field { display: flex; flex-direction: column; gap: 8px; }
+
+.cf-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--accent-earth);
 }
 
 .cf-form input,
 .cf-form select,
 .cf-form textarea {
   width: 100%;
-  padding: 14px 18px;
+  padding: 14px 16px;
   font-family: var(--sans);
   font-size: 14px;
   border: 1px solid var(--line);
@@ -254,6 +284,9 @@ async function handleSubmit() {
   appearance: none;
 }
 
+.cf-form input::placeholder,
+.cf-form textarea::placeholder { color: var(--text-muted); opacity: .55; }
+
 .cf-form input:focus,
 .cf-form select:focus,
 .cf-form textarea:focus { border-color: var(--brand-primary); outline: none; }
@@ -263,15 +296,12 @@ async function handleSubmit() {
 .cf-form textarea:focus-visible {
   border-color: var(--brand-primary);
   outline: none;
-  box-shadow: 0 0 0 3px rgba(85, 107, 47, 0.18);
+  box-shadow: 0 0 0 3px rgba(85, 107, 47, 0.15);
 }
-
-.cf-form input::placeholder,
-.cf-form textarea::placeholder { color: var(--text-muted); }
 
 .cf-form select {
   cursor: pointer;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%235C5C58' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%236B675A' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 16px center;
   padding-right: 40px;
@@ -296,47 +326,39 @@ async function handleSubmit() {
   align-items: center;
   gap: 16px;
   flex-wrap: wrap;
-  margin-top: 4px;
+  margin-top: 8px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
 }
 
-.cf-note { font-size: 12px; color: var(--text-muted); }
+.cf-note {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  max-width: 200px;
+}
 
-:deep(.btn-primary:disabled) { opacity: .7; cursor: not-allowed; transform: none; }
+:deep(.btn-gold:disabled) { opacity: .7; cursor: not-allowed; transform: none; }
 
 .cf-success {
   display: flex;
   align-items: flex-start;
   gap: 20px;
-  padding: 32px;
+  padding: 28px;
   background: var(--bg-primary);
   border: 1px solid var(--line);
-  border-radius: var(--r-md);
+  border-radius: var(--r-sm);
   color: var(--accent-earth);
 }
-
 .cf-success strong {
   display: block;
   font-family: var(--serif);
+  font-style: italic;
   font-size: 22px;
-  color: var(--brand-primary);
+  color: var(--accent-earth);
   margin-bottom: 6px;
 }
-
 .cf-success p { color: var(--text-muted); font-size: 14px; margin: 0; }
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
-.cf-field { position: relative; }
 
 .cf-error {
   display: flex;
@@ -351,9 +373,13 @@ async function handleSubmit() {
   line-height: 1.5;
 }
 
-@media (max-width: 860px) {
+@media (max-width: 960px) {
   .cf-wrap { grid-template-columns: 1fr; padding: 48px 32px; gap: 40px; }
   .cf-row-two { grid-template-columns: 1fr; }
-  .cf-heading { font-size: 32px; }
+  .cf-heading { font-size: 40px; }
+  .cf-form { padding: 28px 24px; }
+  .cf-footer-row { flex-direction: column; align-items: stretch; }
+  .cf-note { max-width: none; }
+  .cf-footer-row .btn-gold { justify-content: center; }
 }
 </style>

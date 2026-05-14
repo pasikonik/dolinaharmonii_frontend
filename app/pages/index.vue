@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { DEFAULT_PRICING } from '~~/types/directus'
 
-const { getWorkshops, getImageUrl, getPricing } = useDirectus()
+const { getWorkshops, getImageUrl, getPricing, getMainGallery } = useDirectus()
 const { lang, t } = useLang()
 
 const { data, error: workshopsError } = await useAsyncData('workshops-home', () => getWorkshops({ limit: 3 }))
@@ -11,6 +11,41 @@ const { data: pricingData } = await useAsyncData('prices', async () => {
   try { return await getPricing() } catch { return null }
 })
 const p = computed(() => pricingData.value?.data ?? DEFAULT_PRICING)
+
+const { data: galleryData } = await useAsyncData('main-gallery', async () => {
+  try { return await getMainGallery() } catch { return null }
+})
+const galleryImages = computed(() =>
+  (galleryData.value?.data ?? []).map(g => ({
+    thumb: getImageUrl(g.image, { width: 800 }),
+    full:  getImageUrl(g.image, { width: 1800, quality: 85 }),
+    title: g.title ?? '',
+  })),
+)
+
+const GALLERY_PREVIEW_LIMIT = 10
+const galleryPreview = computed(() => galleryImages.value.slice(0, GALLERY_PREVIEW_LIMIT))
+
+const lightboxIndex = ref<number | null>(null)
+function openLightbox(i: number) { lightboxIndex.value = i }
+function closeLightbox() { lightboxIndex.value = null }
+function prevImg() {
+  if (lightboxIndex.value === null) return
+  const n = galleryImages.value.length
+  lightboxIndex.value = (lightboxIndex.value - 1 + n) % n
+}
+function nextImg() {
+  if (lightboxIndex.value === null) return
+  lightboxIndex.value = (lightboxIndex.value + 1) % galleryImages.value.length
+}
+function onLightboxKey(e: KeyboardEvent) {
+  if (lightboxIndex.value === null) return
+  if (e.key === 'Escape') closeLightbox()
+  else if (e.key === 'ArrowRight') nextImg()
+  else if (e.key === 'ArrowLeft') prevImg()
+}
+onMounted(() => window.addEventListener('keydown', onLightboxKey))
+onUnmounted(() => window.removeEventListener('keydown', onLightboxKey))
 
 function fmt(n: number): string {
   return n.toLocaleString('pl-PL')
@@ -133,7 +168,7 @@ const ACCOM_RAW = [
     tag_pl: 'Dom Gościnny · 5 pokoi · 12–14 miejsc', tag_en: 'Guest House · 5 rooms · 12–14 guests',
     desc_pl: 'Drewniany dom z pięcioma przytulnymi pokojami — 2-, 3- i 5-osobowymi. Wnętrza wypełnia domowy klimat: drewniane meble, naturalne tkaniny, dekoracje inspirowane sielską prostotą izerskiej wsi. W salonie kominek z trzaskającym ogniem, w sali warsztatowej maty i poduszki do medytacji.',
     desc_en: 'A wooden house with five cosy rooms — for 2, 3 and 5 guests. The interiors exude a homely warmth: wooden furniture, natural fabrics, décor inspired by the pastoral simplicity of an Izera village. In the living room a crackling fireplace; in the workshop hall, mats and meditation cushions.',
-    main: '/duzy_dom.avif', small: '/sala-w-1.avif',
+    main: '/dom-1.avif', small: '/sala-w-1.avif',
     features_pl: [{ i: 'bed', t: '5 pokoi gościnnych' }, { i: 'fireplace', t: 'Kominek w salonie' }, { i: 'kitchen', t: 'Kuchnia dla gości' }, { i: 'meditation', t: 'Sala warsztatowa' }, { i: 'bath', t: 'Sauna infrared' }, { i: 'leaf', t: 'Sad i widok na góry' }],
     features_en: [{ i: 'bed', t: '5 guest rooms' }, { i: 'fireplace', t: 'Fireplace in lounge' }, { i: 'kitchen', t: 'Guest kitchen' }, { i: 'meditation', t: 'Workshop hall' }, { i: 'bath', t: 'Infrared sauna' }, { i: 'leaf', t: 'Orchard & mountain view' }],
     getPrice: (p: typeof DEFAULT_PRICING) => Math.min(p.forest_room, p.sun_room, p.flower_room, p.ethnic_room, p.magic_room),
@@ -179,16 +214,6 @@ const ACCOMMODATIONS = computed(() => ACCOM_RAW.map(a => ({
   priceFor: t(a.priceFor_pl, a.priceFor_en),
   url: a.url,
 })))
-
-const GALLERY = [
-  { src: 'https://images.unsplash.com/photo-1518173946687-a4c8892bbd9f?auto=format&fit=crop&w=1200&q=80', span: 'span-2-row' },
-  { src: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=900&q=80', span: '' },
-  { src: 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=900&q=80', span: '' },
-  { src: 'https://images.unsplash.com/photo-1505765050516-f72dcac9c60e?auto=format&fit=crop&w=900&q=80', span: 'span-2-col' },
-  { src: 'https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=900&q=80', span: '' },
-  { src: 'https://images.unsplash.com/photo-1455218873509-8097305ee378?auto=format&fit=crop&w=900&q=80', span: '' },
-  { src: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=900&q=80', span: 'span-2-col' },
-]
 
 const TEAM_RAW = [
   { name: 'Danuta', role_pl: 'Założycielka', role_en: 'Founder', img: '/dana.avif' },
@@ -333,7 +358,7 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
             </div>
           </div>
           <div class="reveal intro-image-wrap">
-            <img src="/szalas.avif"
+            <img src="/dom-4.avif"
               :alt="t('Wnętrze drewnianego domu', 'Interior of the wooden house')" class="intro-main-img" />
             <div class="intro-badge">
               <div class="badge-head">
@@ -548,19 +573,38 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
             'Horse rides in early spring, barn concerts, August harvests, quiet winter mornings — glimpses of life in this place.'
           ) }}</p>
         </div>
-        <div class="gallery-grid reveal">
-          <NuxtImg
-            v-for="(g, i) in GALLERY"
+        <div v-if="galleryPreview.length" class="gallery-masonry reveal">
+          <button
+            v-for="(g, i) in galleryPreview"
             :key="i"
-            :src="g.src"
-            alt=""
-            loading="lazy"
-            sizes="(max-width:768px) 50vw, 25vw"
-            :class="g.span"
-          />
+            type="button"
+            class="gallery-tile"
+            :aria-label="g.title || t('Otwórz zdjęcie', 'Open image')"
+            @click="openLightbox(i)"
+          >
+            <img :src="g.thumb" :alt="g.title" loading="lazy" />
+          </button>
+        </div>
+        <div v-if="galleryImages.length" class="gallery-cta reveal">
+          <button type="button" class="btn btn-secondary" @click="openLightbox(0)">
+            {{ t('Zobacz całą galerię', 'View full gallery') }}
+            <span class="gallery-cta-count">({{ galleryImages.length }})</span>
+            <DhIcon name="arrow" :size="14" :stroke="1.6" />
+          </button>
         </div>
       </div>
     </section>
+
+    <!-- ─── GALLERY LIGHTBOX ────────────────────────────────────────── -->
+    <Teleport to="body">
+      <div v-if="lightboxIndex !== null" class="lightbox open" @click="closeLightbox">
+        <button class="lightbox-nav prev" :aria-label="t('Poprzednie', 'Previous')" @click.stop="prevImg">‹</button>
+        <img :src="galleryImages[lightboxIndex].full" :alt="galleryImages[lightboxIndex].title" @click.stop />
+        <button class="lightbox-nav next" :aria-label="t('Następne', 'Next')" @click.stop="nextImg">›</button>
+        <button class="lightbox-close" :aria-label="t('Zamknij', 'Close')" @click="closeLightbox">×</button>
+        <div class="lightbox-counter">{{ lightboxIndex + 1 }} / {{ galleryImages.length }}</div>
+      </div>
+    </Teleport>
 
     <!-- ─── TEAM ───────────────────────────────────────────────────── -->
     <section id="zespol" class="cream" :aria-label="t('Zespół i partnerzy', 'Team and partners')">
@@ -1233,32 +1277,96 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
   object-fit: cover;
 }
 
-/* ─── Gallery ───────────────────────────────────────────────────── */
-.gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-auto-rows: 240px;
-  gap: 12px;
+/* ─── Gallery (masonry, mixed portrait/landscape) ──────────────── */
+.gallery-masonry {
+  column-count: 4;
+  column-gap: 12px;
 }
 
-.gallery-grid img {
+.gallery-tile {
+  display: block;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  margin: 0 0 12px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  break-inside: avoid;
   border-radius: var(--r-sm);
-  transition: opacity .3s;
+  overflow: hidden;
+  position: relative;
 }
 
-.gallery-grid img:hover {
-  opacity: .9;
+.gallery-tile img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--r-sm);
+  transition: transform .35s ease, opacity .3s ease;
 }
 
-.gallery-grid .span-2-col {
-  grid-column: span 2;
+.gallery-tile::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 60%, rgba(18,32,25,0.35) 100%);
+  opacity: 0;
+  transition: opacity .3s ease;
+  pointer-events: none;
 }
 
-.gallery-grid .span-2-row {
-  grid-row: span 2;
+.gallery-tile:hover img { transform: scale(1.03); }
+.gallery-tile:hover::after { opacity: 1; }
+.gallery-tile:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+
+.gallery-cta {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+}
+.gallery-cta-count {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  opacity: 0.7;
+  margin-left: 2px;
+}
+
+/* ─── Gallery lightbox (matches workshop page) ─────────────────── */
+.lightbox {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(18,32,25,0.94);
+  backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 48px;
+}
+.lightbox img {
+  max-width: 90vw; max-height: 86vh;
+  object-fit: contain;
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-lg);
+}
+.lightbox-close,
+.lightbox-nav {
+  position: absolute;
+  background: rgba(253,251,247,0.1); color: #FDFBF7;
+  border: 1px solid rgba(253,251,247,0.2);
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .2s;
+  font-size: 20px;
+}
+.lightbox-close:hover,
+.lightbox-nav:hover { background: rgba(253,251,247,0.2); }
+.lightbox-close { top: 24px; right: 24px; }
+.lightbox-nav.prev { left: 24px; top: 50%; transform: translateY(-50%); }
+.lightbox-nav.next { right: 24px; top: 50%; transform: translateY(-50%); }
+.lightbox-counter {
+  position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+  font-family: var(--mono); font-size: 12px; letter-spacing: .12em;
+  color: rgba(253,251,247,.7); text-transform: uppercase;
 }
 
 /* ─── Team ──────────────────────────────────────────────────────── */
@@ -1638,9 +1746,7 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
   .accommodation.reverse .acc-text { order: 0; }
   .workshop-grid { grid-template-columns: repeat(2, 1fr); }
   .team-grid { grid-template-columns: repeat(2, 1fr); }
-  .gallery-grid { grid-template-columns: repeat(3, 1fr); grid-auto-rows: 200px; }
-  .gallery-grid .span-2-col { grid-column: span 2; }
-  .gallery-grid .span-2-row { grid-row: span 1; }
+  .gallery-masonry { column-count: 3; }
   .workshops-head { flex-direction: column; align-items: flex-start; gap: 16px; }
   .hero-meta { padding: 0 24px; gap: 12px; flex-wrap: wrap; justify-content: center; }
   .accommodation { margin-bottom: 96px; }
@@ -1660,9 +1766,12 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
 
   .workshop-grid { grid-template-columns: 1fr; }
   .team-grid { grid-template-columns: 1fr 1fr; gap: 20px; }
-  .gallery-grid { grid-template-columns: 1fr 1fr; grid-auto-rows: 180px; }
-  .gallery-grid .span-2-col,
-  .gallery-grid .span-2-row { grid-column: auto; grid-row: auto; }
+  .gallery-masonry { column-count: 2; column-gap: 8px; }
+  .gallery-tile { margin-bottom: 8px; }
+  .lightbox { padding: 16px; }
+  .lightbox-close, .lightbox-nav { width: 40px; height: 40px; }
+  .lightbox-nav.prev { left: 8px; }
+  .lightbox-nav.next { right: 8px; }
   .intro-stats { grid-template-columns: repeat(2, 1fr); gap: 16px 12px; }
   .stat-num { font-size: 26px; }
   .acc-features { grid-template-columns: 1fr; }

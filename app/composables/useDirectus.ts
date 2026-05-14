@@ -1,4 +1,4 @@
-import type { Category, DirectusResponse, Pricing, Workshop } from '~~/types/directus'
+import type { Category, DirectusResponse, MainGalleryItem, Pricing, RoomAvailability, Workshop } from '~~/types/directus'
 
 interface ImageOptions {
   width?: number
@@ -6,12 +6,6 @@ interface ImageOptions {
   format?: 'avif' | 'webp' | 'jpg' | 'png'
   quality?: number
   fit?: 'cover' | 'contain' | 'fill' | 'inside' | 'outside'
-}
-
-interface Availability {
-  room_id: string
-  start_date: string
-  end_date: string
 }
 
 export function useDirectus() {
@@ -39,10 +33,23 @@ export function useDirectus() {
     })
   }
 
-  function getAvailability(roomId: string) {
-    return get<DirectusResponse<Availability[]>>('/items/room_availability', {
-      filter: { room_id: { _eq: roomId } },
-      fields: ['start_date', 'end_date'],
+  function getRoomAvailability(params?: Record<string, unknown>) {
+    return get<DirectusResponse<RoomAvailability[]>>('/items/room_availability', {
+      fields: 'id,start_date,end_date,source,room',
+      limit: -1,
+      sort: 'start_date',
+      ...params,
+    })
+  }
+
+  function getRoomAvailabilityInRange(from: string, to: string) {
+    return getRoomAvailability({
+      filter: {
+        _and: [
+          { start_date: { _lte: to } },
+          { end_date: { _gte: from } },
+        ],
+      },
     })
   }
 
@@ -73,6 +80,14 @@ export function useDirectus() {
     return get<DirectusResponse<Pricing>>('/items/prices')
   }
 
+  function getMainGallery() {
+    return get<DirectusResponse<MainGalleryItem[]>>('/items/main_gallery', {
+      fields: 'id,sort,image,title,category',
+      sort: 'sort,id',
+      limit: -1,
+    })
+  }
+
   function getImageUrl(fileId: string, options: ImageOptions = {}) {
     const params = new URLSearchParams()
     if (options.width) params.set('width', String(options.width))
@@ -91,6 +106,8 @@ export function useDirectus() {
     getCategories,
     getPricing,
     getImageUrl,
-    getAvailability,
+    getRoomAvailability,
+    getRoomAvailabilityInRange,
+    getMainGallery,
   }
 }
