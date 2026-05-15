@@ -1043,11 +1043,61 @@ const activePillar = computed(() => COMPASS[activeCompass.value])
 
   .areas-grid { grid-template-columns: 1fr; }
 
-  .compass-tabs { flex-direction: column; }
-  .compass-tab { flex: 1 1 100%; grid-template-columns: 32px 32px 1fr; }
-  .compass-panel { padding: 28px 24px; }
-  .panel-head { flex-direction: column; align-items: flex-start; gap: 14px; }
-  .panel-icon { width: 60px; height: 60px; }
+  .compass-head { margin-bottom: 36px; }
+  .compass-wrap {
+    padding: 14px;
+    gap: 16px;
+    border-radius: var(--r-md);
+  }
+  .compass-tabs {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 8px;
+    margin: -4px -14px;
+    padding: 4px 14px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+  }
+  .compass-tabs::-webkit-scrollbar { display: none; }
+  .compass-tab {
+    flex: 0 0 auto;
+    grid-template-columns: 22px auto;
+    gap: 8px;
+    padding: 10px 14px;
+    border: 1px solid var(--line);
+    background: var(--bg-card);
+    scroll-snap-align: start;
+  }
+  .compass-tab .tab-num { display: none; }
+  .compass-tab .tab-ic { width: 22px; height: 22px; }
+  .compass-tab .tab-title { font-size: 15px; white-space: nowrap; }
+  .compass-tab .tab-arrow { display: none; }
+  .compass-tab.active {
+    background: var(--brand-deep);
+    border-color: var(--brand-deep);
+  }
+  .compass-tab.active .tab-title { color: #FDFBF7; }
+
+  .compass-panel { padding: 24px 20px; }
+  .panel-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding-bottom: 18px;
+    margin-bottom: 18px;
+  }
+  .panel-icon { width: 56px; height: 56px; padding: 12px; }
+  .compass-panel h3 { font-size: 26px; }
+  .panel-list { gap: 12px; }
+  .panel-list li {
+    grid-template-columns: 16px 1fr;
+    gap: 6px;
+    font-size: 14.5px;
+    line-height: 1.6;
+  }
+  .panel-list .bullet { font-size: 20px; }
 
   .contact-cards { grid-template-columns: 1fr; }
 
