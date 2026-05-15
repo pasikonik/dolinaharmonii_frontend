@@ -78,8 +78,8 @@ onUnmounted(() => {
 
     <ul class="nav-list">
       <li><NuxtLink to="/warsztaty" active-class="" exact-active-class="" :class="{ active: isActive('/warsztaty') }">{{ t('Warsztaty', 'Workshops') }}</NuxtLink></li>
-      <li><NuxtLink to="/kalendarz" active-class="" exact-active-class="" :class="{ active: isActive('/kalendarz') }">{{ t('Kalendarz', 'Calendar') }}</NuxtLink></li>
       <li><NuxtLink to="/#noclegi" active-class="" exact-active-class="" :class="{ active: isActive('/#noclegi') }">{{ t('Noclegi', 'Stay') }}</NuxtLink></li>
+      <li><NuxtLink to="/kalendarz" active-class="" exact-active-class="" :class="{ active: isActive('/kalendarz') }">{{ t('Dostępność', 'Availability') }}</NuxtLink></li>
       <li><NuxtLink to="/fundacja" active-class="" exact-active-class="" :class="{ active: isActive('/fundacja') }">{{ t('Fundacja', 'Foundation') }}</NuxtLink></li>
       <li><NuxtLink to="/dojazd" active-class="" exact-active-class="" :class="{ active: isActive('/dojazd') }">{{ t('Dojazd', 'Getting here') }}</NuxtLink></li>
     </ul>
