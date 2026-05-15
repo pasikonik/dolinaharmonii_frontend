@@ -83,7 +83,7 @@ export function useDirectus() {
   function getMainGallery() {
     return get<DirectusResponse<MainGalleryItem[]>>('/items/main_gallery', {
       fields: 'id,sort,image,title,category',
-      sort: 'sort,id',
+      sort: 'sort',
       limit: -1,
     })
   }

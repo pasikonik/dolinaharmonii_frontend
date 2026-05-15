@@ -18,7 +18,7 @@ const { data: galleryData } = await useAsyncData('main-gallery', async () => {
 const galleryImages = computed(() =>
   (galleryData.value?.data ?? []).map(g => ({
     thumb: getImageUrl(g.image, { width: 800 }),
-    full:  getImageUrl(g.image, { width: 1800, quality: 85 }),
+    full:  getImageUrl(g.image, { width: 1800, height: 1200, fit: 'inside', quality: 85 }),
     title: g.title ?? '',
   })),
 )
@@ -27,6 +27,28 @@ const GALLERY_PREVIEW_LIMIT = 10
 const galleryPreview = computed(() => galleryImages.value.slice(0, GALLERY_PREVIEW_LIMIT))
 
 const lightboxIndex = ref<number | null>(null)
+const lightboxLoading = ref(false)
+
+function preloadNeighbors(i: number) {
+  if (!import.meta.client) return
+  const list = galleryImages.value
+  const n = list.length
+  if (n < 2) return
+  for (const k of [(i + 1) % n, (i - 1 + n) % n]) {
+    const url = list[k]?.full
+    if (url) { const im = new Image(); im.src = url }
+  }
+}
+
+watch(lightboxIndex, (i) => {
+  if (i === null) return
+  lightboxLoading.value = true
+  preloadNeighbors(i)
+})
+
+function onLightboxLoad() { lightboxLoading.value = false }
+function onLightboxError() { lightboxLoading.value = false }
+
 function openLightbox(i: number) { lightboxIndex.value = i }
 function closeLightbox() { lightboxIndex.value = null }
 function prevImg() {
@@ -603,7 +625,19 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
     <Teleport to="body">
       <div v-if="lightboxIndex !== null" class="lightbox open" @click="closeLightbox">
         <button class="lightbox-nav prev" :aria-label="t('Poprzednie', 'Previous')" @click.stop="prevImg">‹</button>
-        <img :src="galleryImages[lightboxIndex].full" :alt="galleryImages[lightboxIndex].title" @click.stop />
+        <div class="lightbox-stage" @click.stop>
+          <div v-show="lightboxLoading" class="lightbox-spinner" aria-hidden="true" />
+          <img
+            :key="lightboxIndex"
+            :src="galleryImages[lightboxIndex]?.full"
+            :alt="galleryImages[lightboxIndex]?.title"
+            :class="{ 'is-loading': lightboxLoading }"
+            decoding="async"
+            fetchpriority="high"
+            @load="onLightboxLoad"
+            @error="onLightboxError"
+          />
+        </div>
         <button class="lightbox-nav next" :aria-label="t('Następne', 'Next')" @click.stop="nextImg">›</button>
         <button class="lightbox-close" :aria-label="t('Zamknij', 'Close')" @click="closeLightbox">×</button>
         <div class="lightbox-counter">{{ lightboxIndex + 1 }} / {{ galleryImages.length }}</div>
@@ -1448,11 +1482,34 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
   display: flex; align-items: center; justify-content: center;
   padding: 48px;
 }
+.lightbox-stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 90vw;
+  max-height: 86vh;
+}
 .lightbox img {
   max-width: 90vw; max-height: 86vh;
   object-fit: contain;
   border-radius: var(--r-sm);
   box-shadow: var(--shadow-lg);
+  transition: opacity .25s ease;
+}
+.lightbox img.is-loading { opacity: 0; }
+.lightbox-spinner {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  border: 3px solid rgba(253, 251, 247, 0.18);
+  border-top-color: rgba(253, 251, 247, 0.85);
+  border-radius: 50%;
+  animation: lightbox-spin 0.85s linear infinite;
+  pointer-events: none;
+}
+@keyframes lightbox-spin {
+  to { transform: rotate(360deg); }
 }
 .lightbox-close,
 .lightbox-nav {
