@@ -141,9 +141,10 @@ onUnmounted(() => window.removeEventListener('keydown', onKey))
 .lb-main {
   flex: 1;
   display: flex;
-  align-items: stretch;
+  align-items: center;
   min-height: 0;
-  padding: 56px 20px 16px;
+  padding: 56px 80px 16px;
+  position: relative;
 }
 
 .lb-stage {
@@ -178,8 +179,9 @@ onUnmounted(() => window.removeEventListener('keydown', onKey))
 @keyframes lb-spin { to { transform: rotate(360deg); } }
 
 .lb-nav {
-  flex-shrink: 0;
-  align-self: center;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
   width: 48px;
   height: 48px;
   border-radius: 50%;
@@ -192,8 +194,11 @@ onUnmounted(() => window.removeEventListener('keydown', onKey))
   align-items: center;
   justify-content: center;
   transition: background 0.2s;
+  z-index: 5;
 }
 .lb-nav:hover { background: rgba(253, 251, 247, 0.18); }
+.lb-prev { left: 20px; }
+.lb-next { right: 20px; }
 
 /* ── thumbnail strip ───────────────────────────── */
 .lb-strip {
@@ -252,7 +257,9 @@ onUnmounted(() => window.removeEventListener('keydown', onKey))
 
 /* ── responsive ────────────────────────────────── */
 @media (max-width: 720px) {
-  .lb-main { padding: 52px 8px 12px; }
+  .lb-main { padding: 48px 0 8px; }
+  .lb-prev { left: 8px; }
+  .lb-next { right: 8px; }
   .lb-strip { padding: 6px 12px 16px; }
   .lb-thumb { width: 50px; height: 50px; }
 }
