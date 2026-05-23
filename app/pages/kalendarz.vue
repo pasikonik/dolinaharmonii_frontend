@@ -52,23 +52,31 @@ const WEEKDAYS_SHORT_PL = ['Pn','Wt','Śr','Cz','Pt','So','Nd']
 const WEEKDAYS_SHORT_EN = ['Mo','Tu','We','Th','Fr','Sa','Su']
 
 const SEASON_MONTHS = [
-  { year: 2026, month: 4, label_pl: 'Maj',         label_en: 'May',       short_pl: 'Maj', short_en: 'May' },
-  { year: 2026, month: 5, label_pl: 'Czerwiec',    label_en: 'June',      short_pl: 'Cze', short_en: 'Jun' },
-  { year: 2026, month: 6, label_pl: 'Lipiec',      label_en: 'July',      short_pl: 'Lip', short_en: 'Jul' },
-  { year: 2026, month: 7, label_pl: 'Sierpień',    label_en: 'August',    short_pl: 'Sie', short_en: 'Aug' },
-  { year: 2026, month: 8, label_pl: 'Wrzesień',    label_en: 'September', short_pl: 'Wrz', short_en: 'Sep' },
-  { year: 2026, month: 9, label_pl: 'Październik', label_en: 'October',   short_pl: 'Paź', short_en: 'Oct' },
+  { year: 2026, month: 3,  label_pl: 'Kwiecień',    label_en: 'April',     short_pl: 'Kwi', short_en: 'Apr' },
+  { year: 2026, month: 4,  label_pl: 'Maj',         label_en: 'May',       short_pl: 'Maj', short_en: 'May' },
+  { year: 2026, month: 5,  label_pl: 'Czerwiec',    label_en: 'June',      short_pl: 'Cze', short_en: 'Jun' },
+  { year: 2026, month: 6,  label_pl: 'Lipiec',      label_en: 'July',      short_pl: 'Lip', short_en: 'Jul' },
+  { year: 2026, month: 7,  label_pl: 'Sierpień',    label_en: 'August',    short_pl: 'Sie', short_en: 'Aug' },
+  { year: 2026, month: 8,  label_pl: 'Wrzesień',    label_en: 'September', short_pl: 'Wrz', short_en: 'Sep' },
+  { year: 2026, month: 9,  label_pl: 'Październik', label_en: 'October',   short_pl: 'Paź', short_en: 'Oct' },
+  { year: 2026, month: 10, label_pl: 'Listopad',    label_en: 'November',  short_pl: 'Lis', short_en: 'Nov' },
+  { year: 2026, month: 11, label_pl: 'Grudzień',    label_en: 'December',  short_pl: 'Gru', short_en: 'Dec' },
 ]
 
-// Anchor inside the season (May–Oct 2026) so the calendar always has live cells.
+// Anchor inside the season (Apr–Dec 2026) so the calendar always has live cells.
 function makeToday() {
   const real = new Date()
   real.setHours(0, 0, 0, 0)
-  const seasonStart = new Date(2026, 4, 1)
+  const seasonStart = new Date(2026, 3, 1)
   return real < seasonStart ? seasonStart : real
 }
 const TODAY = makeToday()
 const TODAY_ISO = iso(TODAY)
+
+// Only show current month and forward within the season.
+const VISIBLE_MONTHS = SEASON_MONTHS.filter(
+  m => m.year > TODAY.getFullYear() || (m.year === TODAY.getFullYear() && m.month >= TODAY.getMonth()),
+)
 
 // Monday = 0 .. Sunday = 6
 function getWeekdayIdx(d: Date) {
@@ -125,7 +133,7 @@ const selectedISO = ref<string | null>(null)
 
 watch(monthIdx, () => { selectedISO.value = null })
 
-const currentMonth = computed(() => SEASON_MONTHS[monthIdx.value]!)
+const currentMonth = computed(() => VISIBLE_MONTHS[monthIdx.value]!)
 
 interface CalCell {
   key: string
@@ -209,7 +217,7 @@ function selectDay(c: CalCell) {
   selectedISO.value = c.dISO
 }
 function goMonth(i: number) {
-  monthIdx.value = Math.max(0, Math.min(SEASON_MONTHS.length - 1, i))
+  monthIdx.value = Math.max(0, Math.min(VISIBLE_MONTHS.length - 1, i))
 }
 
 useScrollReveal({ threshold: 0.05, retriggerOn: [monthIdx] })
@@ -243,13 +251,13 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [monthIdx] })
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
             </button>
             <div class="current">{{ pickMonth(currentMonth, 'label') }} {{ currentMonth.year }}</div>
-            <button :disabled="monthIdx === SEASON_MONTHS.length - 1" :aria-label="t('Następny miesiąc', 'Next month')" @click="goMonth(monthIdx + 1)">
+            <button :disabled="monthIdx === VISIBLE_MONTHS.length - 1" :aria-label="t('Następny miesiąc', 'Next month')" @click="goMonth(monthIdx + 1)">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
             </button>
           </div>
           <div class="month-pills">
             <button
-              v-for="(m, i) in SEASON_MONTHS" :key="i"
+              v-for="(m, i) in VISIBLE_MONTHS" :key="i"
               :class="{ active: i === monthIdx }"
               @click="goMonth(i)"
             >

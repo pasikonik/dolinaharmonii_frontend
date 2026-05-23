@@ -34,17 +34,17 @@ async function handleSubmit() {
             ) }}
           </p>
           <div class="cf-contact-list">
-            <a class="cf-contact-row" href="mailto:dolina@harmonii.pl">
+            <a class="cf-contact-row" href="mailto:dolinaharmonii@gmail.com">
               <span class="cf-icon"><DhIcon name="leaf" :size="18" :stroke="1.6" /></span>
-              <span class="cf-contact-text">dolina@harmonii.pl</span>
+              <span class="cf-contact-text">dolinaharmonii@gmail.com</span>
             </a>
             <div class="cf-contact-row">
               <span class="cf-icon"><DhIcon name="candle" :size="18" :stroke="1.6" /></span>
-              <span class="cf-contact-text">+48 757 123 456 · {{ t('pn–pt, 10:00–18:00', 'Mon–Fri, 10:00–18:00') }}</span>
+              <span class="cf-contact-text">+48 789 447 941 · {{ t('pn–pt, 10:00–18:00', 'Mon–Fri, 10:00–18:00') }}</span>
             </div>
             <div class="cf-contact-row">
               <span class="cf-icon"><DhIcon name="seed" :size="18" :stroke="1.6" /></span>
-              <span class="cf-contact-text">Kopaniec 67A · 58-512 Stara Kamienica</span>
+              <span class="cf-contact-text">Kopaniec 69A · 58-512 Stara Kamienica</span>
             </div>
           </div>
         </div>
@@ -64,8 +64,8 @@ async function handleSubmit() {
           <div v-else-if="status === 'error'" class="cf-error" role="alert">
             <DhIcon name="leaf" :size="20" :stroke="1.4" />
             {{ t(
-              'Coś poszło nie tak. Spróbuj ponownie lub napisz bezpośrednio na dolina@harmonii.pl.',
-              'Something went wrong. Please try again or write directly to dolina@harmonii.pl.'
+              'Coś poszło nie tak. Spróbuj ponownie lub napisz bezpośrednio na dolinaharmonii@gmail.com.',
+              'Something went wrong. Please try again or write directly to dolinaharmonii@gmail.com.'
             ) }}
           </div>
 

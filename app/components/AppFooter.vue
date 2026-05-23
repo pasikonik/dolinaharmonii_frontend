@@ -45,8 +45,8 @@ const { t } = useLang()
         <div>
           <h5>{{ t('Kontakt', 'Contact') }}</h5>
           <ul>
-            <li><a href="mailto:dolina@harmonii.pl">dolina@harmonii.pl</a></li>
-            <li><a href="tel:+48757123456">+48 757 123 456</a></li>
+            <li><a href="mailto:dolinaharmonii@gmail.com">dolinaharmonii@gmail.com</a></li>
+            <li><a href="tel:+48789447941">+48 789 447 941</a></li>
             <li>{{ t('pn–pt, 10:00–18:00', 'Mon–Fri, 10:00–18:00') }}</li>
           </ul>
         </div>

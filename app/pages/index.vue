@@ -239,16 +239,12 @@ const ACCOMMODATIONS = computed(() => ACCOM_RAW.map(a => ({
 
 const TEAM_RAW = [
   { name: 'Danuta', role_pl: 'Założycielka', role_en: 'Founder', img: '/dana.avif' },
-  { name: 'Filip', role_pl: 'Gospodarz', role_en: 'Host', img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80' },
+  { name: 'Filip', role_pl: 'Gospodarz', role_en: 'Host', img: '/Filip.avif' },
   { name: 'Kulka', role_pl: 'Gospodyni', role_en: 'Host', img: '/kulka.avif' },
-  { name: 'Jędrzej', role_pl: 'Cieśla', role_en: 'Carpenter', img: '/Jedrzej.avif' },
 ]
 
 const TEAM = computed(() => TEAM_RAW.map(m => ({ name: m.name, role: t(m.role_pl, m.role_en), img: m.img })))
 
-const { data: instaData } = await useAsyncData('instagram', () => $fetch('/api/instagram'))
-const instaLive = computed(() => (instaData.value as any)?.live === true)
-const instaPosts = computed(() => (instaData.value as any)?.posts ?? [])
 
 const FAQ_DATA = [
   {
@@ -355,8 +351,8 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
             </p>
             <p class="desc-muted">
               {{ t(
-                'Działamy od 2017 roku w Kopańcu — niewielkiej wsi otoczonej lasami, łąkami i strumieniami. Zapraszamy grupy warsztatowe oraz osoby, które chcą po prostu zatrzymać się na kilka dni, oddychać i obserwować pory roku.',
-                'We have been here since 2017 in Kopaniec — a small village surrounded by forests, meadows and streams. We welcome workshop groups and anyone who simply wants to pause for a few days, breathe and watch the seasons change.'
+                'Działamy od 1995 roku w Kopańcu — niewielkiej wsi otoczonej lasami, łąkami i strumieniami. Zapraszamy grupy warsztatowe oraz osoby, które chcą po prostu zatrzymać się na kilka dni, oddychać i obserwować pory roku.',
+                'We have been here since 1995 in Kopaniec — a small village surrounded by forests, meadows and streams. We welcome workshop groups and anyone who simply wants to pause for a few days, breathe and watch the seasons change.'
               ) }}
             </p>
             <p class="desc-muted">
@@ -666,8 +662,7 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
           <span class="eyebrow">{{ t('Współpracujemy z', 'We work with') }}</span>
           <div class="partners-list">
             <span>Fundacja Harmonia Kultury</span>
-            <span>· Magiczne Izery</span>
-            <span>· Izerski Park Ciemnego Nieba</span>
+            <span>Magiczne Izery</span>
           </div>
         </div>
       </div>
@@ -721,46 +716,6 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
             {{ t('Zadaj pytanie', 'Ask a question') }}
             <DhIcon name="arrow" :size="16" :stroke="1.6" />
           </NuxtLink>
-        </div>
-      </div>
-    </section>
-
-    <!-- ─── INSTAGRAM ───────────────────────────────────────────────── -->
-    <section v-if="instaLive" class="insta-section" :aria-label="t('Instagram', 'Instagram')">
-      <div class="container">
-        <div class="insta-head reveal">
-          <div>
-            <span class="eyebrow">Instagram</span>
-            <h2>@dolina.harmonii</h2>
-          </div>
-          <a
-            class="insta-follow"
-            href="https://www.instagram.com/dolina.harmonii/"
-            target="_blank"
-            rel="noopener"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-              <circle cx="12" cy="12" r="4"/>
-              <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
-            </svg>
-            {{ t('Obserwuj nas', 'Follow us') }}
-          </a>
-        </div>
-        <div class="insta-grid reveal">
-          <a
-            v-for="post in instaPosts"
-            :key="post.id"
-            :href="post.url"
-            target="_blank"
-            rel="noopener"
-            class="insta-post"
-          >
-            <img :src="post.img" alt="" loading="lazy" />
-            <div class="insta-overlay">
-              <p>{{ post.caption }}</p>
-            </div>
-          </a>
         </div>
       </div>
     </section>
@@ -1537,8 +1492,10 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
 /* ─── Team ──────────────────────────────────────────────────────── */
 .team-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 32px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 48px;
+  max-width: 960px;
+  margin: 0 auto;
 }
 
 .team-member {
@@ -1569,26 +1526,32 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
 
 .partners-strip {
   margin-top: 80px;
-  padding: 40px 0;
+  padding: 24px 0;
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 32px;
+  justify-content: flex-start;
+  gap: 36px;
   flex-wrap: wrap;
 }
 
 .partners-list {
   display: flex;
-  gap: 48px;
-  flex: 1;
-  justify-content: space-around;
+  gap: 0;
+  align-items: center;
   flex-wrap: wrap;
   font-family: var(--serif);
   font-size: 18px;
   color: var(--brand-primary);
   font-style: italic;
+}
+.partners-list span + span::before {
+  content: '·';
+  display: inline-block;
+  margin: 0 24px;
+  opacity: 0.4;
+  font-style: normal;
 }
 
 /* ─── FAQ ───────────────────────────────────────────────────────── */
@@ -1813,92 +1776,11 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
   margin: 0;
 }
 
-/* ─── Instagram ─────────────────────────────────────────────────── */
-.insta-section { background: var(--bg-primary); }
-
-.insta-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 40px;
-}
-
-.insta-follow {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  border-radius: var(--r-pill);
-  border: 1.5px solid var(--brand-primary);
-  color: var(--brand-primary);
-  font-family: var(--sans);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-decoration: none;
-  transition: background .2s, color .2s;
-  flex-shrink: 0;
-}
-.insta-follow:hover {
-  background: var(--brand-primary);
-  color: var(--bg-primary);
-}
-
-.insta-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 6px;
-}
-
-.insta-post {
-  position: relative;
-  aspect-ratio: 1;
-  overflow: hidden;
-  border-radius: var(--r-sm);
-  display: block;
-}
-
-.insta-post img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform .5s ease;
-}
-
-.insta-post:hover img { transform: scale(1.06); }
-
-.insta-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(27, 48, 34, 0.75);
-  display: flex;
-  align-items: flex-end;
-  padding: 16px;
-  opacity: 0;
-  transition: opacity .3s ease;
-}
-
-.insta-post:hover .insta-overlay { opacity: 1; }
-
-.insta-overlay p {
-  font-size: 11px;
-  line-height: 1.5;
-  color: rgba(253, 251, 247, 0.9);
-  margin: 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  line-clamp: 3;
-  overflow: hidden;
-}
-
 /* ─── Responsive ────────────────────────────────────────────────── */
 @media (max-width: 1024px) {
   .blessings-grid { grid-template-columns: 1fr; }
   .blessing-item.is-left { border-right: none; padding-right: 0; }
   .blessing-item:not(.is-left) { padding-left: 0; }
-
-  .insta-grid { grid-template-columns: repeat(3, 1fr); }
 
   .intro-grid,
   .region-grid,
@@ -1910,7 +1792,7 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
   .accommodation.reverse .acc-imgs { order: 0; }
   .accommodation.reverse .acc-text { order: 0; }
   .workshop-grid { grid-template-columns: repeat(2, 1fr); }
-  .team-grid { grid-template-columns: repeat(2, 1fr); }
+  .team-grid { gap: 24px; }
   .gallery-masonry { column-count: 3; }
   .workshops-head { flex-direction: column; align-items: flex-start; gap: 16px; }
   .hero-meta { padding: 0 24px; gap: 12px; flex-wrap: wrap; justify-content: center; }
@@ -1926,11 +1808,8 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
   .blessing-item { grid-template-columns: 36px 56px 1fr; gap: 0 14px; }
   .blessings-head { flex-direction: column; align-items: flex-start; gap: 16px; }
 
-  .insta-grid { grid-template-columns: repeat(2, 1fr); gap: 4px; }
-  .insta-head { flex-direction: column; align-items: flex-start; gap: 16px; }
-
   .workshop-grid { grid-template-columns: 1fr; }
-  .team-grid { grid-template-columns: 1fr 1fr; gap: 20px; }
+  .team-grid { grid-template-columns: 1fr; gap: 24px; }
   .gallery-masonry { column-count: 2; column-gap: 8px; }
   .gallery-tile { margin-bottom: 8px; }
   .lightbox { padding: 16px; }

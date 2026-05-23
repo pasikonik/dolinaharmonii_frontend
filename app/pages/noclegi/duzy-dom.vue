@@ -47,7 +47,7 @@ useHead({
       name: 'Duży Dom — Dolina Harmonii',
       description: 'Drewniany Dom Gościnny z pięcioma przytulnymi pokojami w Kopańcu, Góry Izerskie.',
       url: `${origin}/noclegi/duzy-dom`,
-      email: 'dolina@harmonii.pl',
+      email: 'dolinaharmonii@gmail.com',
       address: {
         '@type': 'PostalAddress',
         addressLocality: 'Kopaniec',
@@ -406,7 +406,7 @@ useScrollReveal({ threshold: 0.08 })
             <p class="cta-desc">Napisz lub zadzwoń — odpowiadamy w ciągu 48 godzin. Pokoje rezerwujemy dwustopniowo: najpierw potwierdzamy termin, potem prosimy o zaliczkę.</p>
           </div>
           <div class="cta-buttons-wrap">
-            <a class="btn btn-primary" href="mailto:dolina@harmonii.pl">
+            <a class="btn btn-primary" href="mailto:dolinaharmonii@gmail.com">
               Napisz do nas
               <DhIcon name="arrow" :size="14" :stroke="1.6" />
             </a>
