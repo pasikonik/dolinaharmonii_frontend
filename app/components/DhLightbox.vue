@@ -141,7 +141,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKey))
 .lb-main {
   flex: 1;
   display: flex;
-  align-items: center;
+  align-items: stretch;
   min-height: 0;
   padding: 56px 80px 16px;
   position: relative;

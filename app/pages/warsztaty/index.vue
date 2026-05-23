@@ -28,7 +28,7 @@ const CATEGORIES_RAW = [
 const CATEGORIES = computed(() => CATEGORIES_RAW.map(c => ({ ...c, label: t(c.label_pl, c.label_en) })))
 
 const MONTHS_RAW = [
-  { id: 'all', label_pl: 'Cały sezon',  label_en: 'Full season' },
+  { id: 'all', label_pl: 'Cały rok',    label_en: 'All year around' },
   { id: 'maj', label_pl: 'Maj',         label_en: 'May' },
   { id: 'cze', label_pl: 'Czerwiec',    label_en: 'June' },
   { id: 'lip', label_pl: 'Lipiec',      label_en: 'July' },
