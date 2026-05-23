@@ -13,7 +13,7 @@ export function useDirectus() {
   const baseURL = config.public.directusUrl
 
   function get<T>(endpoint: string, params?: Record<string, unknown>): Promise<T> {
-    return $fetch<T>(`${baseURL}${endpoint}`, { params })
+    return $fetch<T>(`${baseURL}${endpoint}`, { params }) as Promise<T>
   }
 
   function getWorkshops(params?: Record<string, unknown>) {

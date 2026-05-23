@@ -4,15 +4,16 @@ import { DEFAULT_PRICING } from '~~/types/directus'
 const { getWorkshops, getImageUrl, getPricing, getMainGallery } = useDirectus()
 const { lang, t } = useLang()
 
-const { data, error: workshopsError } = await useAsyncData('workshops-home', () => getWorkshops({ limit: 3 }))
-const workshops = computed(() => data.value?.data ?? [])
+const { data, error: workshopsError } = await useAsyncData('home', () =>
+  Promise.all([
+    getWorkshops({ limit: 3 }),
+    getPricing().catch(() => null),
+  ]).then(([workshops, pricing]) => ({ workshops, pricing })),
+)
+const workshops = computed(() => data.value?.workshops?.data ?? [])
+const p = computed(() => data.value?.pricing?.data ?? DEFAULT_PRICING)
 
-const { data: pricingData } = await useAsyncData('prices', async () => {
-  try { return await getPricing() } catch { return null }
-})
-const p = computed(() => pricingData.value?.data ?? DEFAULT_PRICING)
-
-const { data: galleryData } = await useAsyncData('main-gallery', async () => {
+const { data: galleryData } = useLazyAsyncData('main-gallery', async () => {
   try { return await getMainGallery() } catch { return null }
 })
 const galleryImages = computed(() =>
