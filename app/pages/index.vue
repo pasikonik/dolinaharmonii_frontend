@@ -63,7 +63,7 @@ useHead({
       name: 'Dolina Harmonii',
       description: 'Ośrodek warsztatowy i dom gościnny w Kopańcu, w Górach Izerskich. Warsztaty mindfulness, medytacja, rękodzieło, pobyty regeneracyjne.',
       url: origin,
-      email: 'dolina@harmonii.pl',
+      email: 'dolinaharmonii@gmail.com',
       foundingDate: '2017',
       address: {
         '@type': 'PostalAddress',
@@ -214,7 +214,7 @@ const FAQ_DATA = [
   {
     cat_pl: 'Pobyt i rezerwacja', cat_en: 'Stay & booking',
     items: [
-      { q_pl: 'Jak zarezerwować pobyt?', q_en: 'How do I book a stay?', a_pl: 'Wyślij wiadomość przez formularz kontaktowy lub napisz na dolina@harmonii.pl. Podaj termin, liczbę osób i wybrany obiekt — wrócimy z odpowiedzią w ciągu 48 godzin.', a_en: "Send us a message via the contact form or write to dolina@harmonii.pl. Include your preferred dates, number of guests and chosen building — we'll reply within 48 hours." },
+      { q_pl: 'Jak zarezerwować pobyt?', q_en: 'How do I book a stay?', a_pl: 'Wyślij wiadomość przez formularz kontaktowy lub napisz na dolinaharmonii@gmail.com. Podaj termin, liczbę osób i wybrany obiekt — wrócimy z odpowiedzią w ciągu 48 godzin.', a_en: "Send us a message via the contact form or write to dolinaharmonii@gmail.com. Include your preferred dates, number of guests and chosen building — we'll reply within 48 hours." },
       { q_pl: 'Jaki jest minimalny czas pobytu?', q_en: 'What is the minimum stay?', a_pl: 'W sezonie (maj–październik) minimalny pobyt to 2 noce. Poza sezonem przyjmujemy też pobyty jednodniowe — napisz do nas, a ustalimy szczegóły.', a_en: "During the season (May–October) the minimum stay is 2 nights. Off-season we also accept one-night stays — contact us and we'll work out the details." },
       { q_pl: 'Czy mogę przyjechać z dziećmi?', q_en: 'Can I bring children?', a_pl: 'Tak — Leśny Domek i Studio z oranżerią są idealne dla rodzin. Duży Dom i warsztaty grupowe są zarezerwowane dla dorosłych lub starszych dzieci (12+), by zapewnić spokój innym gościom.', a_en: 'Yes — the Forest Cottage and Studio with Orangery are ideal for families. The Big House and group workshops are reserved for adults or older children (12+) to ensure quiet for other guests.' },
       { q_pl: 'Czy można przyjechać ze zwierzęciem?', q_en: 'Can I bring a pet?', a_pl: 'Przyjmujemy grzeczne psy w Leśnym Domku i Studiu z oranżerią. W Dużym Domu zwierzęta nie są dozwolone ze względu na uczestników warsztatów i alergie. Prosimy o wcześniejszą informację.', a_en: 'Well-behaved dogs are welcome in the Forest Cottage and Studio. Pets are not allowed in the Big House due to workshop participants and allergies. Please let us know in advance.' },
@@ -411,7 +411,7 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
           <DhIcon name="leaf" :size="32" :stroke="1.2" class="notice-icon" />
           <p class="notice-title">{{ t('Nie udało się pobrać warsztatów', 'Workshops unavailable') }}</p>
           <p class="notice-desc">{{ t('Sprawdź ponownie za chwilę lub napisz do nas bezpośrednio.', 'Please try again in a moment or contact us directly.') }}</p>
-          <a href="mailto:dolina@harmonii.pl" class="btn btn-secondary">dolina@harmonii.pl</a>
+          <a href="mailto:dolinaharmonii@gmail.com" class="btn btn-secondary">dolinaharmonii@gmail.com</a>
         </div>
         <template v-else>
           <div class="workshop-grid">
@@ -495,7 +495,7 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
                 {{ t('Zobacz obiekt', 'View property') }}
                 <DhIcon name="arrow" :size="18" :stroke="1.6" />
               </NuxtLink>
-              <a class="btn btn-secondary" href="mailto:dolina@harmonii.pl">{{ t('Zapytaj o termin', 'Ask about dates') }}</a>
+              <a class="btn btn-secondary" href="mailto:dolinaharmonii@gmail.com">{{ t('Zapytaj o termin', 'Ask about dates') }}</a>
             </div>
           </div>
         </div>
