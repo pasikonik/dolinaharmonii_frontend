@@ -27,47 +27,10 @@ const GALLERY_PREVIEW_LIMIT = 10
 const galleryPreview = computed(() => galleryImages.value.slice(0, GALLERY_PREVIEW_LIMIT))
 
 const lightboxIndex = ref<number | null>(null)
-const lightboxLoading = ref(false)
 
-function preloadNeighbors(i: number) {
-  if (!import.meta.client) return
-  const list = galleryImages.value
-  const n = list.length
-  if (n < 2) return
-  for (const k of [(i + 1) % n, (i - 1 + n) % n]) {
-    const url = list[k]?.full
-    if (url) { const im = new Image(); im.src = url }
-  }
-}
-
-watch(lightboxIndex, (i) => {
-  if (i === null) return
-  lightboxLoading.value = true
-  preloadNeighbors(i)
-})
-
-function onLightboxLoad() { lightboxLoading.value = false }
-function onLightboxError() { lightboxLoading.value = false }
-
-function openLightbox(i: number) { lightboxIndex.value = i }
-function closeLightbox() { lightboxIndex.value = null }
-function prevImg() {
-  if (lightboxIndex.value === null) return
-  const n = galleryImages.value.length
-  lightboxIndex.value = (lightboxIndex.value - 1 + n) % n
-}
-function nextImg() {
-  if (lightboxIndex.value === null) return
-  lightboxIndex.value = (lightboxIndex.value + 1) % galleryImages.value.length
-}
-function onLightboxKey(e: KeyboardEvent) {
-  if (lightboxIndex.value === null) return
-  if (e.key === 'Escape') closeLightbox()
-  else if (e.key === 'ArrowRight') nextImg()
-  else if (e.key === 'ArrowLeft') prevImg()
-}
-onMounted(() => window.addEventListener('keydown', onLightboxKey))
-onUnmounted(() => window.removeEventListener('keydown', onLightboxKey))
+const lightboxImages = computed(() =>
+  galleryImages.value.map(g => ({ src: g.full, thumb: g.thumb, title: g.title })),
+)
 
 function fmt(n: number): string {
   return n.toLocaleString('pl-PL')
@@ -591,8 +554,8 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
           <span class="eyebrow">{{ t('Galeria', 'Gallery') }}</span>
           <h2>{{ t('Cztery pory roku w Dolinie.', 'Four seasons in the Valley.') }}</h2>
           <p class="lede">{{ t(
-            'Jazdy konne wczesną wiosną, koncerty w stodole, sierpniowe zbiory, ciche zimowe poranki — fragmenty życia miejsca.',
-            'Horse rides in early spring, barn concerts, August harvests, quiet winter mornings — glimpses of life in this place.'
+            'Poranki z pianiem koguta, psy drzemiące w słońcu, owce na pastwisku i wieczory przy ognisku. Dolina Harmonii to miejsce wolniejszego rytmu — pełne natury, ciszy i prostych chwil, które pozwalają naprawdę odpocząć.',
+            'Morning rooster calls, dogs napping in the sun, sheep grazing nearby, and evenings spent around the fire. Dolina Harmonii is a place of slower rhythm — filled with nature, quietness, and simple moments that help you truly rest.'
           ) }}</p>
         </div>
         <div v-if="galleryPreview.length" class="gallery-masonry reveal">
@@ -602,13 +565,13 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
             type="button"
             class="gallery-tile"
             :aria-label="g.title || t('Otwórz zdjęcie', 'Open image')"
-            @click="openLightbox(i)"
+            @click="lightboxIndex = i"
           >
             <img :src="g.thumb" :alt="g.title" loading="lazy" />
           </button>
         </div>
         <div v-if="galleryImages.length" class="gallery-cta reveal">
-          <button type="button" class="btn btn-secondary" @click="openLightbox(0)">
+          <button type="button" class="btn btn-secondary" @click="lightboxIndex = 0">
             {{ t('Zobacz całą galerię', 'View full gallery') }}
             <span class="gallery-cta-count">({{ galleryImages.length }})</span>
             <DhIcon name="arrow" :size="14" :stroke="1.6" />
@@ -618,27 +581,7 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
     </section>
 
     <!-- ─── GALLERY LIGHTBOX ────────────────────────────────────────── -->
-    <Teleport to="body">
-      <div v-if="lightboxIndex !== null" class="lightbox open" @click="closeLightbox">
-        <button class="lightbox-nav prev" :aria-label="t('Poprzednie', 'Previous')" @click.stop="prevImg">‹</button>
-        <div class="lightbox-stage" @click.stop>
-          <div v-show="lightboxLoading" class="lightbox-spinner" aria-hidden="true" />
-          <img
-            :key="lightboxIndex"
-            :src="galleryImages[lightboxIndex]?.full"
-            :alt="galleryImages[lightboxIndex]?.title"
-            :class="{ 'is-loading': lightboxLoading }"
-            decoding="async"
-            fetchpriority="high"
-            @load="onLightboxLoad"
-            @error="onLightboxError"
-          />
-        </div>
-        <button class="lightbox-nav next" :aria-label="t('Następne', 'Next')" @click.stop="nextImg">›</button>
-        <button class="lightbox-close" :aria-label="t('Zamknij', 'Close')" @click="closeLightbox">×</button>
-        <div class="lightbox-counter">{{ lightboxIndex + 1 }} / {{ galleryImages.length }}</div>
-      </div>
-    </Teleport>
+    <DhLightbox v-model="lightboxIndex" :images="lightboxImages" />
 
     <!-- ─── TEAM ───────────────────────────────────────────────────── -->
     <section id="zespol" class="cream" :aria-label="t('Zespół i partnerzy', 'Team and partners')">
@@ -1429,66 +1372,6 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
   margin-left: 2px;
 }
 
-/* ─── Gallery lightbox (matches workshop page) ─────────────────── */
-.lightbox {
-  position: fixed; inset: 0; z-index: 100;
-  background: rgba(18,32,25,0.94);
-  backdrop-filter: blur(8px);
-  display: flex; align-items: center; justify-content: center;
-  padding: 48px;
-}
-.lightbox-stage {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  max-width: 90vw;
-  max-height: 86vh;
-}
-.lightbox img {
-  max-width: 90vw; max-height: 86vh;
-  object-fit: contain;
-  border-radius: var(--r-sm);
-  box-shadow: var(--shadow-lg);
-  transition: opacity .25s ease;
-}
-.lightbox img.is-loading { opacity: 0; }
-.lightbox-spinner {
-  position: absolute;
-  width: 44px;
-  height: 44px;
-  border: 3px solid rgba(253, 251, 247, 0.18);
-  border-top-color: rgba(253, 251, 247, 0.85);
-  border-radius: 50%;
-  animation: lightbox-spin 0.85s linear infinite;
-  pointer-events: none;
-}
-@keyframes lightbox-spin {
-  to { transform: rotate(360deg); }
-}
-.lightbox-close,
-.lightbox-nav {
-  position: absolute;
-  background: rgba(253,251,247,0.1); color: #FDFBF7;
-  border: 1px solid rgba(253,251,247,0.2);
-  width: 48px; height: 48px;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: background .2s;
-  font-size: 20px;
-}
-.lightbox-close:hover,
-.lightbox-nav:hover { background: rgba(253,251,247,0.2); }
-.lightbox-close { top: 24px; right: 24px; }
-.lightbox-nav.prev { left: 24px; top: 50%; transform: translateY(-50%); }
-.lightbox-nav.next { right: 24px; top: 50%; transform: translateY(-50%); }
-.lightbox-counter {
-  position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
-  font-family: var(--mono); font-size: 12px; letter-spacing: .12em;
-  color: rgba(253,251,247,.7); text-transform: uppercase;
-}
-
 /* ─── Team ──────────────────────────────────────────────────────── */
 .team-grid {
   display: grid;
@@ -1812,11 +1695,7 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
   .team-grid { grid-template-columns: 1fr; gap: 24px; }
   .gallery-masonry { column-count: 2; column-gap: 8px; }
   .gallery-tile { margin-bottom: 8px; }
-  .lightbox { padding: 16px; }
-  .lightbox-close, .lightbox-nav { width: 40px; height: 40px; }
-  .lightbox-nav.prev { left: 8px; }
-  .lightbox-nav.next { right: 8px; }
-  .intro-stats { grid-template-columns: repeat(2, 1fr); gap: 16px 12px; }
+.intro-stats { grid-template-columns: repeat(2, 1fr); gap: 16px 12px; }
   .stat-num { font-size: 26px; }
   .acc-features { grid-template-columns: 1fr; }
   .acc-text h3 { font-size: 36px; }

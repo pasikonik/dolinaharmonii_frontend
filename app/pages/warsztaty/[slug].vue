@@ -5,22 +5,24 @@ const route = useRoute()
 const slug = computed(() => route.params.slug as string)
 const { getWorkshop, getWorkshops, getImageUrl } = useDirectus()
 
-const { data } = await useAsyncData(
+const { data, pending } = useAsyncData(
   `workshop-${slug.value}`,
   () => getWorkshop(slug.value),
 )
 
 const workshop = computed(() => data.value?.data?.[0] ?? null)
 
-if (!workshop.value) {
-  throw createError({
-    statusCode: 404,
-    statusMessage: 'Nie znaleziono takiego warsztatu',
-    fatal: true,
-  })
-}
+watch(pending, (isPending) => {
+  if (!isPending && !workshop.value) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: 'Nie znaleziono takiego warsztatu',
+      fatal: true,
+    })
+  }
+})
 
-const { data: relatedData } = await useAsyncData(
+const { data: relatedData } = useAsyncData(
   `related-${slug.value}`,
   () => {
     const cat = workshop.value?.category
@@ -37,6 +39,7 @@ const { data: relatedData } = await useAsyncData(
       limit: 3,
     })
   },
+  { watch: [workshop] },
 )
 
 const origin = useRequestURL().origin
@@ -120,28 +123,11 @@ const galleryImages = computed(() => {
   return imgs
 })
 
-function openLightbox(i: number) { lightboxIndex.value = i }
-function closeLightbox() { lightboxIndex.value = null }
-function prevImg() {
-  if (lightboxIndex.value === null) return
-  lightboxIndex.value = (lightboxIndex.value - 1 + galleryImages.value.length) % galleryImages.value.length
-}
-function nextImg() {
-  if (lightboxIndex.value === null) return
-  lightboxIndex.value = (lightboxIndex.value + 1) % galleryImages.value.length
-}
+const lightboxImages = computed(() =>
+  galleryImages.value.map(src => ({ src })),
+)
 
-function onKey(e: KeyboardEvent) {
-  if (lightboxIndex.value === null) return
-  if (e.key === 'Escape') closeLightbox()
-  else if (e.key === 'ArrowRight') nextImg()
-  else if (e.key === 'ArrowLeft') prevImg()
-}
-
-onMounted(() => window.addEventListener('keydown', onKey))
-onUnmounted(() => window.removeEventListener('keydown', onKey))
-
-useScrollReveal()
+useScrollReveal({ retriggerOn: pending })
 
 const category = computed(() => {
   const cat = workshop.value?.category
@@ -187,7 +173,48 @@ const relatedWorkshops = computed(() =>
 
 <template>
   <div class="workshop-detail-page">
+
+    <!-- ─── SKELETON ────────────────────────────────────────────── -->
+    <template v-if="pending">
+      <header class="w-hero">
+        <div class="container">
+          <div class="w-hero-grid">
+            <div class="w-hero-title-col">
+              <div class="sk sk-pill" />
+              <div class="sk sk-h1" />
+              <div class="sk sk-h1 sk-h1--short" />
+              <div class="sk sk-lede" />
+              <div class="sk sk-lede sk-lede--short" />
+            </div>
+            <div class="book-card">
+              <div class="sk sk-label" />
+              <div class="sk sk-price" />
+              <div class="divide" />
+              <div class="sk sk-row" />
+              <div class="sk sk-row" />
+            </div>
+          </div>
+        </div>
+      </header>
+      <section class="w-body">
+        <div class="container">
+          <div class="w-body-grid">
+            <div>
+              <div class="sk sk-label" />
+              <div class="sk sk-line" />
+              <div class="sk sk-line" />
+              <div class="sk sk-line sk-line--short" />
+              <div class="sk sk-line" />
+              <div class="sk sk-line sk-line--short" />
+            </div>
+            <div class="sk sk-side" />
+          </div>
+        </div>
+      </section>
+    </template>
+
     <!-- ─── HERO ──────────────────────────────────────────────────── -->
+    <template v-else>
     <header class="w-hero">
       <div class="container">
         <div class="w-hero-grid">
@@ -317,12 +344,12 @@ const relatedWorkshops = computed(() =>
     <section v-if="galleryImages.length" class="w-gallery-section">
       <div class="container">
         <div class="w-gallery-strip" :class="{ 'single': galleryImages.length === 1 }">
-          <div class="gallery-main" @click="openLightbox(0)">
+          <div class="gallery-main" @click="lightboxIndex = 0">
             <img :src="galleryImages[0]" alt="" />
           </div>
           <div v-if="galleryImages.length >= 3" class="right-stack">
-            <div @click="openLightbox(1)"><img :src="galleryImages[1]" alt="" /></div>
-            <div class="gallery-more" @click="openLightbox(2)">
+            <div @click="lightboxIndex = 1"><img :src="galleryImages[1]" alt="" /></div>
+            <div class="gallery-more" @click="lightboxIndex = 2">
               <img :src="galleryImages[2]" alt="" />
               <div v-if="galleryImages.length > 3" class="more-overlay">+ {{ galleryImages.length - 3 }} zdjęć</div>
             </div>
@@ -332,15 +359,8 @@ const relatedWorkshops = computed(() =>
     </section>
 
     <!-- ─── LIGHTBOX ──────────────────────────────────────────────── -->
-    <Teleport to="body">
-      <div v-if="lightboxIndex !== null" class="lightbox open" @click="closeLightbox">
-        <button class="lightbox-nav prev" @click.stop="prevImg">‹</button>
-        <img :src="galleryImages[lightboxIndex]" alt="" @click.stop />
-        <button class="lightbox-nav next" @click.stop="nextImg">›</button>
-        <button class="lightbox-close" @click="closeLightbox">×</button>
-        <div class="lightbox-counter">{{ lightboxIndex + 1 }} / {{ galleryImages.length }}</div>
-      </div>
-    </Teleport>
+    <DhLightbox v-model="lightboxIndex" :images="lightboxImages" />
+    </template>
   </div>
 </template>
 
@@ -416,15 +436,29 @@ const relatedWorkshops = computed(() =>
 .related-title { font-family: var(--serif); font-size: 15px; color: var(--brand-primary); line-height: 1.3; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .related-date { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); }
 
-/* ─── Lightbox ────────────────────────────────────────────────── */
-.lightbox { position: fixed; inset: 0; z-index: 100; background: rgba(18,32,25,0.94); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; padding: 48px; }
-.lightbox img { max-width: 90vw; max-height: 86vh; object-fit: contain; border-radius: var(--r-sm); box-shadow: var(--shadow-lg); }
-.lightbox-close, .lightbox-nav { position: absolute; background: rgba(253,251,247,0.1); color: #FDFBF7; border: 1px solid rgba(253,251,247,0.2); width: 48px; height: 48px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .2s; font-size: 20px; }
-.lightbox-close:hover, .lightbox-nav:hover { background: rgba(253,251,247,0.2); }
-.lightbox-close { top: 24px; right: 24px; }
-.lightbox-nav.prev { left: 24px; top: 50%; transform: translateY(-50%); }
-.lightbox-nav.next { right: 24px; top: 50%; transform: translateY(-50%); }
-.lightbox-counter { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); font-family: var(--mono); font-size: 12px; letter-spacing: .12em; color: rgba(253,251,247,.7); text-transform: uppercase; }
+
+/* ─── Skeleton ────────────────────────────────────────────────── */
+@keyframes sk-shimmer {
+  from { background-position: -600px 0 }
+  to   { background-position:  600px 0 }
+}
+.sk {
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--bg-section) 25%, var(--line) 50%, var(--bg-section) 75%);
+  background-size: 600px 100%;
+  animation: sk-shimmer 1.4s ease-in-out infinite;
+}
+.sk-pill  { height: 32px; width: 130px; margin-bottom: 28px; border-radius: var(--r-pill); }
+.sk-h1    { height: 72px; width: 90%; margin-bottom: 16px; }
+.sk-h1--short { width: 65%; }
+.sk-lede  { height: 20px; width: 88%; margin-bottom: 12px; }
+.sk-lede--short { width: 60%; margin-bottom: 0; }
+.sk-label { height: 12px; width: 80px; margin-bottom: 12px; }
+.sk-price { height: 52px; width: 140px; margin-bottom: 24px; }
+.sk-row   { height: 18px; width: 100%; margin-bottom: 14px; }
+.sk-line  { height: 16px; width: 100%; margin-bottom: 14px; }
+.sk-line--short { width: 70%; }
+.sk-side  { height: 260px; border-radius: var(--r-md); }
 
 /* ─── Responsive ──────────────────────────────────────────────── */
 @media (max-width: 1024px) {
@@ -441,9 +475,5 @@ const relatedWorkshops = computed(() =>
   .w-gallery-strip { grid-template-columns: 1fr; height: auto; }
   .w-gallery-strip .right-stack { display: none; }
   .w-gallery-strip .gallery-main { aspect-ratio: 4/3; }
-  .lightbox { padding: 16px; }
-  .lightbox-close, .lightbox-nav { width: 40px; height: 40px; }
-  .lightbox-nav.prev { left: 8px; }
-  .lightbox-nav.next { right: 8px; }
 }
 </style>

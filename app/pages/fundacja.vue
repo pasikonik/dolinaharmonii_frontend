@@ -56,13 +56,16 @@ const AREAS_RAW = [
   },
 ]
 
-const TOPICS_PL = [
-  'permakultura', 'suwerenność żywnościowa', 'zrównoważony rozwój', 'głęboka ekologia',
-  'ekonomia społeczna', 'edukacja pozaformalna', 'edukacja globalna', 'edukacja międzykulturowa', 'sztuka',
-]
-const TOPICS_EN = [
-  'permaculture', 'food sovereignty', 'sustainable development', 'deep ecology',
-  'social economy', 'non-formal education', 'global education', 'intercultural education', 'art',
+const TOPICS = [
+  { icon: 'leaf',       label_pl: 'Permakultura',                label_en: 'Permaculture' },
+  { icon: 'seed',       label_pl: 'Suwerenność żywnościowa',     label_en: 'Food sovereignty' },
+  { icon: 'compass',    label_pl: 'Zrównoważony rozwój',         label_en: 'Sustainable development' },
+  { icon: 'mountain',   label_pl: 'Głęboka ekologia',            label_en: 'Deep ecology' },
+  { icon: 'hands',      label_pl: 'Ekonomia społeczna',          label_en: 'Social economy' },
+  { icon: 'candle',     label_pl: 'Edukacja pozaformalna',       label_en: 'Non-formal education' },
+  { icon: 'tea',        label_pl: 'Edukacja globalna',           label_en: 'Global education' },
+  { icon: 'meditation', label_pl: 'Edukacja międzykulturowa',    label_en: 'Intercultural education' },
+  { icon: 'craft',      label_pl: 'Sztuka',                      label_en: 'Art' },
 ]
 
 const COMPASS = [
@@ -323,19 +326,22 @@ const activePillar = computed(() => COMPASS[activeCompass.value])
     <!-- ─── TOPICS ────────────────────────────────────────────────── -->
     <section class="sage tight topics-section" :aria-label="t('Tematyka', 'Topics')">
       <div class="container">
-        <div class="section-head reveal">
+        <div class="topics-header reveal">
           <span class="eyebrow">{{ t('Tematyka', 'Topics') }}</span>
           <h2>{{ t('O czym opowiadamy.', 'What we talk about.') }}</h2>
         </div>
-        <div class="topics-cloud reveal">
-          <span
-            v-for="(topic, i) in (lang === 'en' ? TOPICS_EN : TOPICS_PL)"
+        <div class="topics-grid reveal">
+          <div
+            v-for="(topic, i) in TOPICS"
             :key="i"
-            class="topic"
-            :style="{ transitionDelay: `${i * 40}ms` }"
+            class="topic-item"
+            :style="{ transitionDelay: `${i * 35}ms` }"
           >
-            {{ topic }}
-          </span>
+            <span class="topic-icon">
+              <DhIcon :name="topic.icon" :size="20" :stroke="1.5" />
+            </span>
+            <span class="topic-label">{{ t(topic.label_pl, topic.label_en) }}</span>
+          </div>
         </div>
       </div>
     </section>
@@ -654,35 +660,44 @@ const activePillar = computed(() => COMPASS[activeCompass.value])
   background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-sage) 100%);
 }
 
-/* ─── Topics cloud ──────────────────────────────────────────────── */
-.topics-section .section-head { margin-bottom: 48px; }
-.topics-cloud {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px 14px;
-  max-width: 880px;
-  margin: 0 auto;
+/* ─── Topics grid ───────────────────────────────────────────────── */
+.topics-header {
+  margin-bottom: 40px;
 }
-.topic {
-  display: inline-flex;
+.topics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+  max-width: 860px;
+}
+.topic-item {
+  display: flex;
   align-items: center;
+  gap: 14px;
+  padding: 20px 28px;
+  border-bottom: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+  transition: background .2s ease;
+}
+.topic-item:hover { background: rgba(255,255,255,0.6); }
+.topic-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(139,154,103,0.15);
+  color: var(--brand-primary);
+  flex-shrink: 0;
+}
+.topic-label {
   font-family: var(--serif);
   font-style: italic;
-  font-size: clamp(18px, 2vw, 26px);
+  font-size: 17px;
   color: var(--brand-primary);
-  padding: 8px 22px;
-  border: 1px solid var(--accent-sand);
-  border-radius: var(--r-pill);
-  background: rgba(255, 255, 255, 0.55);
-  transition: background .25s ease, color .25s ease, border-color .25s ease;
-  cursor: default;
-}
-.topic:nth-child(odd) { color: var(--accent-earth); }
-.topic:hover {
-  background: var(--cta-main);
-  color: var(--brand-deep);
-  border-color: var(--cta-main);
+  line-height: 1.3;
 }
 
 /* ─── Shared direction (compass) ────────────────────────────────── */
@@ -1013,6 +1028,7 @@ const activePillar = computed(() => COMPASS[activeCompass.value])
   .mission-grid { grid-template-columns: 1fr; gap: 56px; }
 
   .areas-grid { grid-template-columns: repeat(2, 1fr); }
+  .topics-grid { grid-template-columns: repeat(2, 1fr); max-width: none; }
   .area-card:nth-child(4),
   .area-card:nth-child(5) { grid-column: auto; grid-row: auto; }
   .area-card:nth-child(5) { background: var(--bg-card); }
@@ -1042,6 +1058,8 @@ const activePillar = computed(() => COMPASS[activeCompass.value])
   .pillar-num { font-size: 30px; }
 
   .areas-grid { grid-template-columns: 1fr; }
+  .topics-grid { grid-template-columns: 1fr; }
+  .topic-item { padding: 16px 20px; }
 
   .compass-head { margin-bottom: 36px; }
   .compass-wrap {
