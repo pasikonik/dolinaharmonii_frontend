@@ -34,7 +34,7 @@ useSeoMeta({
             ) }}</p>
             <p>{{ t(
               'Pociągiem do stacji Piechowice (bezpośrednio z Wrocławia) lub Jeleniej Góry, skąd busem Ro-Ko do Kopańca z którego możemy Cie odebrać.',
-              ''
+              'By train, head to Piechowice station (directly from Wrocław) or Jelenia Góra, then take the Ro-Ko bus to Kopańce where we can pick you up.'
             ) }}</p>
             <div class="links">
               <a href="https://koleo.pl/rozklad-jazdy" target="_blank" rel="noopener">koleo.pl</a>
