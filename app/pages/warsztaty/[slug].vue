@@ -54,14 +54,14 @@ useSeoMeta({
   ogUrl: () => `${origin}/warsztaty/${slug.value}`,
   ogImage: () => workshop.value?.cover_image
     ? getImageUrl(workshop.value.cover_image, { width: 1200, format: 'webp' })
-    : `${origin}/duzy_dom.avif`,
+    : `${origin}/miejsce/duzy-dom.avif`,
   ogType: 'website',
   twitterCard: 'summary_large_image',
   twitterTitle: () => workshop.value?.title ?? 'Warsztat — Dolina Harmonii',
   twitterDescription: () => workshop.value?.meta_description || workshop.value?.short_description || '',
   twitterImage: () => workshop.value?.cover_image
     ? getImageUrl(workshop.value.cover_image, { width: 1200, format: 'webp' })
-    : `${origin}/duzy_dom.avif`,
+    : `${origin}/miejsce/duzy-dom.avif`,
 })
 
 useHead(computed(() => ({
@@ -344,15 +344,15 @@ const relatedWorkshops = computed(() =>
     <section v-if="galleryImages.length" class="w-gallery-section">
       <div class="container">
         <div class="w-gallery-strip" :class="{ 'single': galleryImages.length === 1 }">
-          <div class="gallery-main" @click="lightboxIndex = 0">
+          <button type="button" class="gallery-main" aria-label="Otwórz galerię" @click="lightboxIndex = 0">
             <img :src="galleryImages[0]" alt="" />
-          </div>
+          </button>
           <div v-if="galleryImages.length >= 3" class="right-stack">
-            <div @click="lightboxIndex = 1"><img :src="galleryImages[1]" alt="" /></div>
-            <div class="gallery-more" @click="lightboxIndex = 2">
+            <button type="button" aria-label="Otwórz zdjęcie 2" @click="lightboxIndex = 1"><img :src="galleryImages[1]" alt="" /></button>
+            <button type="button" class="gallery-more" aria-label="Otwórz galerię" @click="lightboxIndex = 2">
               <img :src="galleryImages[2]" alt="" />
               <div v-if="galleryImages.length > 3" class="more-overlay">+ {{ galleryImages.length - 3 }} zdjęć</div>
-            </div>
+            </button>
           </div>
         </div>
       </div>
@@ -398,9 +398,11 @@ const relatedWorkshops = computed(() =>
 .w-gallery-section { padding: 0 0 96px; }
 .w-gallery-strip { display: grid; grid-template-columns: 2fr 1fr; gap: 8px; height: 460px; }
 .w-gallery-strip.single { grid-template-columns: 1fr; }
-.w-gallery-strip > div { overflow: hidden; border-radius: var(--r-sm); position: relative; background: var(--bg-section); cursor: pointer; }
+.w-gallery-strip > div,
+.w-gallery-strip > button { overflow: hidden; border-radius: var(--r-sm); position: relative; background: var(--bg-section); cursor: pointer; border: none; padding: 0; display: block; }
 .w-gallery-strip img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s ease; }
-.w-gallery-strip > div:hover img { transform: scale(1.04); }
+.w-gallery-strip > div:hover img,
+.w-gallery-strip > button:hover img { transform: scale(1.04); }
 .w-gallery-strip .right-stack { display: grid; grid-template-rows: 1fr 1fr; gap: 8px; height: 100%; }
 .w-gallery-strip .more-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(27,48,34,0) 60%, rgba(27,48,34,.6) 100%); display: flex; align-items: flex-end; padding: 16px; color: var(--bg-primary); font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; pointer-events: none; }
 

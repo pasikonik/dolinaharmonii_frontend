@@ -8,7 +8,40 @@ useSeoMeta({
   ogTitle: 'Fundacja Harmonia Kultury',
   ogDescription: 'Działania na rzecz harmonii człowieka z naturą — Perski Izerski, edukacja globalna, suwerenność żywnościowa, rezydencje artystyczne, permakultura.',
   ogUrl: `${origin}/fundacja`,
-  ogImage: `${origin}/kopaniec.avif`,
+  ogImage: `${origin}/miejsce/kopaniec.avif`,
+})
+
+useHead({
+  script: [{
+    type: 'application/ld+json',
+    innerHTML: JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'NGO',
+      name: 'Fundacja Harmonia Kultury',
+      alternateName: 'Harmonia Kultury Foundation',
+      description: 'Fundacja działająca na rzecz harmonii człowieka z naturą — permakultura, edukacja globalna, suwerenność żywnościowa, rezydencje artystyczne.',
+      url: `${origin}/fundacja`,
+      logo: `${origin}/logo.png`,
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'Kopaniec 69A',
+        addressLocality: 'Stara Kamienica',
+        postalCode: '58-512',
+        addressRegion: 'Dolnośląskie',
+        addressCountry: 'PL',
+      },
+      knowsAbout: [
+        'Permakultura',
+        'Suwerenność żywnościowa',
+        'Edukacja globalna',
+        'Edukacja pozaformalna',
+        'Rezydencje artystyczne',
+        'Ekonomia społeczna',
+        'Głęboka ekologia',
+      ],
+      areaServed: { '@type': 'Country', name: 'Poland' },
+    }),
+  }],
 })
 
 useScrollReveal({ rootMargin: '0px 0px -60px 0px' })
@@ -16,7 +49,7 @@ useScrollReveal({ rootMargin: '0px 0px -60px 0px' })
 const AREAS_RAW = [
   {
     num: '01',
-    img: '/obszary/perski-1.avif',
+    img: '/obszary/perski-izerski.avif',
     title_pl: 'Perski Izerski',
     title_en: 'Persian Izera',
     desc_pl: 'Cykliczne jarmarki łączące lokalnych wytwórców, rzemieślników i mieszkańców regionu — żywa ekonomia społeczna w sercu Gór Izerskich.',
@@ -24,7 +57,7 @@ const AREAS_RAW = [
   },
   {
     num: '02',
-    img: '/obszary/edukacja-globalna.jpg',
+    img: '/obszary/edukacja-globalna.avif',
     title_pl: 'Edukacja globalna',
     title_en: 'Global education',
     desc_pl: 'Projekty edukacji pozaformalnej i międzykulturowej, otwierające na perspektywę globalnych współzależności i odpowiedzialności.',
@@ -32,7 +65,7 @@ const AREAS_RAW = [
   },
   {
     num: '03',
-    img: '/obszary/suwerennosc.avif',
+    img: '/obszary/suwerennosc-zywnosciowa.avif',
     title_pl: 'Izerskie Forum Suwerenności Żywnościowej',
     title_en: 'Izera Food Sovereignty Forum',
     desc_pl: 'Spotkania, debaty i działania wokół lokalnych systemów żywnościowych, drobnego rolnictwa i prawa do dobrego jedzenia.',
@@ -40,7 +73,7 @@ const AREAS_RAW = [
   },
   {
     num: '04',
-    img: '/obszary/rezydencje-artystyczne.jpg',
+    img: '/obszary/rezydencje-artystyczne.avif',
     title_pl: 'Rezydencje artystyczne',
     title_en: 'Artist residencies',
     desc_pl: 'Goszczenie artystek i artystów na czas wspólnej pracy z miejscem — w dialogu z naturą Izerów i lokalną kulturą.',
@@ -48,7 +81,7 @@ const AREAS_RAW = [
   },
   {
     num: '05',
-    img: '/obszary/permakultura.jpg',
+    img: '/obszary/permakultura.avif',
     title_pl: 'Permakultura',
     title_en: 'Permaculture',
     desc_pl: 'Praktyki permakulturowe w gospodarstwie i w ogrodach — projekt długiej współpracy z ziemią, wodą i wspólnotą.',
@@ -56,7 +89,7 @@ const AREAS_RAW = [
   },
   {
     num: '06',
-    img: '/obszary/magiczne_izery.avif',
+    img: '/obszary/magiczne-izery.avif',
     title_pl: 'Magiczne Izery',
     title_en: 'Magical Izeras',
     desc_pl: 'Niespiesznie weekendowy festiwal otwartej kultury wsi — lokalni artyści i rzemieślnicy otwierają swoje pracownie, dzielą się twórczością i tradycjami w całym regionie Izerskim.',
@@ -65,22 +98,22 @@ const AREAS_RAW = [
 ]
 
 const TOPICS = [
-  { img: '/tematy/permakultura.avif',              label_pl: 'Permakultura',                label_en: 'Permaculture' },
-  { img: '/tematy/suwerennosc-zywnosciowa.avif',   label_pl: 'Suwerenność żywnościowa',     label_en: 'Food sovereignty' },
-  { img: '/tematy/zrownowazony-rozwoj.avif',       label_pl: 'Zrównoważony rozwój',         label_en: 'Sustainable development' },
-  { img: '/tematy/gleboka-ekologia.avif',          label_pl: 'Głęboka ekologia',            label_en: 'Deep ecology' },
-  { img: '/tematy/ekonomia-spoleczna.avif',        label_pl: 'Ekonomia społeczna',          label_en: 'Social economy' },
-  { img: '/tematy/edukacja-pozaformalna.avif',     label_pl: 'Edukacja pozaformalna',       label_en: 'Non-formal education' },
-  { img: '/tematy/edukacja-globalna-2.avif',         label_pl: 'Edukacja globalna',           label_en: 'Global education' },
-  { img: '/tematy/edukacja-międzykulturowa.avif',  label_pl: 'Edukacja międzykulturowa',    label_en: 'Intercultural education' },
-  { img: '/tematy/sztuka.avif',                    label_pl: 'Sztuka',                      label_en: 'Art' },
+  { img: '/tematy/permakultura.avif',              label_pl: 'Permakultura',             label_en: 'Permaculture' },
+  { img: '/tematy/suwerennosc-zywnosciowa.avif',   label_pl: 'Suwerenność żywnościowa',  label_en: 'Food sovereignty' },
+  { img: '/tematy/zrownowazony-rozwoj.avif',       label_pl: 'Zrównoważony rozwój',      label_en: 'Sustainable development' },
+  { img: '/tematy/edukacja-pozaformalna.avif',     label_pl: 'Edukacja pozaformalna',    label_en: 'Non-formal education' },
+  { img: '/tematy/edukacja-globalna.avif',         label_pl: 'Edukacja globalna',        label_en: 'Global education' },
+  { img: '/tematy/gleboka-ekologia.avif',          label_pl: 'Głęboka ekologia',         label_en: 'Deep ecology' },
+  { img: '/tematy/ekonomia-spoleczna.avif',        label_pl: 'Ekonomia społeczna',       label_en: 'Social economy' },
+  { img: '/tematy/edukacja-miedzykulturowa.avif',  label_pl: 'Edukacja międzykulturowa', label_en: 'Intercultural education' },
+  { img: '/tematy/sztuka.avif',                    label_pl: 'Sztuka',                   label_en: 'Art' },
 ]
 
 const COMPASS = [
   {
     id: 'konsumpcja',
     icon: 'hands',
-    img: '/fundacja_konsumpcja.avif',
+    img: '/fundacja/konsumpcja.avif',
     title_pl: 'Konsumpcja', title_en: 'Consumption',
     items_pl: [
       'Unikaj kupowania nowo wyprodukowanych rzeczy — kupuj rzeczy używane lub rób je sam.',
@@ -102,7 +135,7 @@ const COMPASS = [
   {
     id: 'spolecznosc',
     icon: 'meditation',
-    img: '/fundacja_społecznosc.avif',
+    img: '/fundacja/spolecznosc.avif',
     title_pl: 'Społeczność', title_en: 'Community',
     items_pl: [
       'Uśmiechaj się do ludzi i spotykaj ich wzrok.',
@@ -122,7 +155,7 @@ const COMPASS = [
   {
     id: 'styl-zycia',
     icon: 'mountain',
-    img: '/fundacja_styl-zycia.avif',
+    img: '/fundacja/styl-zycia.avif',
     title_pl: 'Styl życia', title_en: 'Way of life',
     items_pl: [
       'Pracuj mniej. To uwolni czas i energię na rozwijanie zrównoważonych metod życia oraz odejmie wsparcie destrukcyjnemu systemowi.',
@@ -140,7 +173,7 @@ const COMPASS = [
   {
     id: 'ziemia',
     icon: 'seed',
-    img: '/fundacja_dbalosc.avif',
+    img: '/fundacja/dbalosc.avif',
     title_pl: 'Dbałość o ziemię', title_en: 'Care for the earth',
     items_pl: [
       'Propaguj i sadź jadalne wieloletnie rośliny gdziekolwiek to możliwe.',
@@ -162,7 +195,7 @@ const COMPASS = [
   {
     id: 'energia',
     icon: 'fireplace',
-    img: '/fundacja_energia.avif',
+    img: '/fundacja/energia.avif',
     title_pl: 'Energia', title_en: 'Energy',
     items_pl: [
       'Używaj drewna i biomasy do ogrzewania. Rób zapasy, recyklinguj i sadź lokalne lub własne zasoby drewna.',
@@ -184,7 +217,7 @@ const COMPASS = [
   {
     id: 'rozwazania',
     icon: 'candle',
-    img: '/fundacja_rozwazania.avif',
+    img: '/fundacja/rozwazania.avif',
     title_pl: 'Rozważania', title_en: 'Reflections',
     items_pl: [
       'Przemyśl, które elementy naszego świata są dla Ciebie największą wartością — powietrze, woda, jedzenie, medycyna?',
@@ -256,12 +289,12 @@ const activePillar = computed(() => COMPASS[activeCompass.value])
         <div class="mission-grid">
           <div class="mission-intro reveal">
             <span class="eyebrow">{{ t('Czym jest Fundacja', 'About the Foundation') }}</span>
-            <p class="lead">
+            <h2 class="lead">
               {{ t(
                 'Tworzymy przestrzeń, w której to, co lokalne, spotyka się z tym, co głęboko osobiste — a jedno wspiera drugie.',
                 'We create a space where the local meets the deeply personal — where one supports the other.'
               ) }}
-            </p>
+            </h2>
             <p class="desc-muted">
               {{ t(
                 'Naszym celem jest dążenie do rozwoju świadomości, dzięki której wszelkie działania aktywizujące społeczność, pobudzające kreatywność lub promujące region przyczynią się do wspierania harmonijnej relacji człowieka z Naturą.',
@@ -367,12 +400,14 @@ const activePillar = computed(() => COMPASS[activeCompass.value])
         </div>
 
         <div class="compass-wrap reveal">
-          <aside class="compass-tabs" role="tablist">
+          <div class="compass-tabs" role="tablist" :aria-label="t('Kierunkowskazy', 'Waymarks')">
             <button
               v-for="(p, i) in COMPASS"
               :key="p.id"
               role="tab"
+              :id="`tab-${p.id}`"
               :aria-selected="activeCompass === i"
+              :aria-controls="`panel-${p.id}`"
               class="compass-tab"
               :class="{ active: activeCompass === i }"
               @click="setCompass(i)"
@@ -384,9 +419,15 @@ const activePillar = computed(() => COMPASS[activeCompass.value])
               <span class="tab-title">{{ t(p.title_pl, p.title_en) }}</span>
               <span class="tab-arrow" aria-hidden="true">→</span>
             </button>
-          </aside>
+          </div>
 
-          <article class="compass-panel" :key="activeCompass">
+          <article
+            class="compass-panel"
+            :key="activeCompass"
+            role="tabpanel"
+            :id="`panel-${activePillar!.id}`"
+            :aria-labelledby="`tab-${activePillar!.id}`"
+          >
             <div class="panel-head">
               <span class="panel-icon">
                 <img :src="activePillar!.img" :alt="t(activePillar!.title_pl, activePillar!.title_en)" />

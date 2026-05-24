@@ -63,8 +63,15 @@ onUnmounted(() => window.removeEventListener('keydown', onKey))
 
 <template>
   <Teleport to="body">
-    <div v-if="modelValue !== null" class="lb" @click="close">
-      <button class="lb-close" aria-label="Zamknij" @click="close">×</button>
+    <div
+      v-if="modelValue !== null"
+      class="lb"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Galeria zdjęć"
+      @click="close"
+    >
+      <button class="lb-close" aria-label="Zamknij galerię" @click="close">×</button>
 
       <!-- main image + arrows -->
       <div class="lb-main" @click.stop>
@@ -87,7 +94,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKey))
 
       <!-- thumbnail strip -->
       <div v-if="images.length > 1" class="lb-strip" @click.stop>
-        <span class="lb-counter">{{ modelValue + 1 }} / {{ images.length }}</span>
+        <span class="lb-counter" aria-live="polite" aria-atomic="true">{{ modelValue + 1 }} / {{ images.length }}</span>
         <div ref="thumbsEl" class="lb-thumbs">
           <button
             v-for="(img, i) in images"

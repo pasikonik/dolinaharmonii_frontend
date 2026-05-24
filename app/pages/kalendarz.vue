@@ -11,7 +11,7 @@ useSeoMeta({
   ogTitle: 'Kalendarz dostępności — Dolina Harmonii',
   ogDescription: 'Sprawdź dostępność pokoi w Dużym Domu i okna wolne pod wynajem całej doliny w sezonie 2026.',
   ogUrl: `${origin}/kalendarz`,
-  ogImage: `${origin}/kopaniec.avif`,
+  ogImage: `${origin}/miejsce/kopaniec.avif`,
   twitterCard: 'summary_large_image',
 })
 
@@ -43,6 +43,34 @@ const ROOMS = [
   { id: 'magiczny',  name: 'Magiczny',  capacity: 6 },
 ]
 const ROOM_COUNT = ROOMS.length
+
+useHead({
+  script: [{
+    key: 'ld-calendar',
+    type: 'application/ld+json',
+    innerHTML: JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'LodgingBusiness',
+      name: 'Dolina Harmonii — Duży Dom',
+      url: `${origin}/noclegi/duzy-dom`,
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'Kopaniec 69A',
+        addressLocality: 'Kopaniec',
+        postalCode: '58-512',
+        addressCountry: 'PL',
+      },
+      containsPlace: ROOMS.map(r => ({
+        '@type': 'HotelRoom',
+        name: `Pokój ${r.name}`,
+        occupancy: {
+          '@type': 'QuantitativeValue',
+          maxValue: r.capacity,
+        },
+      })),
+    }),
+  }],
+})
 
 const MONTHS_PL_GEN = ['stycznia','lutego','marca','kwietnia','maja','czerwca','lipca','sierpnia','września','października','listopada','grudnia']
 const MONTHS_EN = ['January','February','March','April','May','June','July','August','September','October','November','December']

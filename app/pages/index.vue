@@ -45,12 +45,12 @@ useSeoMeta({
   ogTitle: 'Dolina Harmonii — miejsce naturalnych mocy',
   ogDescription: 'Ośrodek warsztatowy w Kopańcu, w Górach Izerskich. Warsztaty mindfulness, medytacja, rękodzieło, pobyty regeneracyjne.',
   ogUrl: origin,
-  ogImage: `${origin}/duzy_dom.avif`,
+  ogImage: `${origin}/miejsce/duzy-dom.avif`,
   ogType: 'website',
   twitterCard: 'summary_large_image',
   twitterTitle: 'Dolina Harmonii — miejsce naturalnych mocy',
   twitterDescription: 'Ośrodek warsztatowy w Kopańcu, w Górach Izerskich. Warsztaty mindfulness, medytacja, rękodzieło.',
-  twitterImage: `${origin}/duzy_dom.avif`,
+  twitterImage: `${origin}/miejsce/duzy-dom.avif`,
 })
 
 useHead({
@@ -77,7 +77,7 @@ useHead({
         latitude: 50.85,
         longitude: 15.45,
       },
-      image: `${origin}/duzy_dom.avif`,
+      image: `${origin}/miejsce/duzy-dom.avif`,
     }),
   }],
 })
@@ -88,37 +88,37 @@ const yearsOpen = new Date().getFullYear() - 1995
 
 const BLESSINGS = [
   {
-    img: '/blessing-ustronnosc.avif',
+    img: '/blessings/ustronnosc.avif',
     name_pl: 'Ustronność', name_en: 'Seclusion',
     desc_pl: 'Nasze miejsce leży na wzgórzach poza wsią Kopaniec, do której szosą mamy 1,5 km. Otaczają nas rozległe lasy i łąki, a ślady cywilizacji widać dopiero na horyzoncie.',
     desc_en: 'Our place sits on the hills above Kopaniec village, 1.5 km away by road. Vast forests and meadows surround us; the traces of civilisation appear only on the distant horizon.',
   },
   {
-    img: '/blessing-woda.avif',
+    img: '/blessings/woda.avif',
     name_pl: 'Woda ze źródła', name_en: 'Spring water',
     desc_pl: 'Z naszych kranów leci woda mineralna. Serio! Na początku lat 90. funkcjonowała tutaj fabryka wód mineralnych. Pamiętajcie, by nie zabierać ze sobą zapasu wody w plastiku!',
     desc_en: 'Mineral water flows straight from our taps. Seriously! In the early 90s there was a mineral water factory here. No need to bring plastic bottles.',
   },
   {
-    img: '/blessing-przytulnosc.avif',
+    img: '/blessings/przytulnosc.avif',
     name_pl: 'Przytulność', name_en: 'Cosiness',
     desc_pl: 'Pragniemy, by atmosfera naszego domu sprzyjała swobodnej regeneracji, więc stopniowo odmieniamy wnętrza i otaczającą nas przestrzeń, wzbogacając je w rozmaite skarby.',
     desc_en: 'We want the atmosphere of our home to encourage free-flowing recovery, so we gradually transform the interiors and the surrounding space, filling them with various treasures.',
   },
   {
-    img: '/blessing-natura.avif',
+    img: '/blessings/natura.avif',
     name_pl: 'Moc natury', name_en: 'Power of nature',
     desc_pl: 'Magiczne zachody słońca i obfitość łąk i lasów, w których rosną zioła, jeżyny, maliny i dorodne grzyby — to jedynie odrobina tego, czym obdarowuje nas tu codziennie przyroda.',
     desc_en: 'Magical sunsets and an abundance of meadows and forests filled with herbs, blackberries, raspberries and mushrooms — just a fraction of what nature gifts us here each day.',
   },
   {
-    img: '/blessing-wifi.avif',
+    img: '/blessings/wifi.avif',
     name_pl: 'Wi-Fi w lesie', name_en: 'Wi-Fi in the forest',
     desc_pl: 'Jest u nas Wi-Fi, ale nie bije ono rekordów prędkości. Gościom polecamy jednak cyfrowy detoks i podłączenie się do prawdziwej sieci — Natury.',
     desc_en: "We do have Wi-Fi, though it won't break any speed records. We warmly recommend a digital detox and connecting to the real network — Nature.",
   },
   {
-    img: '/blessing-food.avif',
+    img: '/blessings/food.avif',
     name_pl: 'Lokalna żywność', name_en: 'Local food',
     desc_pl: 'Stopniowo powiększamy nasze ogrody, by coraz więcej posiłków powstawało z własnych plonów, uzupełniając kuchnię produktami spoza gospodarstwa. Krok po kroku ku samowystarczalności.',
     desc_en: 'We steadily expand our gardens so that more and more meals come from our own harvest. Step by step towards self-sufficiency.',
@@ -126,7 +126,7 @@ const BLESSINGS = [
 ]
 
 
-const FALLBACK_IMG = '/duzy_dom.avif'
+const FALLBACK_IMG = '/miejsce/duzy-dom.avif'
 
 function calcDuration(start?: string | null, end?: string | null): string {
   if (!start || !end) return ''
@@ -340,7 +340,7 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
             </div>
           </div>
           <div class="reveal intro-image-wrap">
-            <img src="/dom-4.avif"
+            <img src="/miejsce/dom-4.avif"
               :alt="t('Wnętrze drewnianego domu', 'Interior of the wooden house')" class="intro-main-img" />
             <div class="intro-badge">
               <div class="badge-head">
@@ -383,7 +383,7 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
             <div class="blessing-num">{{ String(i + 1).padStart(2, '0') }}</div>
             <img :src="b.img" alt="" class="blessing-icon" loading="lazy" />
             <div class="blessing-text">
-              <h4 class="blessing-name">{{ t(b.name_pl, b.name_en) }}</h4>
+              <h3 class="blessing-name">{{ t(b.name_pl, b.name_en) }}</h3>
               <p class="blessing-desc">{{ t(b.desc_pl, b.desc_en) }}</p>
             </div>
           </div>
@@ -426,7 +426,7 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
                 </span>
               </div>
               <div class="body">
-                <h4>{{ w.name }}</h4>
+                <h3>{{ w.name }}</h3>
                 <p>{{ w.desc }}</p>
                 <div class="foot">
                   <span v-if="w.dur" class="dur">{{ w.dur }}</span>
@@ -541,7 +541,7 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
             </div>
           </div>
           <div class="reveal region-img-wrap">
-            <img src="/kopaniec.avif"
+            <img src="/miejsce/kopaniec.avif"
               :alt="t('Góry Izerskie', 'Izera Mountains')" />
           </div>
         </div>
@@ -598,7 +598,7 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
         <div class="team-grid reveal">
           <div v-for="(m, i) in TEAM" :key="i" class="team-member">
             <img class="photo" :src="m.img" :alt="m.name" loading="lazy" />
-            <h4>{{ m.name }}</h4>
+            <h3>{{ m.name }}</h3>
             <span class="role">{{ m.role }}</span>
           </div>
         </div>
@@ -1011,7 +1011,7 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
   flex: 1;
 }
 
-.workshop-card h4 {
+.workshop-card h3 {
   font-family: var(--serif);
   font-size: 24px;
   font-weight: 500;
@@ -1020,7 +1020,7 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
   color: var(--brand-deep);
   transition: color .25s ease;
 }
-.workshop-card:hover h4 { color: var(--brand-primary); }
+.workshop-card:hover h3 { color: var(--brand-primary); }
 
 .workshop-card p {
   font-size: 14px;
@@ -1395,7 +1395,7 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
   filter: saturate(0.85);
 }
 
-.team-member h4 {
+.team-member h3 {
   font-family: var(--serif);
   margin-bottom: 4px;
 }

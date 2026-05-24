@@ -30,11 +30,11 @@ useSeoMeta({
   ogTitle: 'Duży Dom — Dom Gościnny · Dolina Harmonii',
   ogDescription: 'Drewniany Dom Gościnny z 5 pokojami, kominkiem i salą warsztatową w Kopańcu, Góry Izerskie.',
   ogUrl: `${origin}/noclegi/duzy-dom`,
-  ogImage: `${origin}/duzy_dom.avif`,
+  ogImage: `${origin}/miejsce/duzy-dom.avif`,
   twitterCard: 'summary_large_image',
   twitterTitle: 'Duży Dom — Dolina Harmonii',
   twitterDescription: 'Drewniany Dom Gościnny z 5 pokojami, kominkiem i salą warsztatową w Kopańcu.',
-  twitterImage: `${origin}/duzy_dom.avif`,
+  twitterImage: `${origin}/miejsce/duzy-dom.avif`,
 })
 
 useHead({
@@ -54,7 +54,7 @@ useHead({
         addressRegion: 'Dolny Śląsk',
         addressCountry: 'PL',
       },
-      image: `${origin}/duzy_dom.avif`,
+      image: `${origin}/miejsce/duzy-dom.avif`,
       numberOfRooms: 5,
       amenityFeature: [
         { '@type': 'LocationFeatureSpecification', name: 'Kominek', value: true },
@@ -228,7 +228,12 @@ useScrollReveal({ threshold: 0.08 })
     <header class="hero-sub">
       <img class="bg" src="https://images.unsplash.com/photo-1542718610-a1d656d1884c?auto=format&fit=crop&w=2000&q=80" alt="" />
       <div class="container">
-        <div class="crumb">Noclegi / Obiekt 01</div>
+        <nav aria-label="Breadcrumb" class="crumb">
+          <ol>
+            <li><NuxtLink to="/#noclegi">Noclegi</NuxtLink></li>
+            <li aria-current="page">Duży Dom</li>
+          </ol>
+        </nav>
         <h1>Duży Dom</h1>
         <p class="hero-lede">Drewniany Dom Gościnny z pięcioma przytulnymi pokojami — sercem Doliny Harmonii. Domowy klimat, kominek w salonie, sala warsztatowa i wspólna kuchnia, w której poznają się goście.</p>
         <div class="quick-meta">
@@ -260,6 +265,7 @@ useScrollReveal({ threshold: 0.08 })
               </p>
             </div>
             <table class="spec-table">
+              <caption class="sr-only">Parametry techniczne Dużego Domu</caption>
               <tbody>
                 <tr><td>Liczba pokoi</td><td>5 · każdy z osobną łazienką</td></tr>
                 <tr><td>Maksymalna liczba osób</td><td>14 (z rozłożonymi sofami)</td></tr>
@@ -272,9 +278,9 @@ useScrollReveal({ threshold: 0.08 })
           </div>
           <div class="reveal">
             <div class="img-stack">
-              <img class="tall" src="/kwiecisty-4.avif" alt="Pokój Kwiecisty — wnętrze" />
-              <img src="/magiczny-1.avif" alt="Pokój Magiczny — poddasze" />
-              <img src="/sloneczny-1.avif" alt="Pokój Słoneczny" />
+              <img class="tall" src="/pokoje/kwiecisty-4.avif" alt="Pokój Kwiecisty — wnętrze" />
+              <img src="/pokoje/magiczny-1.avif" alt="Pokój Magiczny — poddasze" />
+              <img src="/pokoje/sloneczny-1.avif" alt="Pokój Słoneczny" />
             </div>
           </div>
         </div>
@@ -427,6 +433,11 @@ useScrollReveal({ threshold: 0.08 })
 .hero-sub img.bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .7; }
 .hero-sub .container { position: relative; z-index: 2; }
 .hero-sub .crumb { font-family: var(--mono); font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--cta-main); margin-bottom: 24px; }
+.hero-sub .crumb ol { list-style: none; padding: 0; margin: 0; display: flex; gap: 8px; align-items: center; }
+.hero-sub .crumb li + li::before { content: '/'; opacity: 0.5; margin-right: 8px; }
+.hero-sub .crumb a { color: inherit; text-decoration: none; opacity: 0.7; }
+.hero-sub .crumb a:hover { opacity: 1; }
+.hero-sub .crumb [aria-current="page"] { opacity: 1; }
 .hero-sub h1 { font-size: clamp(56px, 7vw, 104px); color: #FAF8F2; font-style: italic; font-weight: 500; line-height: 1; margin-bottom: 24px; letter-spacing: -0.02em; }
 .hero-lede { font-family: var(--serif); font-size: 22px; max-width: 620px; color: rgba(250,248,242,.9); margin-bottom: 0; }
 .quick-meta { display: flex; gap: 48px; margin-top: 56px; flex-wrap: wrap; padding-top: 32px; border-top: 1px solid rgba(250,248,242,.2); font-family: var(--mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: rgba(250,248,242,.85); }

@@ -84,11 +84,11 @@ onUnmounted(() => {
       <li><NuxtLink to="/dojazd" active-class="" exact-active-class="" :class="{ active: isActive('/dojazd') }">{{ t('Dojazd', 'Getting here') }}</NuxtLink></li>
     </ul>
 
-    <span class="lang-switch" aria-label="Language">
-      <button :class="{ active: lang === 'pl' }" @click="handleSetLang('pl')">PL</button>
-      <span class="sep">/</span>
-      <button :class="{ active: lang === 'en' }" @click="handleSetLang('en')">EN</button>
-    </span>
+    <div class="lang-switch" role="group" :aria-label="t('Wybór języka', 'Language selector')">
+      <button :class="{ active: lang === 'pl' }" :aria-pressed="lang === 'pl'" @click="handleSetLang('pl')">PL</button>
+      <span class="sep" aria-hidden="true">/</span>
+      <button :class="{ active: lang === 'en' }" :aria-pressed="lang === 'en'" @click="handleSetLang('en')">EN</button>
+    </div>
 
     <NuxtLink class="nav-cta" to="/#rezerwacja">{{ t('Kontakt', 'Contact') }}</NuxtLink>
 

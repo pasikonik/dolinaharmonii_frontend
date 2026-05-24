@@ -8,12 +8,15 @@ useSeoMeta({
   ogTitle: 'Warsztaty — Dolina Harmonii',
   ogDescription: 'Kameralne, kilkudniowe warsztaty od maja do października w Dolinie Harmonii. Mindfulness, joga, natura, rękodzieło.',
   ogUrl: `${origin}/warsztaty`,
-  ogImage: `${origin}/kopaniec.avif`,
+  ogImage: `${origin}/miejsce/kopaniec.avif`,
   twitterCard: 'summary_large_image',
   twitterTitle: 'Warsztaty — Dolina Harmonii',
   twitterDescription: 'Kameralne, kilkudniowe warsztaty od maja do października w Dolinie Harmonii.',
-  twitterImage: `${origin}/kopaniec.avif`,
+  twitterImage: `${origin}/miejsce/kopaniec.avif`,
 })
+
+// ─── JSON-LD ───────────────────────────────────────────────────────────────
+const MONTH_NUM: Record<string, number> = { maj: 5, cze: 6, lip: 7, sie: 8, wrz: 9, paź: 10 }
 
 // ─── Static data ──────────────────────────────────────────────────────────
 const CATEGORIES_RAW = [
@@ -71,6 +74,57 @@ const WORKSHOPS = computed(() => WORKSHOPS_RAW.map(w => ({
   date: t(w.date_pl, w.date_en),
   dateLong: t(w.dateLong_pl, w.dateLong_en),
 })))
+
+useHead({
+  script: [{
+    key: 'ld-workshops',
+    type: 'application/ld+json',
+    innerHTML: JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      name: 'Warsztaty 2026 — Dolina Harmonii',
+      description: 'Kameralne, kilkudniowe warsztaty od maja do października w Dolinie Harmonii.',
+      url: `${origin}/warsztaty`,
+      numberOfItems: WORKSHOPS_RAW.length,
+      itemListElement: WORKSHOPS_RAW.map((w, i) => {
+        const m = String(MONTH_NUM[w.month]).padStart(2, '0')
+        const startDate = `2026-${m}-${String(w.day).padStart(2, '0')}`
+        return {
+          '@type': 'ListItem',
+          position: i + 1,
+          item: {
+            '@type': 'Event',
+            name: w.name_pl,
+            description: w.desc_pl,
+            url: `${origin}/warsztaty/${w.slug}`,
+            image: w.img,
+            startDate,
+            location: {
+              '@type': 'Place',
+              name: 'Dolina Harmonii',
+              address: {
+                '@type': 'PostalAddress',
+                streetAddress: 'Kopaniec 69A',
+                addressLocality: 'Kopaniec',
+                postalCode: '58-512',
+                addressCountry: 'PL',
+              },
+            },
+            offers: {
+              '@type': 'Offer',
+              price: w.priceN,
+              priceCurrency: 'PLN',
+              availability: w.taken >= w.spots
+                ? 'https://schema.org/SoldOut'
+                : 'https://schema.org/InStock',
+              url: `${origin}/warsztaty/${w.slug}`,
+            },
+          },
+        }
+      }),
+    }),
+  }],
+})
 
 // ─── Filter state ──────────────────────────────────────────────────────────
 type WorkshopRow = (typeof WORKSHOPS)['value'][number]
@@ -211,17 +265,18 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [view, cat, month, q, sort] })
         <!-- ─── CONTROLS ─────────────────────────────────────────── -->
         <div class="controls-bar reveal">
           <div class="search-input" :class="{ focused: q }">
-            <DhIcon name="compass" :size="18" :stroke="1.4" />
+            <DhIcon name="compass" :size="18" :stroke="1.4" aria-hidden="true" />
             <input
               v-model="q"
-              type="text"
+              type="search"
+              :aria-label="t('Szukaj warsztatów', 'Search workshops')"
               :placeholder="t('Szukaj po nazwie, opisie, prowadzącym…', 'Search by name, description, instructor…')"
             />
             <button v-if="q" class="clear-btn" @click="q = ''">×</button>
           </div>
           <div class="sort-select">
-            <span class="sort-label">{{ t('Sortuj', 'Sort') }}</span>
-            <select v-model="sort">
+            <label :for="'wks-sort'" class="sort-label">{{ t('Sortuj', 'Sort') }}</label>
+            <select id="wks-sort" v-model="sort">
               <option value="date">{{ t('Wg daty', 'By date') }}</option>
               <option value="price-asc">{{ t('Cena ↑', 'Price ↑') }}</option>
               <option value="price-desc">{{ t('Cena ↓', 'Price ↓') }}</option>
@@ -250,6 +305,7 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [view, cat, month, q, sort] })
                 v-for="c in CATEGORIES" :key="c.id"
                 class="filter-chip"
                 :class="{ active: cat === c.id }"
+                :aria-pressed="cat === c.id"
                 @click="cat = c.id"
               >
                 <span class="chip-ic"><DhIcon :name="c.icon" :size="16" :stroke="1.4" /></span>
@@ -264,6 +320,7 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [view, cat, month, q, sort] })
                 v-for="m in MONTHS" :key="m.id"
                 class="filter-chip month-chip"
                 :class="{ active: month === m.id }"
+                :aria-pressed="month === m.id"
                 @click="month = m.id"
               >
                 {{ m.label }}
@@ -274,7 +331,7 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [view, cat, month, q, sort] })
 
         <!-- ─── RESULTS HEAD ──────────────────────────────────────── -->
         <div class="results-head">
-          <div class="rcount">
+          <div class="rcount" aria-live="polite" aria-atomic="true">
             {{ t('Znaleziono', 'Found') }} <em>{{ sorted.length }}</em> {{ pluralWorkshops(sorted.length) }}
           </div>
           <button v-if="hasFilters" class="clear-all-btn" @click="clearAll">× {{ t('Wyczyść filtry', 'Clear filters') }}</button>

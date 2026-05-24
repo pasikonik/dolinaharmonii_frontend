@@ -8,7 +8,35 @@ useSeoMeta({
   ogTitle: 'Dojazd — Dolina Harmonii',
   ogDescription: 'Jak dotrzeć do Doliny Harmonii w Kopańcu. Dojazd samochodem i komunikacją publiczną, mapa, współrzędne GPS.',
   ogUrl: `${origin}/dojazd`,
-  ogImage: `${origin}/kopaniec.avif`,
+  ogImage: `${origin}/miejsce/kopaniec.avif`,
+})
+
+useHead({
+  script: [{
+    key: 'ld-directions',
+    type: 'application/ld+json',
+    innerHTML: JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'LodgingBusiness',
+      name: 'Dolina Harmonii',
+      url: origin,
+      email: 'dolinaharmonii@gmail.com',
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'Kopaniec 69A',
+        addressLocality: 'Kopaniec',
+        addressRegion: 'Dolnośląskie',
+        postalCode: '58-512',
+        addressCountry: 'PL',
+      },
+      geo: {
+        '@type': 'GeoCoordinates',
+        latitude: 50.8827757,
+        longitude: 15.5621443,
+      },
+      hasMap: 'https://www.google.com/maps/dir/?api=1&destination=50.8827757,15.5621443',
+    }),
+  }],
 })
 </script>
 
@@ -64,7 +92,7 @@ useSeoMeta({
       </div>
     </section>
 
-    <div class="map-section">
+    <section class="map-section" :aria-label="t('Dolina Harmonii na mapie', 'Dolina Harmonii on the map')">
       <iframe
         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2700.0!2d15.559569377085882!3d50.882775671678!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f170!3m3!1m2!1s0x471645b096281c1f%3A0x3f1c5e255f4bb9f7!2sDolina%20Harmonii!5e0!3m2!1spl!2spl!4v1777922975447!5m2!1spl!2spl"
         allowfullscreen
@@ -72,7 +100,7 @@ useSeoMeta({
         referrerpolicy="no-referrer-when-downgrade"
         :title="t('Dolina Harmonii na mapie', 'Dolina Harmonii on the map')"
       />
-    </div>
+    </section>
 
   </div>
 </template>
@@ -189,6 +217,9 @@ useSeoMeta({
 }
 .nav-btn:hover { background: var(--brand-deep); }
 
+.map-section {
+  display: block;
+}
 .map-section iframe {
   display: block;
   width: 100%;
