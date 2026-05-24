@@ -16,7 +16,7 @@ useScrollReveal({ rootMargin: '0px 0px -60px 0px' })
 const AREAS_RAW = [
   {
     num: '01',
-    icon: 'tea',
+    img: '/obszary/perski-1.avif',
     title_pl: 'Perski Izerski',
     title_en: 'Persian Izera',
     desc_pl: 'Cykliczne jarmarki łączące lokalnych wytwórców, rzemieślników i mieszkańców regionu — żywa ekonomia społeczna w sercu Gór Izerskich.',
@@ -24,7 +24,7 @@ const AREAS_RAW = [
   },
   {
     num: '02',
-    icon: 'compass',
+    img: '/obszary/edukacja-globalna.jpg',
     title_pl: 'Edukacja globalna',
     title_en: 'Global education',
     desc_pl: 'Projekty edukacji pozaformalnej i międzykulturowej, otwierające na perspektywę globalnych współzależności i odpowiedzialności.',
@@ -32,7 +32,7 @@ const AREAS_RAW = [
   },
   {
     num: '03',
-    icon: 'seed',
+    img: '/obszary/suwerennosc.avif',
     title_pl: 'Izerskie Forum Suwerenności Żywnościowej',
     title_en: 'Izera Food Sovereignty Forum',
     desc_pl: 'Spotkania, debaty i działania wokół lokalnych systemów żywnościowych, drobnego rolnictwa i prawa do dobrego jedzenia.',
@@ -40,7 +40,7 @@ const AREAS_RAW = [
   },
   {
     num: '04',
-    icon: 'craft',
+    img: '/obszary/rezydencje-artystyczne.jpg',
     title_pl: 'Rezydencje artystyczne',
     title_en: 'Artist residencies',
     desc_pl: 'Goszczenie artystek i artystów na czas wspólnej pracy z miejscem — w dialogu z naturą Izerów i lokalną kulturą.',
@@ -48,24 +48,32 @@ const AREAS_RAW = [
   },
   {
     num: '05',
-    icon: 'leaf',
+    img: '/obszary/permakultura.jpg',
     title_pl: 'Permakultura',
     title_en: 'Permaculture',
     desc_pl: 'Praktyki permakulturowe w gospodarstwie i w ogrodach — projekt długiej współpracy z ziemią, wodą i wspólnotą.',
     desc_en: 'Permaculture practice in our homestead and gardens — a project of long-term cooperation with land, water and community.',
   },
+  {
+    num: '06',
+    img: '/obszary/magiczne_izery.avif',
+    title_pl: 'Magiczne Izery',
+    title_en: 'Magical Izeras',
+    desc_pl: 'Niespiesznie weekendowy festiwal otwartej kultury wsi — lokalni artyści i rzemieślnicy otwierają swoje pracownie, dzielą się twórczością i tradycjami w całym regionie Izerskim.',
+    desc_en: 'A slow-paced weekend festival of open village culture — local artists and craftspeople open their studios and share their craft and traditions across the Izera region.',
+  },
 ]
 
 const TOPICS = [
-  { icon: 'leaf',       label_pl: 'Permakultura',                label_en: 'Permaculture' },
-  { icon: 'seed',       label_pl: 'Suwerenność żywnościowa',     label_en: 'Food sovereignty' },
-  { icon: 'compass',    label_pl: 'Zrównoważony rozwój',         label_en: 'Sustainable development' },
-  { icon: 'mountain',   label_pl: 'Głęboka ekologia',            label_en: 'Deep ecology' },
-  { icon: 'hands',      label_pl: 'Ekonomia społeczna',          label_en: 'Social economy' },
-  { icon: 'candle',     label_pl: 'Edukacja pozaformalna',       label_en: 'Non-formal education' },
-  { icon: 'tea',        label_pl: 'Edukacja globalna',           label_en: 'Global education' },
-  { icon: 'meditation', label_pl: 'Edukacja międzykulturowa',    label_en: 'Intercultural education' },
-  { icon: 'craft',      label_pl: 'Sztuka',                      label_en: 'Art' },
+  { img: '/tematy/permakultura.avif',              label_pl: 'Permakultura',                label_en: 'Permaculture' },
+  { img: '/tematy/suwerennosc-zywnosciowa.avif',   label_pl: 'Suwerenność żywnościowa',     label_en: 'Food sovereignty' },
+  { img: '/tematy/zrownowazony-rozwoj.avif',       label_pl: 'Zrównoważony rozwój',         label_en: 'Sustainable development' },
+  { img: '/tematy/gleboka-ekologia.avif',          label_pl: 'Głęboka ekologia',            label_en: 'Deep ecology' },
+  { img: '/tematy/ekonomia-spoleczna.avif',        label_pl: 'Ekonomia społeczna',          label_en: 'Social economy' },
+  { img: '/tematy/edukacja-pozaformalna.avif',     label_pl: 'Edukacja pozaformalna',       label_en: 'Non-formal education' },
+  { img: '/tematy/edukacja-globalna-2.avif',         label_pl: 'Edukacja globalna',           label_en: 'Global education' },
+  { img: '/tematy/edukacja-międzykulturowa.avif',  label_pl: 'Edukacja międzykulturowa',    label_en: 'Intercultural education' },
+  { img: '/tematy/sztuka.avif',                    label_pl: 'Sztuka',                      label_en: 'Art' },
 ]
 
 const COMPASS = [
@@ -227,7 +235,7 @@ const activePillar = computed(() => COMPASS[activeCompass.value])
         </div>
         <div class="hero-stats">
           <div class="s">
-            <div class="n">5</div>
+            <div class="n">6</div>
             <div class="l">{{ t('Obszarów działania', 'Areas of activity') }}</div>
           </div>
           <div class="s">
@@ -298,7 +306,7 @@ const activePillar = computed(() => COMPASS[activeCompass.value])
       <div class="container">
         <div class="section-head reveal">
           <span class="eyebrow">{{ t('Obszary działania', 'Areas of activity') }}</span>
-          <h2>{{ t('Pięć korzeni jednego drzewa.', 'Five roots of one tree.') }}</h2>
+          <h2>{{ t('Sześć korzeni jednego drzewa.', 'Six roots of one tree.') }}</h2>
           <p class="lede">{{ t(
             'Rożne tradycje, jeden kierunek — splatamy je w codziennej pracy fundacji.',
             'Different traditions, one direction — we weave them together in the daily work of the foundation.'
@@ -313,9 +321,9 @@ const activePillar = computed(() => COMPASS[activeCompass.value])
             :style="{ transitionDelay: `${i * 60}ms` }"
           >
             <div class="area-num">{{ a.num }}</div>
-            <span class="area-icon">
-              <DhIcon :name="a.icon" :size="44" :stroke="1.4" />
-            </span>
+            <div class="area-img">
+              <img :src="a.img" :alt="t(a.title_pl, a.title_en)" loading="lazy" />
+            </div>
             <h3>{{ t(a.title_pl, a.title_en) }}</h3>
             <p>{{ t(a.desc_pl, a.desc_en) }}</p>
           </div>
@@ -337,9 +345,9 @@ const activePillar = computed(() => COMPASS[activeCompass.value])
             class="topic-item"
             :style="{ transitionDelay: `${i * 35}ms` }"
           >
-            <span class="topic-icon">
-              <DhIcon :name="topic.icon" :size="20" :stroke="1.5" />
-            </span>
+            <div class="topic-img">
+              <img :src="topic.img" :alt="t(topic.label_pl, topic.label_en)" loading="lazy" />
+            </div>
             <span class="topic-label">{{ t(topic.label_pl, topic.label_en) }}</span>
           </div>
         </div>
@@ -607,11 +615,12 @@ const activePillar = computed(() => COMPASS[activeCompass.value])
   background: var(--bg-card);
   border: 1px solid var(--line);
   border-radius: var(--r-lg);
-  padding: 40px 32px 36px;
+  padding: 0;
   box-shadow: var(--shadow-sm);
   transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 .area-card:hover {
   transform: translateY(-4px);
@@ -620,44 +629,38 @@ const activePillar = computed(() => COMPASS[activeCompass.value])
 }
 .area-num {
   position: absolute;
-  top: 24px;
-  right: 28px;
+  top: 12px;
+  right: 14px;
   font-family: var(--mono);
   font-size: 11px;
   letter-spacing: 0.18em;
-  color: var(--text-muted);
+  color: rgba(253, 251, 247, 0.7);
+  z-index: 1;
 }
-.area-icon {
-  display: inline-flex;
-  width: 76px;
-  height: 76px;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: rgba(139, 154, 103, 0.15);
-  color: var(--accent-earth);
-  margin-bottom: 22px;
+.area-img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  flex-shrink: 0;
+  background: var(--bg-sage);
+}
+.area-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 .area-card h3 {
   font-size: 24px;
   line-height: 1.2;
   margin-bottom: 12px;
   color: var(--brand-primary);
+  padding: 28px 28px 0;
 }
 .area-card p {
   color: var(--text-muted);
   font-size: 14.5px;
   line-height: 1.65;
-}
-/* Make 5-card grid look balanced: cards 4 & 5 span more on row 2 */
-.area-card:nth-child(4),
-.area-card:nth-child(5) {
-  grid-column: span 1;
-}
-.area-card:nth-child(4) { grid-column: 1 / span 1; grid-row: 2; }
-.area-card:nth-child(5) { grid-column: 2 / span 2; grid-row: 2; }
-.area-card:nth-child(5) {
-  background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-sage) 100%);
+  padding: 0 28px 28px;
 }
 
 /* ─── Topics grid ───────────────────────────────────────────────── */
@@ -667,31 +670,28 @@ const activePillar = computed(() => COMPASS[activeCompass.value])
 .topics-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  border-top: 1px solid var(--line);
-  border-left: 1px solid var(--line);
-  max-width: 860px;
+  gap: 32px;
 }
 .topic-item {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 14px;
-  padding: 20px 28px;
-  border-bottom: 1px solid var(--line);
-  border-right: 1px solid var(--line);
-  transition: background .2s ease;
+  gap: 16px;
+  text-align: center;
 }
-.topic-item:hover { background: rgba(255,255,255,0.6); }
-.topic-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: rgba(139,154,103,0.15);
-  color: var(--brand-primary);
+.topic-img {
+  width: 120px;
+  height: 120px;
   flex-shrink: 0;
 }
+.topic-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  transition: transform .4s ease;
+}
+.topic-item:hover .topic-img img { transform: scale(1.06); }
 .topic-label {
   font-family: var(--serif);
   font-style: italic;
@@ -1028,7 +1028,7 @@ const activePillar = computed(() => COMPASS[activeCompass.value])
   .mission-grid { grid-template-columns: 1fr; gap: 56px; }
 
   .areas-grid { grid-template-columns: repeat(2, 1fr); }
-  .topics-grid { grid-template-columns: repeat(2, 1fr); max-width: none; }
+  .topics-grid { grid-template-columns: repeat(3, 1fr); gap: 20px; }
   .area-card:nth-child(4),
   .area-card:nth-child(5) { grid-column: auto; grid-row: auto; }
   .area-card:nth-child(5) { background: var(--bg-card); }
@@ -1058,8 +1058,8 @@ const activePillar = computed(() => COMPASS[activeCompass.value])
   .pillar-num { font-size: 30px; }
 
   .areas-grid { grid-template-columns: 1fr; }
-  .topics-grid { grid-template-columns: 1fr; }
-  .topic-item { padding: 16px 20px; }
+  .topics-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .topic-item { gap: 12px; }
 
   .compass-head { margin-bottom: 36px; }
   .compass-wrap {

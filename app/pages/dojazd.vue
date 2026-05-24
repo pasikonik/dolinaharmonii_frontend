@@ -33,8 +33,8 @@ useSeoMeta({
               'By car, head from Jelenia Góra towards Szklarska Poręba — turn right just past the Piechowice sign, then 5 km.'
             ) }}</p>
             <p>{{ t(
-              'Pociągiem do stacji Piechowice (bezpośrednio z Wrocławia) lub Jelenia Góra, skąd busem Ro-Ko do Kopańca.',
-              'By train to Piechowice station (direct from Wrocław) or Jelenia Góra, then Ro-Ko bus to Kopaniec.'
+              'Pociągiem do stacji Piechowice (bezpośrednio z Wrocławia) lub Jeleniej Góry, skąd busem Ro-Ko do Kopańca z którego możemy Cie odebrać.',
+              ''
             ) }}</p>
             <div class="links">
               <a href="https://koleo.pl/rozklad-jazdy" target="_blank" rel="noopener">koleo.pl</a>

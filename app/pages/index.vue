@@ -589,10 +589,10 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
       <div class="container">
         <div class="section-head reveal">
           <span class="eyebrow">{{ t('Zespół &amp; partnerzy', 'Team &amp; partners') }}</span>
-          <h2>{{ t('Ludzie, którzy tworzą Dolinę.', 'The people who make the Valley.') }}</h2>
+          <h2>{{ t('Ludzie, którzy budują to miejsce.', 'The people who build this place.') }}</h2>
           <p class="lede">{{ t(
-            'Niewielka grupa stałych mieszkańców i prowadzących, plus szeroki krąg lokalnych rzemieślniczek, muzyków i przewodników.',
-            'A small group of permanent residents and facilitators, plus a wide circle of local craftswomen, musicians and guides.'
+            'Trzy dekady obecności w Górach Izerskich — wspólna praca z ziemią, gośćmi i lokalną społecznością, która wciąż trwa.',
+            'Three decades rooted in the Izera Mountains — tending the land, welcoming guests and weaving into the local community, one season at a time.'
           ) }}</p>
         </div>
         <div class="team-grid reveal">
