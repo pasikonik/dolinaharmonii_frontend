@@ -70,11 +70,15 @@ const ROOMS = computed(() => [
   {
     name: 'Słoneczny',
     who: '3-osobowy pokój na piętrze',
-    thumb: '/pokoje/sloneczny-cover.avif',
+    thumb: '/pokoje/Sloneczny/sloneczny-cover.avif',
     images: [
-      '/pokoje/sloneczny-1.avif',
-      '/pokoje/sloneczny-2.avif',
-      '/pokoje/sloneczny-3.avif',
+      '/pokoje/Sloneczny/sloneczny_5.avif',
+      '/pokoje/Sloneczny/sloneczny_1.avif',
+      '/pokoje/Sloneczny/sloneczny_2.avif',
+      '/pokoje/Sloneczny/sloneczny_3.avif',
+      '/pokoje/Sloneczny/sloneczny_4.avif',
+      '/pokoje/Sloneczny/sloneczny_6.avif',
+      '/pokoje/Sloneczny/sloneczny_7.avif',
     ],
     lead: 'Najjaśniejszy pokój w Domu — z oknami zwróconymi ku południowi i widokiem na sad oraz otaczającą zieleń.',
     features: [
@@ -89,12 +93,17 @@ const ROOMS = computed(() => [
   {
     name: 'Leśny',
     who: '2-osobowy pokój na piętrze',
-    thumb: '/pokoje/lesny-cover.avif',
+    thumb: '/pokoje/Lesny/lesny-cover.avif',
     images: [
-      '/pokoje/lesny-1.avif',
-      '/pokoje/lesny-2.avif',
-      '/pokoje/lesny-3.avif',
-      '/pokoje/lesny-4.avif',
+      '/pokoje/Lesny/lesny_1.avif',
+      '/pokoje/Lesny/lesny_2.avif',
+      '/pokoje/Lesny/lesny_3.avif',
+      '/pokoje/Lesny/lesny_4.avif',
+      '/pokoje/Lesny/lesny_5.avif',
+      '/pokoje/Lesny/lesny_6.avif',
+      '/pokoje/Lesny/lesny_7.avif',
+      '/pokoje/Lesny/lesny_8.avif',
+      '/pokoje/Lesny/lesny_9.avif',
     ],
     lead: 'Kameralny pokój dla dwóch osób z dwoma osobnymi łóżkami — w spokojnej, zacisznej części piętra.',
     features: [
@@ -109,12 +118,16 @@ const ROOMS = computed(() => [
   {
     name: 'Kwiecisty',
     who: '2/3-osobowy pokój na piętrze',
-    thumb: '/pokoje/kwiecisty-cover.avif',
+    thumb: '/pokoje/Kwiecisty/kwiecisty-cover.avif',
     images: [
-      '/pokoje/kwiecisty-4.avif',
-      '/pokoje/kwiecisty-1.avif',
-      '/pokoje/kwiecisty-2.avif',
-      '/pokoje/kwiecisty-3.avif',
+      '/pokoje/Kwiecisty/kwiecisty_1.avif',
+      '/pokoje/Kwiecisty/kwiecisty_2.avif',
+      '/pokoje/Kwiecisty/kwiecisty_3.avif',
+      '/pokoje/Kwiecisty/kwiecisty_4.avif',
+      '/pokoje/Kwiecisty/kwiecisty_5.avif',
+      '/pokoje/Kwiecisty/kwiecisty_6.avif',
+      '/pokoje/Kwiecisty/kwiecisty_7.avif',
+      '/pokoje/Kwiecisty/kwiecisty_8.avif',
     ],
     lead: 'Przytulny pokój z łóżkiem małżeńskim i kanapą, z oknem otwartym na Wiśniową Górę.',
     features: [
@@ -129,12 +142,16 @@ const ROOMS = computed(() => [
   {
     name: 'Etniczny',
     who: '2-osobowy pokój na piętrze',
-    thumb: '/pokoje/etniczny-cover.avif',
+    thumb: '/pokoje/Etniczny/etniczny-cover.avif',
     images: [
-      '/pokoje/etniczny-1.avif',
-      '/pokoje/etniczny-2.avif',
-      '/pokoje/etniczny-3.avif',
-      '/pokoje/etniczny-4.avif',
+      '/pokoje/Etniczny/etniczny_6.avif',
+      '/pokoje/Etniczny/etniczny_1.avif',
+      '/pokoje/Etniczny/etniczny_2.avif',
+      '/pokoje/Etniczny/etniczny_3.avif',
+      '/pokoje/Etniczny/etniczny_4.avif',
+      '/pokoje/Etniczny/etniczny_5.avif',
+      '/pokoje/Etniczny/etniczny_7.avif',
+      '/pokoje/Etniczny/etniczny_8.avif',
     ],
     lead: 'Pokój z dekoracjami inspirowanymi orientalnym podróżowaniem — kilimy, drewno, ciepłe światło.',
     features: [
@@ -149,12 +166,14 @@ const ROOMS = computed(() => [
   {
     name: 'Magiczny',
     who: 'Największy, 5/6-osobowy pokój na poddaszu',
-    thumb: '/pokoje/magiczny-cover.avif',
+    thumb: '/pokoje/Magiczny/magiczny-cover.avif',
     images: [
-      '/pokoje/magiczny-1.avif',
-      '/pokoje/magiczny-2.avif',
-      '/pokoje/magiczny-3.avif',
-      '/pokoje/magiczny-4.avif',
+      '/pokoje/Magiczny/magiczny_1.avif',
+      '/pokoje/Magiczny/magiczny_2.avif',
+      '/pokoje/Magiczny/magiczny_3.avif',
+      '/pokoje/Magiczny/magiczny_4.avif',
+      '/pokoje/Magiczny/magiczny_5.avif',
+      '/pokoje/Magiczny/magiczny_6.avif',
     ],
     lead: 'Przestronne poddasze pod skośnym dachem — idealne dla rodziny lub większej grupy przyjaciół.',
     features: [
@@ -176,7 +195,7 @@ const HOUSE_FEATURES = [
   { icon: 'tea',       t: 'Wspólna jadalnia',      d: 'Duży, drewniany stół przy którym poznają się goście.' },
   { icon: 'leaf',      t: 'Ogród i sad',           d: 'Otwarty dla gości, kręgi kamienne i ścieżki bose.' },
   { icon: 'star',      t: 'Ciemne niebo',          d: 'Bez latarni — wieczorami widać Drogę Mleczną nad doliną.' },
-  { icon: 'bed',       t: '5 pokoi · do 14 osób', d: 'Każdy z osobną łazienką i własnym charakterem.' },
+  { icon: 'bath',      t: 'Sauna sucha',           d: 'Klasyczna sauna fińska — idealna po dniu w górach lub między sesjami warsztatowymi.' },
 ]
 
 // Slider state for each room — track current + which slides have been "touched"
@@ -222,13 +241,44 @@ function goToSlide(roomIndex: number, imgIndex: number, e: Event) {
 useScrollReveal({ threshold: 0.08 })
 
 // ─── Lightbox ────────────────────────────────────────────────────
-const lightbox = ref<{ roomIndex: number; imgIndex: number } | null>(null)
-const lbRoom = computed(() => lightbox.value !== null ? ROOMS.value[lightbox.value.roomIndex] ?? null : null)
-const lbSrc  = computed(() => lbRoom.value && lightbox.value !== null ? (lbRoom.value.images[lightbox.value.imgIndex] ?? '') : '')
+interface LbImage { src: string; alt: string }
+interface LbState { images: LbImage[]; imgIndex: number; title: string }
 
-function openLightbox(roomIndex: number, imgIndex: number) {
-  lightbox.value = { roomIndex, imgIndex }
+// Galeria Dużego Domu (części wspólne) — odrębna od galerii pokoi
+const HOUSE_GALLERY: LbImage[] = [
+  { src: '/miejsce/Dom/korzytarz_1.avif', alt: 'Duży Dom — korytarz' },
+  { src: '/miejsce/Dom/jadalnia_1.avif',  alt: 'Duży Dom — jadalnia' },
+  { src: '/miejsce/Dom/jadalnia_2.avif',  alt: 'Duży Dom — jadalnia' },
+  { src: '/miejsce/dom-1.avif',           alt: 'Duży Dom — wnętrze' },
+  { src: '/miejsce/dom-4.avif',           alt: 'Duży Dom' },
+  { src: '/miejsce/sala-w-1.avif',        alt: 'Sala warsztatowa' },
+  { src: '/miejsce/sala-w-2.avif',        alt: 'Sala warsztatowa — widok drugi' },
+]
+
+const lightbox = ref<LbState | null>(null)
+const lbSrc   = computed(() => lightbox.value?.images[lightbox.value.imgIndex]?.src ?? '')
+const lbAlt   = computed(() => lightbox.value?.images[lightbox.value.imgIndex]?.alt ?? '')
+const lbTotal = computed(() => lightbox.value?.images.length ?? 0)
+
+function openLightbox(images: LbImage[], imgIndex: number, title: string) {
+  lightbox.value = { images, imgIndex, title }
   if (import.meta.client) document.body.style.overflow = 'hidden'
+}
+
+/** Otwiera lightbox dla galerii pokoju */
+function openRoomLightbox(roomIndex: number, imgIndex: number) {
+  const room = ROOMS.value[roomIndex]
+  if (!room) return
+  openLightbox(
+    room.images.map((src, i) => ({ src, alt: `${room.name} — zdjęcie ${i + 1}` })),
+    imgIndex,
+    `Pokój ${room.name}`,
+  )
+}
+
+/** Otwiera lightbox dla galerii Dużego Domu */
+function openHouseLightbox(imgIndex: number) {
+  openLightbox(HOUSE_GALLERY, imgIndex, 'Duży Dom')
 }
 
 function closeLightbox() {
@@ -238,13 +288,11 @@ function closeLightbox() {
 
 function lbMovePrev() {
   if (!lightbox.value) return
-  const total = lbRoom.value?.images.length ?? 0
-  lightbox.value = { ...lightbox.value, imgIndex: (lightbox.value.imgIndex - 1 + total) % total }
+  lightbox.value = { ...lightbox.value, imgIndex: (lightbox.value.imgIndex - 1 + lbTotal.value) % lbTotal.value }
 }
 function lbMoveNext() {
   if (!lightbox.value) return
-  const total = lbRoom.value?.images.length ?? 0
-  lightbox.value = { ...lightbox.value, imgIndex: (lightbox.value.imgIndex + 1) % total }
+  lightbox.value = { ...lightbox.value, imgIndex: (lightbox.value.imgIndex + 1) % lbTotal.value }
 }
 function lbPrev(e: Event) { e.stopPropagation(); lbMovePrev() }
 function lbNext(e: Event) { e.stopPropagation(); lbMoveNext() }
@@ -320,9 +368,15 @@ onBeforeUnmount(() => {
           </div>
           <div class="reveal">
             <div class="img-stack">
-              <img class="tall slide-img-clickable" src="/pokoje/kwiecisty-4.avif" alt="Pokój Kwiecisty — wnętrze" @click="openLightbox(2, 0)" />
-              <img class="slide-img-clickable" src="/pokoje/magiczny-1.avif" alt="Pokój Magiczny — poddasze" @click="openLightbox(4, 0)" />
-              <img class="slide-img-clickable" src="/pokoje/sloneczny-1.avif" alt="Pokój Słoneczny" @click="openLightbox(0, 0)" />
+              <button class="img-btn img-btn--tall" @click="openHouseLightbox(0)" aria-label="Otwórz galerię Dużego Domu">
+                <img src="/miejsce/Dom/korzytarz_1.avif" alt="Duży Dom — korytarz" />
+              </button>
+              <button class="img-btn" @click="openHouseLightbox(1)" aria-label="Otwórz galerię Dużego Domu">
+                <img src="/miejsce/Dom/jadalnia_1.avif" alt="Duży Dom — jadalnia" />
+              </button>
+              <button class="img-btn" @click="openHouseLightbox(2)" aria-label="Otwórz galerię Dużego Domu">
+                <img src="/miejsce/Dom/jadalnia_2.avif" alt="Duży Dom — jadalnia" />
+              </button>
             </div>
           </div>
         </div>
@@ -378,7 +432,7 @@ onBeforeUnmount(() => {
                   :alt="`${r.name} — zdjęcie ${k+1}`"
                   :loading="k === 0 ? 'eager' : 'lazy'"
                   class="slide-img-clickable"
-                  @click.stop="openLightbox(i, k)"
+                  @click.stop="openRoomLightbox(i, k)"
                 />
               </div>
               <span class="room-badge">0{{ i+1 }} · Pokój</span>
@@ -482,8 +536,8 @@ onBeforeUnmount(() => {
         <button class="lb-close" @click.stop="closeLightbox" aria-label="Zamknij">✕</button>
 
         <!-- Arrows -->
-        <button v-if="(lbRoom?.images.length ?? 0) > 1" class="lb-arrow lb-prev" @click="lbPrev($event)" aria-label="Poprzednie zdjęcie">‹</button>
-        <button v-if="(lbRoom?.images.length ?? 0) > 1" class="lb-arrow lb-next" @click="lbNext($event)" aria-label="Następne zdjęcie">›</button>
+        <button v-if="lbTotal > 1" class="lb-arrow lb-prev" @click="lbPrev($event)" aria-label="Poprzednie zdjęcie">‹</button>
+        <button v-if="lbTotal > 1" class="lb-arrow lb-next" @click="lbNext($event)" aria-label="Następne zdjęcie">›</button>
 
         <!-- Main image -->
         <div class="lb-stage" @click.stop>
@@ -491,7 +545,7 @@ onBeforeUnmount(() => {
             <img
               :key="lbSrc"
               :src="lbSrc"
-              :alt="`${lbRoom?.name} — zdjęcie ${(lightbox.imgIndex + 1)}`"
+              :alt="lbAlt"
               class="lb-img"
             />
           </Transition>
@@ -499,16 +553,16 @@ onBeforeUnmount(() => {
 
         <!-- Info bar -->
         <div class="lb-bar" @click.stop>
-          <span class="lb-room-name">Pokój {{ lbRoom?.name }}</span>
-          <span class="lb-counter">{{ lightbox.imgIndex + 1 }} / {{ lbRoom?.images.length }}</span>
+          <span class="lb-room-name">{{ lightbox.title }}</span>
+          <span class="lb-counter">{{ lightbox.imgIndex + 1 }} / {{ lbTotal }}</span>
         </div>
 
         <!-- Thumbnails -->
         <div class="lb-thumbs" @click.stop>
           <img
-            v-for="(src, k) in lbRoom?.images" :key="k"
-            :src="src"
-            :alt="`Miniatura ${k + 1}`"
+            v-for="(img, k) in lightbox.images" :key="k"
+            :src="img.src"
+            :alt="img.alt"
             class="lb-thumb"
             :class="{ active: k === lightbox.imgIndex }"
             @click="lbGoTo(k, $event)"
@@ -542,9 +596,14 @@ onBeforeUnmount(() => {
 .section-title { margin-top: 16px; margin-bottom: 28px; }
 .desc-text p { color: var(--text-muted); margin-bottom: 18px; }
 .desc-text p:last-child { margin-bottom: 28px; }
-.img-stack { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.img-stack img { width: 100%; aspect-ratio: 4/5; object-fit: cover; border-radius: var(--r-md); }
-.img-stack img.tall { grid-row: span 2; aspect-ratio: 4/9; }
+.img-stack { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; gap: 12px; }
+.img-btn { display: block; padding: 0; border: none; background: none; cursor: zoom-in; border-radius: var(--r-md); overflow: hidden; }
+.img-btn--tall { grid-column: 1; grid-row: 1 / 3; }
+.img-btn:not(.img-btn--tall):nth-child(2) { grid-column: 2; grid-row: 1; }
+.img-btn:not(.img-btn--tall):nth-child(3) { grid-column: 2; grid-row: 2; }
+.img-btn img { width: 100%; height: 100%; object-fit: cover; display: block; aspect-ratio: 4/5; transition: transform .4s ease; }
+.img-btn--tall img { aspect-ratio: 4/9; }
+.img-btn:hover img { transform: scale(1.04); }
 
 /* Spec table */
 .spec-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
@@ -563,14 +622,15 @@ onBeforeUnmount(() => {
 
 /* Rooms list */
 .rooms-list { display: flex; flex-direction: column; gap: 24px; }
-.room-row { display: grid; grid-template-columns: 0.9fr 1.1fr; background: var(--bg-card); border: 1px solid var(--line); border-radius: var(--r-md); overflow: hidden; box-shadow: var(--shadow-sm); min-height: 360px; }
+.room-row { display: grid; grid-template-columns: 0.9fr 1.1fr; background: var(--bg-card); border: 1px solid var(--line); border-radius: var(--r-md); overflow: hidden; box-shadow: var(--shadow-sm); min-height: 360px; transition: box-shadow .3s ease, transform .3s ease; }
+.room-row:hover { box-shadow: 0 16px 56px rgba(27, 48, 34, .18); transform: scale(1.015); }
 .room-row.alt { grid-template-columns: 1.1fr 0.9fr; }
 .room-row.alt .room-img-slider { order: 2; }
 .room-row.alt .room-body { order: 1; }
 
 .room-img-slider { position: relative; min-height: 360px; overflow: hidden; }
-.slide { position: absolute; inset: 0; opacity: 0; transition: opacity .55s ease; }
-.slide.active { opacity: 1; }
+.slide { position: absolute; inset: 0; opacity: 0; transition: opacity .55s ease; pointer-events: none; }
+.slide.active { opacity: 1; pointer-events: auto; }
 .slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .room-badge { position: absolute; top: 20px; left: 20px; z-index: 3; background: rgba(58,75,32,.85); color: #FDFBF7; font-family: var(--mono); font-size: 11px; letter-spacing: .15em; text-transform: uppercase; padding: 8px 14px; border-radius: 100px; }
 .slider-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(253,251,247,.4); background: rgba(58,75,32,.55); color: #FDFBF7; backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 3; font-size: 20px; line-height: 1; transition: background .2s, border-color .2s; }
@@ -584,7 +644,7 @@ onBeforeUnmount(() => {
 
 .room-body { padding: 40px; display: flex; flex-direction: column; }
 .room-header { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; }
-.room-thumb { width: 100px; height: 100px; border-radius: var(--r-md); object-fit: cover; flex-shrink: 0; box-shadow: var(--shadow-sm); }
+.room-thumb { width: 100px; height: 100px; border-radius: var(--r-md); object-fit: cover; flex-shrink: 0; box-shadow: var(--shadow-sm); border: 1px solid var(--line); }
 .room-header-text { display: flex; flex-direction: column; gap: 6px; }
 .room-name { font-family: var(--serif); font-style: italic; font-weight: 500; font-size: clamp(34px, 3.4vw, 44px); color: var(--brand-primary); line-height: 1; margin-bottom: 0; letter-spacing: -0.01em; }
 .room-who { font-family: var(--mono); font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--accent-earth); margin-bottom: 0; display: block; }
@@ -700,8 +760,11 @@ onBeforeUnmount(() => {
   .room-body { padding: 28px 24px; }
   .booking-cta-bar { padding: 28px; flex-direction: column; align-items: stretch; }
   .cta-buttons-wrap { flex-direction: column; }
-  .img-stack { grid-template-columns: 1fr; }
-  .img-stack img.tall { grid-row: auto; aspect-ratio: 4/5; }
+  .img-stack { grid-template-columns: 1fr; grid-template-rows: auto; }
+  .img-btn--tall { grid-column: 1; grid-row: auto; }
+  .img-btn:not(.img-btn--tall):nth-child(2) { grid-column: 1; grid-row: auto; }
+  .img-btn:not(.img-btn--tall):nth-child(3) { grid-column: 1; grid-row: auto; }
+  .img-btn--tall img { aspect-ratio: 4/5; }
   .hero-sub { min-height: 60vh; padding-top: 120px; padding-bottom: 56px; }
   .quick-meta { gap: 8px; padding-top: 24px; margin-top: 32px; flex-direction: column; }
   .room-foot-bar { flex-direction: column; align-items: flex-start; gap: 8px; }
