@@ -188,14 +188,14 @@ const ROOMS = computed(() => [
 ])
 
 const HOUSE_FEATURES = [
-  { icon: 'fireplace', t: 'Salon z kominkiem',     d: 'Sercem Domu jest salon z trzaskającym ogniem w przeszklonym kominku.' },
-  { icon: 'kitchen',   t: 'Kuchnia dla gości',     d: 'W pełni wyposażona, dostępna dla wszystkich mieszkańców Domu.' },
-  { icon: 'meditation',t: 'Sala warsztatowa',      d: 'Maty do jogi, poduszki i materace do medytacji oraz wypoczynku.' },
-  { icon: 'bath',      t: 'Sauna infrared',        d: 'Pokój regeneracji z prysznicem hydromasażem i stołem do masażu.' },
-  { icon: 'tea',       t: 'Wspólna jadalnia',      d: 'Duży, drewniany stół przy którym poznają się goście.' },
-  { icon: 'leaf',      t: 'Ogród i sad',           d: 'Otwarty dla gości, kręgi kamienne i ścieżki bose.' },
-  { icon: 'star',      t: 'Ciemne niebo',          d: 'Bez latarni — wieczorami widać Drogę Mleczną nad doliną.' },
-  { icon: 'bath',      t: 'Sauna sucha',           d: 'Klasyczna sauna fińska — idealna po dniu w górach lub między sesjami warsztatowymi.' },
+  { img: '/benefity/benefit_salon-kominek.avif', t: 'Salon z kominkiem',  d: 'Sercem Domu jest salon z trzaskającym ogniem w przeszklonym kominku.' },
+  { img: '/benefity/benefit_kuchnia.avif',       t: 'Kuchnia dla gości',  d: 'W pełni wyposażona, dostępna dla wszystkich mieszkańców Domu.' },
+  { img: '/benefity/benefit_sala-warsztatowa.avif', t: 'Sala warsztatowa', d: 'Maty do jogi, poduszki i materace do medytacji oraz wypoczynku.' },
+  { img: '/benefity/benefit_sauna-infrared.avif',t: 'Sauna infrared',     d: 'Pokój regeneracji z prysznicem hydromasażem i stołem do masażu.' },
+  { img: '/benefity/benefit_jadalnia.avif',      t: 'Wspólna jadalnia',   d: 'Duży, drewniany stół przy którym poznają się goście.' },
+  { img: '/benefity/benefit_ogrod-sad.avif',     t: 'Ogród i sad',        d: 'Otwarty dla gości, kręgi kamienne i ścieżki bose.' },
+  { img: '/benefity/benefit_ciemne-niebo.avif',  t: 'Ciemne niebo',       d: 'Bez latarni — wieczorami widać Drogę Mleczną nad doliną.' },
+  { img: '/benefity/benefit_sucha-sauna.avif',   t: 'Sauna sucha',        d: 'Klasyczna sauna fińska — idealna po dniu w górach lub między sesjami warsztatowymi.' },
 ]
 
 // Slider state for each room — track current + which slides have been "touched"
@@ -396,7 +396,7 @@ onBeforeUnmount(() => {
             v-for="(f, i) in HOUSE_FEATURES" :key="i"
             class="feat-card reveal"
           >
-            <span class="feat-icon"><DhIcon :name="f.icon" :size="48" :stroke="1.4" /></span>
+            <div class="feat-img"><img :src="f.img" :alt="f.t" loading="lazy" /></div>
             <h4>{{ f.t }}</h4>
             <p>{{ f.d }}</p>
           </div>
@@ -616,8 +616,9 @@ onBeforeUnmount(() => {
 /* Features grid */
 .features-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
 .feat-card { display: flex; flex-direction: column; gap: 12px; padding: 24px; background: var(--bg-card); border-radius: var(--r-md); border: 1px solid var(--line); }
-.feat-icon { width: 48px; height: 48px; color: var(--accent-earth); }
-.feat-card h4 { font-family: var(--serif); font-size: 18px; margin-top: 8px; color: var(--brand-primary); }
+.feat-img { width: 100px; height: 100px; flex-shrink: 0; }
+.feat-img img { width: 100px; height: 100px; display: block; }
+.feat-card h4 { font-family: var(--serif); font-size: 18px; color: var(--brand-primary); }
 .feat-card p { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
 
 /* Rooms list */
