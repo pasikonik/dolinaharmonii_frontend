@@ -309,8 +309,8 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
             <span class="eyebrow">{{ t('Czym jest Dolina', 'About the Valley') }}</span>
             <p class="lead">
               {{ t(
-                'Stary, drewniany dom u podnóża Izerów — przestrzeń, gdzie warsztaty, cisza i wspólny stół tworzą rytm dnia bliski naturze.',
-                'An old wooden house at the foot of the Izeras — a space where workshops, silence and a shared table create a daily rhythm close to nature.'
+                'Dom u podnóża Izerów — przestrzeń, gdzie warsztaty, cisza i wspólny stół tworzą rytm dnia bliski naturze.',
+                'A house at the foot of the Izeras — a space where workshops, silence and a shared table create a daily rhythm close to nature.'
               ) }}
             </p>
             <p class="desc-muted">
@@ -844,7 +844,7 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
 
 .intro-badge {
   position: absolute;
-  bottom: -32px;
+  top: -32px;
   left: -32px;
   background: var(--bg-card);
   padding: 20px 24px;

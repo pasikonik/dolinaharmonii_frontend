@@ -101,7 +101,6 @@ useHead({
         :title="t('Dolina Harmonii na mapie', 'Dolina Harmonii on the map')"
       />
     </section>
-
   </div>
 </template>
 
@@ -219,6 +218,7 @@ useHead({
 
 .map-section {
   display: block;
+  padding: 0;
 }
 .map-section iframe {
   display: block;
