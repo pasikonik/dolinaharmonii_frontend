@@ -154,7 +154,7 @@ const ACCOM_RAW = [
     tag_pl: 'Dom Gościnny · 5 pokoi · 12–14 miejsc', tag_en: 'Guest House · 5 rooms · 12–14 guests',
     desc_pl: 'Drewniany dom z pięcioma przytulnymi pokojami — 2-, 3- i 5-osobowymi. Wnętrza wypełnia domowy klimat: drewniane meble, naturalne tkaniny, dekoracje inspirowane sielską prostotą izerskiej wsi. W salonie kominek z trzaskającym ogniem, w sali warsztatowej maty i poduszki do medytacji.',
     desc_en: 'A wooden house with five cosy rooms — for 2, 3 and 5 guests. The interiors exude a homely warmth: wooden furniture, natural fabrics, décor inspired by the pastoral simplicity of an Izera village. In the living room a crackling fireplace; in the workshop hall, mats and meditation cushions.',
-    main: '/dom-1.avif', small: '/sala-w-1.avif',
+    main: '/miejsce/dom-1.avif', small: '/miejsce/sala-w-1.avif',
     features_pl: [{ i: 'bed', t: '5 pokoi gościnnych' }, { i: 'fireplace', t: 'Kominek w salonie' }, { i: 'kitchen', t: 'Kuchnia dla gości' }, { i: 'meditation', t: 'Sala warsztatowa' }, { i: 'bath', t: 'Sauna infrared' }, { i: 'leaf', t: 'Sad i widok na góry' }],
     features_en: [{ i: 'bed', t: '5 guest rooms' }, { i: 'fireplace', t: 'Fireplace in lounge' }, { i: 'kitchen', t: 'Guest kitchen' }, { i: 'meditation', t: 'Workshop hall' }, { i: 'bath', t: 'Infrared sauna' }, { i: 'leaf', t: 'Orchard & mountain view' }],
     getPrice: (p: typeof DEFAULT_PRICING) => Math.min(p.forest_room, p.sun_room, p.flower_room, p.ethnic_room, p.magic_room),
@@ -167,7 +167,7 @@ const ACCOM_RAW = [
     tag_pl: 'Dwupoziomowy · 4/5 osób', tag_en: 'Two-storey · 4/5 guests',
     desc_pl: 'Osobny, dwupoziomowy obiekt ukryty w zaciszu, pośród drzew. Z okien rozciąga się widok na Osadę z owieczkami, leśny labirynt, staw oraz Wiśniową Górę. Na dole salon i kuchnia, na piętrze część sypialna.',
     desc_en: 'A separate two-storey cottage tucked away among the trees. The windows frame views of the sheep hamlet, forest labyrinth, pond and Cherry Hill. Ground floor: living room and kitchen; upper floor: sleeping quarters.',
-    main: '/lesny-domek.avif', small: '/lesny_taras.avif',
+    main: '/miejsce/lesny-domek.avif', small: '/miejsce/lesny-taras.avif',
     features_pl: [{ i: 'bed', t: 'Łoże + 2 łóżka + sofa' }, { i: 'bath', t: 'Łazienka z prysznicem' }, { i: 'kitchen', t: 'Kuchnia, jadalnia' }, { i: 'fireplace', t: 'Salon z kominkiem' }, { i: 'leaf', t: 'Widok na Wiśniową Górę' }, { i: 'star', t: 'Pełna prywatność' }],
     features_en: [{ i: 'bed', t: 'Double + 2 beds + sofa' }, { i: 'bath', t: 'Bathroom with shower' }, { i: 'kitchen', t: 'Kitchen & dining' }, { i: 'fireplace', t: 'Living room + fireplace' }, { i: 'leaf', t: 'View of Cherry Hill' }, { i: 'star', t: 'Complete privacy' }],
     getPrice: (p: typeof DEFAULT_PRICING) => p.forest_house,
@@ -180,7 +180,7 @@ const ACCOM_RAW = [
     tag_pl: 'Apartament 2/3-osobowy', tag_en: '2/3-person apartment',
     desc_pl: 'Osobny, kameralny obiekt z klimatycznym salonem w postaci przeszklonej oranżerii. Łoże małżeńskie, rozkładana sofa, aneks kuchenny i łazienka. Idealne dla pary szukającej intymności lub trójki gości pragnących osobnej przestrzeni z widokiem na sad.',
     desc_en: 'A cosy separate unit with an atmospheric glass conservatory as the living room. Double bed, pull-out sofa, kitchenette and bathroom. Perfect for a couple seeking intimacy or three guests wanting a private space with orchard views.',
-    main: '/oranzeria.avif', small: '/oranzeria-inside.avif',
+    main: '/miejsce/oranzeria.avif', small: '/miejsce/oranzeria-inside.avif',
     features_pl: [{ i: 'bed', t: 'Łoże + rozkładana sofa' }, { i: 'bath', t: 'Łazienka z prysznicem' }, { i: 'kitchen', t: 'Aneks kuchenny' }, { i: 'leaf', t: 'Salon-oranżeria' }, { i: 'tea', t: 'Widok na sad owocowy' }, { i: 'star', t: 'Prawie osobny apartament' }],
     features_en: [{ i: 'bed', t: 'Double + pull-out sofa' }, { i: 'bath', t: 'Bathroom with shower' }, { i: 'kitchen', t: 'Kitchenette' }, { i: 'leaf', t: 'Glass conservatory lounge' }, { i: 'tea', t: 'View of the orchard' }, { i: 'star', t: 'Near-private apartment' }],
     getPrice: (p: typeof DEFAULT_PRICING) => p.studio_room,
@@ -202,9 +202,9 @@ const ACCOMMODATIONS = computed(() => ACCOM_RAW.map(a => ({
 })))
 
 const TEAM_RAW = [
-  { name: 'Danuta', role_pl: 'Założycielka', role_en: 'Founder', img: '/dana.avif' },
-  { name: 'Filip', role_pl: 'Gospodarz', role_en: 'Host', img: '/Filip.avif' },
-  { name: 'Kulka', role_pl: 'Gospodyni', role_en: 'Host', img: '/kulka.avif' },
+  { name: 'Danuta', role_pl: 'Założycielka', role_en: 'Founder', img: '/zespol/dana.avif' },
+  { name: 'Filip', role_pl: 'Gospodarz', role_en: 'Host', img: '/zespol/filip.avif' },
+  { name: 'Kulka', role_pl: 'Gospodyni', role_en: 'Host', img: '/zespol/kulka.avif' },
 ]
 
 const TEAM = computed(() => TEAM_RAW.map(m => ({ name: m.name, role: t(m.role_pl, m.role_en), img: m.img })))
