@@ -438,7 +438,7 @@ useScrollReveal({ threshold: 0.08 })
   .booking-cta-bar { padding: 28px; flex-direction: column; align-items: stretch; }
   .cta-buttons-wrap { flex-direction: column; }
   /* Lightbox mobile */
-  .lb-overlay { padding: 16px 56px; gap: 12px; }
+  .lb-overlay { padding: 48px 0 8px; gap: 12px; }
   .lb-arrow { width: 44px; height: 44px; font-size: 24px; }
   .lb-prev { left: 8px; }
   .lb-next { right: 8px; }

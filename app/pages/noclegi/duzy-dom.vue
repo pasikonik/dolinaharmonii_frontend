@@ -770,7 +770,7 @@ onBeforeUnmount(() => {
   .quick-meta { gap: 8px; padding-top: 24px; margin-top: 32px; flex-direction: column; }
   .room-foot-bar { flex-direction: column; align-items: flex-start; gap: 8px; }
   /* Lightbox mobile */
-  .lb-overlay { padding: 16px 56px 16px; gap: 12px; }
+  .lb-overlay { padding: 48px 0 8px; gap: 12px; }
   .lb-arrow { width: 44px; height: 44px; font-size: 24px; }
   .lb-prev { left: 8px; }
   .lb-next { right: 8px; }
