@@ -8,6 +8,7 @@ interface LbImage {
 const props = defineProps<{
   images: LbImage[]
   modelValue: number | null
+  title?: string
 }>()
 
 const emit = defineEmits<{
@@ -33,6 +34,9 @@ function next() {
 }
 
 watch(() => props.modelValue, (val) => {
+  if (import.meta.client) {
+    document.body.style.overflow = val !== null ? 'hidden' : ''
+  }
   if (val === null) return
   loading.value = true
   if (import.meta.client) {
@@ -58,7 +62,10 @@ function onKey(e: KeyboardEvent) {
 }
 
 onMounted(() => window.addEventListener('keydown', onKey))
-onUnmounted(() => window.removeEventListener('keydown', onKey))
+onUnmounted(() => {
+  window.removeEventListener('keydown', onKey)
+  if (import.meta.client) document.body.style.overflow = ''
+})
 </script>
 
 <template>
@@ -94,7 +101,10 @@ onUnmounted(() => window.removeEventListener('keydown', onKey))
 
       <!-- thumbnail strip -->
       <div v-if="images.length > 1" class="lb-strip" @click.stop>
-        <span class="lb-counter" aria-live="polite" aria-atomic="true">{{ modelValue + 1 }} / {{ images.length }}</span>
+        <div class="lb-bar">
+          <span v-if="title" class="lb-title">{{ title }}</span>
+          <span class="lb-counter" aria-live="polite" aria-atomic="true">{{ modelValue + 1 }} / {{ images.length }}</span>
+        </div>
         <div ref="thumbsEl" class="lb-thumbs">
           <button
             v-for="(img, i) in images"
@@ -262,6 +272,20 @@ onUnmounted(() => window.removeEventListener('keydown', onKey))
   display: block;
 }
 
+/* ── title bar ─────────────────────────────────── */
+.lb-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.lb-title {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 18px;
+  color: rgba(253, 251, 247, 0.85);
+}
+
 /* ── responsive ────────────────────────────────── */
 @media (max-width: 720px) {
   .lb-main { padding: 48px 0 8px; }
@@ -269,5 +293,6 @@ onUnmounted(() => window.removeEventListener('keydown', onKey))
   .lb-next { right: 8px; }
   .lb-strip { padding: 6px 12px 16px; }
   .lb-thumb { width: 50px; height: 50px; }
+  .lb-close { top: 12px; right: 12px; }
 }
 </style>

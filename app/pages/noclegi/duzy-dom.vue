@@ -241,75 +241,33 @@ function goToSlide(roomIndex: number, imgIndex: number, e: Event) {
 useScrollReveal({ threshold: 0.08 })
 
 // ─── Lightbox ────────────────────────────────────────────────────
-interface LbImage { src: string; alt: string }
-interface LbState { images: LbImage[]; imgIndex: number; title: string }
-
-// Galeria Dużego Domu (części wspólne) — odrębna od galerii pokoi
-const HOUSE_GALLERY: LbImage[] = [
-  { src: '/miejsce/Dom/korzytarz_1.avif', alt: 'Duży Dom — korytarz' },
-  { src: '/miejsce/Dom/jadalnia_1.avif',  alt: 'Duży Dom — jadalnia' },
-  { src: '/miejsce/Dom/jadalnia_2.avif',  alt: 'Duży Dom — jadalnia' },
-  { src: '/miejsce/dom-1.avif',           alt: 'Duży Dom — wnętrze' },
-  { src: '/miejsce/dom-4.avif',           alt: 'Duży Dom' },
-  { src: '/miejsce/sala-w-1.avif',        alt: 'Sala warsztatowa' },
-  { src: '/miejsce/sala-w-2.avif',        alt: 'Sala warsztatowa — widok drugi' },
+const HOUSE_GALLERY = [
+  { src: '/miejsce/Dom/korzytarz_1.avif', title: 'Duży Dom — korytarz' },
+  { src: '/miejsce/Dom/jadalnia_1.avif',  title: 'Duży Dom — jadalnia' },
+  { src: '/miejsce/Dom/jadalnia_2.avif',  title: 'Duży Dom — jadalnia' },
+  { src: '/miejsce/dom-1.avif',           title: 'Duży Dom — wnętrze' },
+  { src: '/miejsce/dom-4.avif',           title: 'Duży Dom' },
+  { src: '/miejsce/sala-w-1.avif',        title: 'Sala warsztatowa' },
+  { src: '/miejsce/sala-w-2.avif',        title: 'Sala warsztatowa — widok drugi' },
 ]
 
-const lightbox = ref<LbState | null>(null)
-const lbSrc   = computed(() => lightbox.value?.images[lightbox.value.imgIndex]?.src ?? '')
-const lbAlt   = computed(() => lightbox.value?.images[lightbox.value.imgIndex]?.alt ?? '')
-const lbTotal = computed(() => lightbox.value?.images.length ?? 0)
+const lbImages = ref<{ src: string; title?: string }[]>([])
+const lbIndex  = ref<number | null>(null)
+const lbTitle  = ref('')
 
-function openLightbox(images: LbImage[], imgIndex: number, title: string) {
-  lightbox.value = { images, imgIndex, title }
-  if (import.meta.client) document.body.style.overflow = 'hidden'
-}
-
-/** Otwiera lightbox dla galerii pokoju */
 function openRoomLightbox(roomIndex: number, imgIndex: number) {
   const room = ROOMS.value[roomIndex]
   if (!room) return
-  openLightbox(
-    room.images.map((src, i) => ({ src, alt: `${room.name} — zdjęcie ${i + 1}` })),
-    imgIndex,
-    `Pokój ${room.name}`,
-  )
+  lbImages.value = room.images.map((src, i) => ({ src, title: `${room.name} — zdjęcie ${i + 1}` }))
+  lbTitle.value = `Pokój ${room.name}`
+  lbIndex.value = imgIndex
 }
 
-/** Otwiera lightbox dla galerii Dużego Domu */
 function openHouseLightbox(imgIndex: number) {
-  openLightbox(HOUSE_GALLERY, imgIndex, 'Duży Dom')
+  lbImages.value = HOUSE_GALLERY
+  lbTitle.value = 'Duży Dom'
+  lbIndex.value = imgIndex
 }
-
-function closeLightbox() {
-  lightbox.value = null
-  if (import.meta.client) document.body.style.overflow = ''
-}
-
-function lbMovePrev() {
-  if (!lightbox.value) return
-  lightbox.value = { ...lightbox.value, imgIndex: (lightbox.value.imgIndex - 1 + lbTotal.value) % lbTotal.value }
-}
-function lbMoveNext() {
-  if (!lightbox.value) return
-  lightbox.value = { ...lightbox.value, imgIndex: (lightbox.value.imgIndex + 1) % lbTotal.value }
-}
-function lbPrev(e: Event) { e.stopPropagation(); lbMovePrev() }
-function lbNext(e: Event) { e.stopPropagation(); lbMoveNext() }
-function lbGoTo(k: number, e: Event) { e.stopPropagation(); if (lightbox.value) lightbox.value = { ...lightbox.value, imgIndex: k } }
-
-function onLbKey(e: KeyboardEvent) {
-  if (!lightbox.value) return
-  if (e.key === 'Escape')     { e.preventDefault(); closeLightbox() }
-  if (e.key === 'ArrowLeft')  { e.preventDefault(); lbMovePrev() }
-  if (e.key === 'ArrowRight') { e.preventDefault(); lbMoveNext() }
-}
-
-onMounted(() => window.addEventListener('keydown', onLbKey))
-onBeforeUnmount(() => {
-  window.removeEventListener('keydown', onLbKey)
-  if (import.meta.client) document.body.style.overflow = ''
-})
 </script>
 
 <template>
@@ -521,56 +479,7 @@ onBeforeUnmount(() => {
     </section>
   </div>
 
-  <!-- ─── LIGHTBOX ─────────────────────────────────────────────────── -->
-  <Teleport to="body">
-    <Transition name="lb">
-      <div
-        v-if="lightbox"
-        class="lb-overlay"
-        role="dialog"
-        aria-modal="true"
-        aria-label="Galeria zdjęć"
-        @click="closeLightbox"
-      >
-        <!-- Close -->
-        <button class="lb-close" @click.stop="closeLightbox" aria-label="Zamknij">✕</button>
-
-        <!-- Arrows -->
-        <button v-if="lbTotal > 1" class="lb-arrow lb-prev" @click="lbPrev($event)" aria-label="Poprzednie zdjęcie">‹</button>
-        <button v-if="lbTotal > 1" class="lb-arrow lb-next" @click="lbNext($event)" aria-label="Następne zdjęcie">›</button>
-
-        <!-- Main image -->
-        <div class="lb-stage" @click.stop>
-          <Transition name="lb-img" mode="out-in">
-            <img
-              :key="lbSrc"
-              :src="lbSrc"
-              :alt="lbAlt"
-              class="lb-img"
-            />
-          </Transition>
-        </div>
-
-        <!-- Info bar -->
-        <div class="lb-bar" @click.stop>
-          <span class="lb-room-name">{{ lightbox.title }}</span>
-          <span class="lb-counter">{{ lightbox.imgIndex + 1 }} / {{ lbTotal }}</span>
-        </div>
-
-        <!-- Thumbnails -->
-        <div class="lb-thumbs" @click.stop>
-          <img
-            v-for="(img, k) in lightbox.images" :key="k"
-            :src="img.src"
-            :alt="img.alt"
-            class="lb-thumb"
-            :class="{ active: k === lightbox.imgIndex }"
-            @click="lbGoTo(k, $event)"
-          />
-        </div>
-      </div>
-    </Transition>
-  </Teleport>
+  <DhLightbox v-model="lbIndex" :images="lbImages" :title="lbTitle" />
 </template>
 
 <style scoped>
@@ -676,72 +585,6 @@ onBeforeUnmount(() => {
 /* Slide image clickable */
 .slide-img-clickable { cursor: zoom-in; }
 
-/* ─── Lightbox ───────────────────────────────────────────────────── */
-.lb-overlay {
-  position: fixed; inset: 0; z-index: 9000;
-  background: rgba(10, 16, 8, .95);
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  padding: 20px 80px 20px;
-  gap: 16px;
-}
-.lb-close {
-  position: absolute; top: 20px; right: 20px; z-index: 10;
-  width: 44px; height: 44px; border-radius: 50%;
-  background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.25);
-  color: #fff; font-size: 18px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: background .2s;
-}
-.lb-close:hover { background: rgba(255,255,255,.28); }
-
-.lb-arrow {
-  position: absolute; top: 50%; transform: translateY(-50%); z-index: 10;
-  width: 56px; height: 56px; border-radius: 50%;
-  background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.2);
-  color: #fff; font-size: 32px; line-height: 1; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: background .2s;
-}
-.lb-arrow:hover { background: rgba(255,255,255,.25); }
-.lb-prev { left: 16px; }
-.lb-next { right: 16px; }
-
-.lb-stage {
-  flex: 1; min-height: 0;
-  display: flex; align-items: center; justify-content: center;
-  width: 100%; max-width: 960px;
-}
-.lb-img {
-  max-width: 100%; max-height: calc(100dvh - 220px);
-  object-fit: contain; border-radius: var(--r-md);
-  box-shadow: 0 32px 80px rgba(0,0,0,.55);
-  display: block;
-}
-
-.lb-bar {
-  display: flex; justify-content: space-between; align-items: center;
-  width: 100%; max-width: 960px;
-}
-.lb-room-name { font-family: var(--serif); font-style: italic; font-size: 20px; color: #fff; }
-.lb-counter { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; color: rgba(255,255,255,.55); }
-
-.lb-thumbs { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
-.lb-thumb {
-  width: 64px; height: 64px; object-fit: cover;
-  border-radius: 6px; cursor: pointer;
-  opacity: .45; border: 2px solid transparent;
-  transition: opacity .2s, border-color .2s;
-}
-.lb-thumb:hover, .lb-thumb.active { opacity: 1; border-color: rgba(255,255,255,.65); }
-
-/* Overlay fade */
-.lb-enter-active, .lb-leave-active { transition: opacity .28s ease; }
-.lb-enter-from, .lb-leave-to { opacity: 0; }
-
-/* Image crossfade */
-.lb-img-enter-active, .lb-img-leave-active { transition: opacity .2s ease; }
-.lb-img-enter-from, .lb-img-leave-to { opacity: 0; }
 
 /* ─── Responsive ────────────────────────────────────────────────── */
 @media (max-width: 1024px) {
@@ -769,12 +612,5 @@ onBeforeUnmount(() => {
   .hero-sub { min-height: 60vh; padding-top: 120px; padding-bottom: 56px; }
   .quick-meta { gap: 8px; padding-top: 24px; margin-top: 32px; flex-direction: column; }
   .room-foot-bar { flex-direction: column; align-items: flex-start; gap: 8px; }
-  /* Lightbox mobile */
-  .lb-overlay { padding: 48px 0 8px; gap: 12px; }
-  .lb-arrow { width: 44px; height: 44px; font-size: 24px; }
-  .lb-prev { left: 8px; }
-  .lb-next { right: 8px; }
-  .lb-img { max-height: calc(100dvh - 200px); }
-  .lb-thumb { width: 48px; height: 48px; }
 }
 </style>

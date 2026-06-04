@@ -65,61 +65,22 @@ const DOMEK_FEATURES = [
   { icon: 'star',      t: 'Zwierzęta mile widziane', d: 'Akceptujemy koty, średnie i małe psy. Prosimy o info przy rezerwacji.' },
 ]
 
-// ─── Lightbox ────────────────────────────────────────────────────
-interface LbImage { src: string; alt: string }
-interface LbState { images: LbImage[]; imgIndex: number; title: string }
-
-const GALLERY: LbImage[] = [
-  { src: '/miejsce/Lesny Domek/lesny_domek_01.avif', alt: 'Leśny Domek — 1' },
-  { src: '/miejsce/Lesny Domek/lesny_domek_02.avif', alt: 'Leśny Domek — 2' },
-  { src: '/miejsce/Lesny Domek/lesny_domek_03.avif', alt: 'Leśny Domek — 3' },
-  { src: '/miejsce/Lesny Domek/lesny_domek_04.avif', alt: 'Leśny Domek — 4' },
-  { src: '/miejsce/Lesny Domek/lesny_domek_05.avif', alt: 'Leśny Domek — 5' },
-  { src: '/miejsce/Lesny Domek/lesny_domek_06.avif', alt: 'Leśny Domek — 6' },
-  { src: '/miejsce/Lesny Domek/lesny_domek_07.avif', alt: 'Leśny Domek — 7' },
-  { src: '/miejsce/Lesny Domek/lesny_domek_08.avif', alt: 'Leśny Domek — 8' },
-  { src: '/miejsce/Lesny Domek/lesny_domek_09.avif', alt: 'Leśny Domek — 9' },
-  { src: '/miejsce/Lesny Domek/lesny_domek_10.avif', alt: 'Leśny Domek — 10' },
-  { src: '/miejsce/Lesny Domek/lesny_domek_11.avif', alt: 'Leśny Domek — 11' },
+const GALLERY = [
+  { src: '/miejsce/Lesny Domek/lesny_domek_01.avif', title: 'Leśny Domek — 1' },
+  { src: '/miejsce/Lesny Domek/lesny_domek_02.avif', title: 'Leśny Domek — 2' },
+  { src: '/miejsce/Lesny Domek/lesny_domek_03.avif', title: 'Leśny Domek — 3' },
+  { src: '/miejsce/Lesny Domek/lesny_domek_04.avif', title: 'Leśny Domek — 4' },
+  { src: '/miejsce/Lesny Domek/lesny_domek_05.avif', title: 'Leśny Domek — 5' },
+  { src: '/miejsce/Lesny Domek/lesny_domek_06.avif', title: 'Leśny Domek — 6' },
+  { src: '/miejsce/Lesny Domek/lesny_domek_07.avif', title: 'Leśny Domek — 7' },
+  { src: '/miejsce/Lesny Domek/lesny_domek_08.avif', title: 'Leśny Domek — 8' },
+  { src: '/miejsce/Lesny Domek/lesny_domek_09.avif', title: 'Leśny Domek — 9' },
+  { src: '/miejsce/Lesny Domek/lesny_domek_10.avif', title: 'Leśny Domek — 10' },
+  { src: '/miejsce/Lesny Domek/lesny_domek_11.avif', title: 'Leśny Domek — 11' },
 ]
 
-const lightbox = ref<LbState | null>(null)
-const lbSrc   = computed(() => lightbox.value?.images[lightbox.value.imgIndex]?.src ?? '')
-const lbAlt   = computed(() => lightbox.value?.images[lightbox.value.imgIndex]?.alt ?? '')
-const lbTotal = computed(() => lightbox.value?.images.length ?? 0)
-
-function openLightbox(imgIndex: number) {
-  lightbox.value = { images: GALLERY, imgIndex, title: 'Leśny Domek' }
-  if (import.meta.client) document.body.style.overflow = 'hidden'
-}
-function closeLightbox() {
-  lightbox.value = null
-  if (import.meta.client) document.body.style.overflow = ''
-}
-function lbMovePrev() {
-  if (!lightbox.value) return
-  lightbox.value = { ...lightbox.value, imgIndex: (lightbox.value.imgIndex - 1 + lbTotal.value) % lbTotal.value }
-}
-function lbMoveNext() {
-  if (!lightbox.value) return
-  lightbox.value = { ...lightbox.value, imgIndex: (lightbox.value.imgIndex + 1) % lbTotal.value }
-}
-function lbPrev(e: Event) { e.stopPropagation(); lbMovePrev() }
-function lbNext(e: Event) { e.stopPropagation(); lbMoveNext() }
-function lbGoTo(k: number, e: Event) { e.stopPropagation(); if (lightbox.value) lightbox.value = { ...lightbox.value, imgIndex: k } }
-
-function onLbKey(e: KeyboardEvent) {
-  if (!lightbox.value) return
-  if (e.key === 'Escape')     { e.preventDefault(); closeLightbox() }
-  if (e.key === 'ArrowLeft')  { e.preventDefault(); lbMovePrev() }
-  if (e.key === 'ArrowRight') { e.preventDefault(); lbMoveNext() }
-}
-
-onMounted(() => window.addEventListener('keydown', onLbKey))
-onBeforeUnmount(() => {
-  window.removeEventListener('keydown', onLbKey)
-  if (import.meta.client) document.body.style.overflow = ''
-})
+const lbIndex = ref<number | null>(null)
+function openLightbox(imgIndex: number) { lbIndex.value = imgIndex }
 
 useScrollReveal({ threshold: 0.08 })
 </script>
@@ -282,44 +243,7 @@ useScrollReveal({ threshold: 0.08 })
     </section>
   </div>
 
-  <!-- ─── LIGHTBOX ─────────────────────────────────────────────────── -->
-  <Teleport to="body">
-    <Transition name="lb">
-      <div
-        v-if="lightbox"
-        class="lb-overlay"
-        role="dialog"
-        aria-modal="true"
-        aria-label="Galeria Leśnego Domku"
-        @click="closeLightbox"
-      >
-        <button class="lb-close" @click.stop="closeLightbox" aria-label="Zamknij">✕</button>
-        <button v-if="lbTotal > 1" class="lb-arrow lb-prev" @click="lbPrev($event)" aria-label="Poprzednie">‹</button>
-        <button v-if="lbTotal > 1" class="lb-arrow lb-next" @click="lbNext($event)" aria-label="Następne">›</button>
-
-        <div class="lb-stage" @click.stop>
-          <Transition name="lb-img" mode="out-in">
-            <img :key="lbSrc" :src="lbSrc" :alt="lbAlt" class="lb-img" />
-          </Transition>
-        </div>
-
-        <div class="lb-bar" @click.stop>
-          <span class="lb-title">{{ lightbox.title }}</span>
-          <span class="lb-counter">{{ lightbox.imgIndex + 1 }} / {{ lbTotal }}</span>
-        </div>
-
-        <div class="lb-thumbs" @click.stop>
-          <img
-            v-for="(img, k) in lightbox.images" :key="k"
-            :src="img.src" :alt="img.alt"
-            class="lb-thumb"
-            :class="{ active: k === lightbox.imgIndex }"
-            @click="lbGoTo(k, $event)"
-          />
-        </div>
-      </div>
-    </Transition>
-  </Teleport>
+  <DhLightbox v-model="lbIndex" :images="GALLERY" title="Leśny Domek" />
 </template>
 
 <style scoped>
@@ -396,26 +320,6 @@ useScrollReveal({ threshold: 0.08 })
 .cta-desc { color: var(--text-muted); }
 .cta-buttons-wrap { display: flex; gap: 12px; flex-shrink: 0; }
 
-/* ─── Lightbox ───────────────────────────────────────────────────── */
-.lb-overlay { position: fixed; inset: 0; z-index: 9000; background: rgba(10,16,8,.95); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 80px; gap: 16px; }
-.lb-close { position: absolute; top: 20px; right: 20px; z-index: 10; width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.25); color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .2s; }
-.lb-close:hover { background: rgba(255,255,255,.28); }
-.lb-arrow { position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; width: 56px; height: 56px; border-radius: 50%; background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.2); color: #fff; font-size: 32px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .2s; }
-.lb-arrow:hover { background: rgba(255,255,255,.25); }
-.lb-prev { left: 16px; }
-.lb-next { right: 16px; }
-.lb-stage { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; width: 100%; max-width: 960px; }
-.lb-img { max-width: 100%; max-height: calc(100dvh - 220px); object-fit: contain; border-radius: var(--r-md); box-shadow: 0 32px 80px rgba(0,0,0,.55); display: block; }
-.lb-bar { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 960px; }
-.lb-title { font-family: var(--serif); font-style: italic; font-size: 20px; color: #fff; }
-.lb-counter { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; color: rgba(255,255,255,.55); }
-.lb-thumbs { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
-.lb-thumb { width: 64px; height: 64px; object-fit: cover; border-radius: 6px; cursor: pointer; opacity: .45; border: 2px solid transparent; transition: opacity .2s, border-color .2s; }
-.lb-thumb:hover, .lb-thumb.active { opacity: 1; border-color: rgba(255,255,255,.65); }
-.lb-enter-active, .lb-leave-active { transition: opacity .28s ease; }
-.lb-enter-from, .lb-leave-to { opacity: 0; }
-.lb-img-enter-active, .lb-img-leave-active { transition: opacity .2s ease; }
-.lb-img-enter-from, .lb-img-leave-to { opacity: 0; }
 
 /* ─── Responsive ────────────────────────────────────────────────── */
 @media (max-width: 1024px) {
@@ -438,12 +342,5 @@ useScrollReveal({ threshold: 0.08 })
   .img-btn--tall img { aspect-ratio: 4/5; }
   .booking-cta-bar { padding: 28px; flex-direction: column; align-items: stretch; }
   .cta-buttons-wrap { flex-direction: column; }
-  /* Lightbox mobile */
-  .lb-overlay { padding: 48px 0 8px; gap: 12px; }
-  .lb-arrow { width: 44px; height: 44px; font-size: 24px; }
-  .lb-prev { left: 8px; }
-  .lb-next { right: 8px; }
-  .lb-img { max-height: calc(100dvh - 200px); }
-  .lb-thumb { width: 48px; height: 48px; }
 }
 </style>
