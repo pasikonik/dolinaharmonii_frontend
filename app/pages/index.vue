@@ -154,7 +154,7 @@ const ACCOM_RAW = [
     tag_pl: 'Dom Gościnny · 5 pokoi · 12–14 miejsc', tag_en: 'Guest House · 5 rooms · 12–14 guests',
     desc_pl: 'Drewniany dom z pięcioma przytulnymi pokojami — 2-, 3- i 5-osobowymi. Wnętrza wypełnia domowy klimat: drewniane meble, naturalne tkaniny, dekoracje inspirowane sielską prostotą izerskiej wsi. W salonie kominek z trzaskającym ogniem, w sali warsztatowej maty i poduszki do medytacji.',
     desc_en: 'A wooden house with five cosy rooms — for 2, 3 and 5 guests. The interiors exude a homely warmth: wooden furniture, natural fabrics, décor inspired by the pastoral simplicity of an Izera village. In the living room a crackling fireplace; in the workshop hall, mats and meditation cushions.',
-    main: '/miejsce/dom-1.avif', small: '/miejsce/sala-w-1.avif',
+    main: '/miejsce/duzy-dom-1.avif', small: '/miejsce/sala-w-1.avif',
     features_pl: [{ i: 'bed', t: '5 pokoi gościnnych' }, { i: 'fireplace', t: 'Kominek w salonie' }, { i: 'kitchen', t: 'Kuchnia dla gości' }, { i: 'meditation', t: 'Sala warsztatowa' }, { i: 'bath', t: 'Sauna infrared' }, { i: 'leaf', t: 'Sad i widok na góry' }],
     features_en: [{ i: 'bed', t: '5 guest rooms' }, { i: 'fireplace', t: 'Fireplace in lounge' }, { i: 'kitchen', t: 'Guest kitchen' }, { i: 'meditation', t: 'Workshop hall' }, { i: 'bath', t: 'Infrared sauna' }, { i: 'leaf', t: 'Orchard & mountain view' }],
     getPrice: (p: typeof DEFAULT_PRICING) => Math.min(p.forest_room, p.sun_room, p.flower_room, p.ethnic_room, p.magic_room),
@@ -265,13 +265,12 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
   <div class="home-page">
     <!-- ─── HERO ──────────────────────────────────────────────────── -->
     <header class="hero" id="top">
-      <NuxtImg
+      <img
         class="hero-bg"
-        src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=2400&q=80"
+        src="/miejsce/hero-2.avif"
         alt=""
         loading="eager"
         fetchpriority="high"
-        sizes="100vw"
       />
       <div class="hero-content">
         <div class="hero-eyebrow-row">
@@ -1393,9 +1392,9 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
 }
 
 .team-member .photo {
-  aspect-ratio: 3/4;
+  aspect-ratio: 2/3;
   width: 100%;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: var(--r-md);
   margin-bottom: 16px;
   filter: saturate(0.85);
