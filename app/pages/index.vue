@@ -84,7 +84,7 @@ useHead({
 
 useScrollReveal({ rootMargin: '0px 0px -60px 0px' })
 
-const yearsOpen = new Date().getFullYear() - 1995
+const yearsOpen = new Date().getFullYear() - 1996
 
 const BLESSINGS = [
   {
@@ -309,20 +309,20 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
             <span class="eyebrow">{{ t('Czym jest Dolina', 'About the Valley') }}</span>
             <p class="lead">
               {{ t(
-                'Dom u podnóża Izerów — przestrzeń, gdzie warsztaty, cisza i wspólny stół tworzą rytm dnia bliski naturze.',
-                'A house at the foot of the Izeras — a space where workshops, silence and a shared table create a daily rhythm close to nature.'
+                'Dom pośród Izerskich lasów i łąk, gdzie natura wyznacza rytm dnia, a wspólne posiłki, warsztaty i chwile ciszy tworzą przestrzeń do prawdziwego odpoczynku.',
+                'A home amid the Izera forests and meadows, where nature sets the pace of the day, and shared meals, workshops and moments of silence create space for true rest.'
               ) }}
             </p>
             <p class="desc-muted">
               {{ t(
-                'Działamy od 1995 roku w Kopańcu — niewielkiej wsi otoczonej lasami, łąkami i strumieniami. Zapraszamy grupy warsztatowe oraz osoby, które chcą po prostu zatrzymać się na kilka dni, oddychać i obserwować pory roku.',
-                'We have been here since 1995 in Kopaniec — a small village surrounded by forests, meadows and streams. We welcome workshop groups and anyone who simply wants to pause for a few days, breathe and watch the seasons change.'
+                'Od ponad trzydziestu lat rozwijamy to miejsce w Kopańcu, niewielkiej górskiej wsi u podnóża Gór Izerskich. Gościmy grupy warsztatowe, rodziny, wędrowców i wszystkich, którzy chcą na chwilę zwolnić, odetchnąć pełną piersią i poczuć bliższy kontakt z naturą.',
+                'For over thirty years we have been developing this place in Kopaniec, a small mountain village at the foot of the Izera Mountains. We welcome workshop groups, families, wanderers and everyone who wants to slow down for a while, breathe deeply and feel closer to nature.'
               ) }}
             </p>
             <p class="desc-muted">
               {{ t(
-                'Łączymy ekologię, rozwój osobisty i turystykę regionalną. Współtworzymy Magiczne Izery — opowieść o tym miejscu, jego ludziach i tradycjach.',
-                'We weave together ecology, personal growth and regional tourism. We co-create Magical Izeras — a story about this place, its people and traditions.'
+                'Łączymy gościnność, edukację, ekologię i lokalną kulturę. Tworzymy miejsce spotkań, inspiracji i regeneracji, zakorzenione w krajobrazie i społeczności Pogórza Izerskiego.',
+                'We weave together hospitality, education, ecology and local culture. We are creating a place of gathering, inspiration and regeneration, rooted in the landscape and community of the Izera Foothills.'
               ) }}
             </p>
             <div class="intro-stats">
@@ -508,17 +508,23 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
         <div class="region-grid">
           <div class="reveal">
             <span class="eyebrow region-eyebrow">{{ t('Magiczne Izery', 'Magical Izeras') }}</span>
-            <h2 class="region-title">{{ t('Najstarsze góry w Polsce, najmniej zatłoczone.', 'The oldest mountains in Poland, the least crowded.') }}</h2>
+            <h2 class="region-title">{{ t('Kraina lasów, mgieł i szerokich horyzontów.', 'A land of forests, mists and wide horizons.') }}</h2>
             <p class="region-desc">
               {{ t(
-                'Kopaniec leży w cieniu Izerskich Garbów — pasma uważanego za jedno z najmniej znanych w Polsce. Mchy, torfowiska, kryształy kwarcu w strumieniach, ciemne niebo gwiazd.',
-                'Kopaniec lies in the shadow of the Izera Ridge — a range considered one of the least known in Poland. Mosses, peat bogs, quartz crystals in the streams, dark starry skies.'
+                'Góry Izerskie należą do najspokojniejszych i najmniej zatłoczonych pasm w Polsce, zachowując wyjątkowy charakter dzikiej przyrody i dawnych sudeckich osad.',
+                'The Izera Mountains are among the most peaceful and least crowded ranges in Poland, preserving the exceptional character of wild nature and old Sudeten settlements.'
               ) }}
             </p>
             <p class="region-desc">
               {{ t(
-                'Współtworzymy oddolny ruch Magiczne Izery — opowieść o ludziach, miejscach i tradycjach regionu. Polecamy wycieczki, mapy, miejscowych przewodników.',
-                'We co-create the grassroots Magical Izeras movement — a story about the people, places and traditions of the region. We recommend hikes, maps and local guides.'
+                'Kopaniec leży na ich skraju, wśród starych lasów, górskich łąk, granitowych strumieni i rozgwieżdżonego nocnego nieba. To miejsce, gdzie można odnaleźć ciszę, której coraz trudniej doświadczyć gdzie indziej.',
+                'Kopaniec lies on their edge, among ancient forests, mountain meadows, granite streams and a star-filled night sky. This is a place where you can find the silence that is increasingly hard to experience elsewhere.'
+              ) }}
+            </p>
+            <p class="region-desc">
+              {{ t(
+                'Współtworzymy inicjatywę „Magiczne Izery", promującą lokalne historie, rzemiosło, kulturę i przyrodę regionu. Chętnie podpowiemy najpiękniejsze szlaki, ukryte miejsca oraz lokalnych twórców i przewodników, dzięki którym można poznać Izery od środka. 🌲✨',
+                'We co-create the Magiczne Izery initiative, promoting local stories, crafts, culture and nature of the region. We are happy to suggest the most beautiful trails, hidden spots and local artists and guides through whom you can discover the Izeras from the inside. 🌲✨'
               ) }}
             </p>
             <div class="region-stats">
