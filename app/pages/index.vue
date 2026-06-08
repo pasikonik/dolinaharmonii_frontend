@@ -154,7 +154,7 @@ const ACCOM_RAW = [
     tag_pl: 'Dom Gościnny · 5 pokoi · 12–14 miejsc', tag_en: 'Guest House · 5 rooms · 12–14 guests',
     desc_pl: 'Drewniany dom z pięcioma przytulnymi pokojami — 2-, 3- i 5-osobowymi. Wnętrza wypełnia domowy klimat: drewniane meble, naturalne tkaniny, dekoracje inspirowane sielską prostotą izerskiej wsi. W salonie kominek z trzaskającym ogniem, w sali warsztatowej maty i poduszki do medytacji.',
     desc_en: 'A wooden house with five cosy rooms — for 2, 3 and 5 guests. The interiors exude a homely warmth: wooden furniture, natural fabrics, décor inspired by the pastoral simplicity of an Izera village. In the living room a crackling fireplace; in the workshop hall, mats and meditation cushions.',
-    main: '/miejsce/duzy-dom-1.avif', small: '/miejsce/sala-w-1.avif',
+    main: '/miejsce/duzy-dom.avif', small: '/miejsce/sala-w-1.avif',
     features_pl: [{ i: 'bed', t: '5 pokoi gościnnych' }, { i: 'fireplace', t: 'Kominek w salonie' }, { i: 'kitchen', t: 'Kuchnia dla gości' }, { i: 'meditation', t: 'Sala warsztatowa' }, { i: 'bath', t: 'Sauna infrared' }, { i: 'leaf', t: 'Sad i widok na góry' }],
     features_en: [{ i: 'bed', t: '5 guest rooms' }, { i: 'fireplace', t: 'Fireplace in lounge' }, { i: 'kitchen', t: 'Guest kitchen' }, { i: 'meditation', t: 'Workshop hall' }, { i: 'bath', t: 'Infrared sauna' }, { i: 'leaf', t: 'Orchard & mountain view' }],
     getPrice: (p: typeof DEFAULT_PRICING) => Math.min(p.forest_room, p.sun_room, p.flower_room, p.ethnic_room, p.magic_room),
@@ -462,7 +462,7 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
             'We can rent you a room, a weekend, or the whole barn — depending on whether you arrive solo, as a couple, or with a workshop group.'
           ) }}</p>
         </div>
-        <div v-for="(a, i) in ACCOMMODATIONS" :key="i" class="accommodation reveal" :class="{ reverse: i % 2 === 1 }">
+        <div v-for="(a, i) in ACCOMMODATIONS" :key="i" class="accommodation reveal" :class="{ reverse: i % 2 === 1, 'acc-landscape': i === 0 }">
           <div class="acc-imgs">
             <img class="main" :src="a.main" :alt="a.name" />
             <img class="small" :src="a.small" alt="" />
@@ -522,8 +522,8 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
             </p>
             <p class="region-desc">
               {{ t(
-                'Współtworzymy inicjatywę „Magiczne Izery", promującą lokalne historie, rzemiosło, kulturę i przyrodę regionu. Chętnie podpowiemy najpiękniejsze szlaki, ukryte miejsca oraz lokalnych twórców i przewodników, dzięki którym można poznać Izery od środka. 🌲✨',
-                'We co-create the Magiczne Izery initiative, promoting local stories, crafts, culture and nature of the region. We are happy to suggest the most beautiful trails, hidden spots and local artists and guides through whom you can discover the Izeras from the inside. 🌲✨'
+                'Współtworzymy inicjatywę „Magiczne Izery", promującą lokalne historie, rzemiosło, kulturę i przyrodę regionu. Chętnie podpowiemy najpiękniejsze szlaki, ukryte miejsca oraz lokalnych twórców i przewodników, dzięki którym można poznać Izery od środka.',
+                'We co-create the Magiczne Izery initiative, promoting local stories, crafts, culture and nature of the region. We are happy to suggest the most beautiful trails, hidden spots and local artists and guides through whom you can discover the Izeras from the inside.'
               ) }}
             </p>
             <div class="region-stats">
@@ -1131,6 +1131,27 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
 .acc-imgs {
   position: relative;
   aspect-ratio: 4/5;
+}
+
+.acc-landscape .acc-imgs {
+  aspect-ratio: unset;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.acc-landscape .acc-imgs .main {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4/3;
+}
+
+.acc-landscape .acc-imgs .small {
+  position: static;
+  width: 100%;
+  aspect-ratio: 16/7;
+  border: none;
+  box-shadow: none;
 }
 
 .acc-imgs .main {

@@ -245,7 +245,7 @@ const HOUSE_GALLERY = [
   { src: '/miejsce/Dom/korzytarz_1.avif', title: 'Duży Dom — korytarz' },
   { src: '/miejsce/Dom/jadalnia_1.avif',  title: 'Duży Dom — jadalnia' },
   { src: '/miejsce/Dom/jadalnia_2.avif',  title: 'Duży Dom — jadalnia' },
-  { src: '/miejsce/dom-1.avif',           title: 'Duży Dom — wnętrze' },
+  { src: '/miejsce/duzy-dom.avif',        title: 'Duży Dom — wnętrze' },
   { src: '/miejsce/dom-4.avif',           title: 'Duży Dom' },
   { src: '/miejsce/sala-w-1.avif',        title: 'Sala warsztatowa' },
   { src: '/miejsce/sala-w-2.avif',        title: 'Sala warsztatowa — widok drugi' },
