@@ -40,6 +40,12 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    // Server-only — never exposed to the browser.
+    resend: {
+      apiKey: process.env.RESEND_API_KEY ?? '',
+      from: process.env.RESEND_FROM ?? '', // set later; must be a Resend-verified domain
+      to: process.env.RESEND_TO ?? 'dolinaharmonii@gmail.com',
+    },
     public: {
       directusUrl,
     },

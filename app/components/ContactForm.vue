@@ -6,15 +6,21 @@ const form = ref({
   email: '',
   topic: '',
   message: '',
+  company: '', // honeypot — kept empty by humans, hidden from view
 })
 
 const status = ref<'idle' | 'sending' | 'sent' | 'error'>('idle')
 
 async function handleSubmit() {
   status.value = 'sending'
-  await new Promise(r => setTimeout(r, 800))
-  status.value = 'sent'
-  form.value = { name: '', email: '', topic: '', message: '' }
+  try {
+    await $fetch('/api/contact', { method: 'POST', body: form.value })
+    status.value = 'sent'
+    form.value = { name: '', email: '', topic: '', message: '', company: '' }
+  }
+  catch {
+    status.value = 'error'
+  }
 }
 </script>
 
@@ -63,13 +69,27 @@ async function handleSubmit() {
 
           <div v-else-if="status === 'error'" class="cf-error" role="alert">
             <DhIcon name="leaf" :size="20" :stroke="1.4" />
-            {{ t(
+            <span class="cf-error-text">{{ t(
               'Coś poszło nie tak. Spróbuj ponownie lub napisz bezpośrednio na dolinaharmonii@gmail.com.',
               'Something went wrong. Please try again or write directly to dolinaharmonii@gmail.com.'
-            ) }}
+            ) }}</span>
+            <button type="button" class="cf-retry" @click="status = 'idle'">
+              {{ t('Spróbuj ponownie', 'Try again') }}
+            </button>
           </div>
 
           <template v-else>
+            <!-- Honeypot: hidden from users; only bots fill it. -->
+            <input
+              v-model="form.company"
+              class="cf-hp"
+              type="text"
+              name="company"
+              tabindex="-1"
+              autocomplete="off"
+              aria-hidden="true"
+            />
+
             <div class="cf-row-two">
               <div class="cf-field">
                 <label for="cf-name" class="cf-label">{{ t('Imię i nazwisko', 'Full name') }}</label>
@@ -364,6 +384,7 @@ async function handleSubmit() {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-wrap: wrap;
   padding: 16px 20px;
   background: rgba(107, 66, 38, 0.08);
   border: 1px solid rgba(107, 66, 38, 0.25);
@@ -371,6 +392,32 @@ async function handleSubmit() {
   color: var(--accent-earth);
   font-size: 14px;
   line-height: 1.5;
+}
+.cf-error-text { flex: 1; min-width: 200px; }
+.cf-retry {
+  flex-shrink: 0;
+  background: transparent;
+  border: 1px solid rgba(107, 66, 38, 0.4);
+  border-radius: var(--r-pill);
+  padding: 8px 16px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent-earth);
+  cursor: pointer;
+  transition: background .2s, border-color .2s;
+}
+.cf-retry:hover { background: rgba(107, 66, 38, 0.12); border-color: var(--accent-earth); }
+
+/* Honeypot — kept out of view and out of the a11y tree */
+.cf-hp {
+  position: absolute !important;
+  left: -9999px !important;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
 }
 
 @media (max-width: 960px) {
