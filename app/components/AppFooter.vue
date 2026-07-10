@@ -53,7 +53,6 @@ const { t } = useLang()
       </div>
       <div class="foot-bottom">
         <span>© {{ new Date().getFullYear() }} Dolina Harmonii · {{ t('wszystkie prawa zastrzeżone', 'all rights reserved') }}</span>
-        <span>{{ t('strona w przygotowaniu', 'site in progress') }}</span>
       </div>
     </div>
   </footer>
