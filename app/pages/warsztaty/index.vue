@@ -119,6 +119,10 @@ const WORKSHOPS = computed(() => workshopsRaw.value.map((w: Workshop) => {
     price: typeof w.price === 'number' ? w.price : null,
     priceLabel: typeof w.price === 'number' ? `${fmt(w.price)} zł` : '',
     startDate: w.start_date ?? null,
+    isPast: (() => {
+      const ref = w.end_date ?? w.start_date
+      return ref ? new Date(ref).getTime() < Date.now() : false
+    })(),
   }
 }))
 
@@ -354,7 +358,7 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [view, cat, month, q, sort] })
             <div class="feature-meta">
               <div><div class="fk">{{ t('Termin', 'Date') }}</div><div class="fv">{{ featured.date }}</div></div>
               <div><div class="fk">{{ t('Cena', 'Price') }}</div><div class="fv">{{ featured.priceLabel || t('Zapytaj o cenę', 'Ask for price') }}</div></div>
-              <div><div class="fk">{{ t('Wolne', 'Available') }}</div><div class="fv">{{ availLabel(featured) }}</div></div>
+              <div v-if="!featured.isPast"><div class="fk">{{ t('Wolne', 'Available') }}</div><div class="fv">{{ availLabel(featured) }}</div></div>
             </div>
             <div style="display:flex;gap:12px;flex-wrap:wrap">
               <NuxtLink class="btn btn-secondary" :to="`/warsztaty/${featured.slug}`">
@@ -494,7 +498,7 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [view, cat, month, q, sort] })
             <div class="price-wrap">
               <div class="wrow-price">{{ w.priceLabel || t('Zapytaj o cenę', 'Ask for price') }}</div>
               <div class="wrow-unit">{{ t('os. / pełen koszt', 'per person / full cost') }}</div>
-              <div class="availability" :class="availClass(w)">
+              <div v-if="!w.isPast" class="availability" :class="availClass(w)">
                 <div class="abar"><div class="afill" :style="{ width: availWidth(w) }"></div></div>
                 <div class="alabel">{{ availLabel(w) }}</div>
               </div>
@@ -528,7 +532,7 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [view, cat, month, q, sort] })
               </div>
               <div class="card-foot">
                 <div class="card-price">{{ w.priceLabel || t('Zapytaj o cenę', 'Ask for price') }}</div>
-                <div class="card-avail" :class="availClass(w)">{{ availLabel(w) }}</div>
+                <div v-if="!w.isPast" class="card-avail" :class="availClass(w)">{{ availLabel(w) }}</div>
               </div>
             </div>
           </NuxtLink>
@@ -562,7 +566,7 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [view, cat, month, q, sort] })
                   <span>{{ w.instrName }}</span>
                 </div>
                 <div class="cal-price">{{ w.priceLabel || t('Zapytaj o cenę', 'Ask for price') }}</div>
-                <div class="cal-avail" :class="availClass(w)">{{ availLabel(w) }}</div>
+                <div v-if="!w.isPast" class="cal-avail" :class="availClass(w)">{{ availLabel(w) }}</div>
               </NuxtLink>
             </div>
           </div>
