@@ -290,14 +290,6 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
           <NuxtLink class="btn btn-glass" to="/warsztaty">{{ t('Zobacz warsztaty', 'Browse workshops') }}</NuxtLink>
         </div>
       </div>
-      <div class="hero-meta">
-        <span>
-          <DhIcon name="compass" :size="18" :stroke="1.4" />
-          50°51′N · 15°27′E
-        </span>
-        <span>EST. 2017 · 720 m {{ t('n.p.m.', 'a.s.l.') }}</span>
-        <span>↓ {{ t('przewiń', 'scroll') }}</span>
-      </div>
     </header>
 
     <!-- ─── INTRO ─────────────────────────────────────────────────── -->
@@ -688,12 +680,22 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
   padding: 0;
 }
 
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 26, 14, .40);
+  z-index: 1;
+  pointer-events: none;
+}
+
 .hero::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(58, 75, 32, .15) 0%, rgba(58, 75, 32, .05) 30%, rgba(253, 251, 247, 0) 60%, rgba(253, 251, 247, .95) 100%);
+  background: linear-gradient(180deg, rgba(58, 75, 32, .25) 0%, rgba(58, 75, 32, .1) 30%, rgba(20, 26, 14, .15) 60%, rgba(253, 251, 247, .95) 100%);
   pointer-events: none;
+  z-index: 1;
 }
 
 .hero-bg {
