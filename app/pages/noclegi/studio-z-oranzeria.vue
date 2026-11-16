@@ -31,7 +31,7 @@ useHead({
   script: [{
     key: 'ld-studio',
     type: 'application/ld+json',
-    innerHTML: JSON.stringify({
+    innerHTML: jsonLd({
       '@context': 'https://schema.org',
       '@type': 'LodgingBusiness',
       name: 'Studio z oranżerią — Dolina Harmonii',
@@ -193,7 +193,7 @@ useScrollReveal({ threshold: 0.08 })
             @click="openLightbox(k)"
             :aria-label="`Otwórz zdjęcie ${k + 1}`"
           >
-            <img :src="img.src" :alt="img.alt" loading="lazy" />
+            <img :src="img.src" :alt="img.title" loading="lazy" />
           </button>
         </div>
       </div>

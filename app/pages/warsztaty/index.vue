@@ -54,38 +54,11 @@ function iconForCategory(cat?: Pick<Category, 'name' | 'slug'> | null): string {
   return 'leaf'
 }
 
-function calcDuration(start?: string | null, end?: string | null): string {
-  if (!start || !end) return ''
-  const days = Math.round((new Date(end).getTime() - new Date(start).getTime()) / 86_400_000) + 1
-  if (lang.value === 'en') return days === 1 ? '1 day' : `${days} days`
-  return days === 1 ? '1 dzień' : `${days} dni`
-}
-
 function fmtHours(start?: string | null, end?: string | null): string {
   if (!start || !end) return ''
   const locale = lang.value === 'en' ? 'en-GB' : 'pl-PL'
   const opts: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit' }
   return `${new Date(start).toLocaleTimeString(locale, opts)} – ${new Date(end).toLocaleTimeString(locale, opts)}`
-}
-
-function fmtRange(start?: string | null, end?: string | null, withYear = false): string {
-  if (!start) return ''
-  const en = lang.value === 'en'
-  const months = en
-    ? ['January','February','March','April','May','June','July','August','September','October','November','December']
-    : ['stycznia','lutego','marca','kwietnia','maja','czerwca','lipca','sierpnia','września','października','listopada','grudnia']
-  const s = new Date(start)
-  const e = end ? new Date(end) : s
-  const year = withYear ? ` ${s.getFullYear()}` : ''
-  if (s.toDateString() === e.toDateString()) {
-    return en ? `${months[s.getMonth()]} ${s.getDate()}${year}` : `${s.getDate()} ${months[s.getMonth()]}${year}`
-  }
-  if (s.getMonth() === e.getMonth() && s.getFullYear() === e.getFullYear()) {
-    return en ? `${months[s.getMonth()]} ${s.getDate()}–${e.getDate()}${year}` : `${s.getDate()}–${e.getDate()} ${months[s.getMonth()]}${year}`
-  }
-  return en
-    ? `${months[s.getMonth()]} ${s.getDate()} – ${months[e.getMonth()]} ${e.getDate()}${year}`
-    : `${s.getDate()} ${months[s.getMonth()]} – ${e.getDate()} ${months[e.getMonth()]}${year}`
 }
 
 // ─── Workshops normalized for display ───────────────────────────────────────
@@ -107,9 +80,9 @@ const WORKSHOPS = computed(() => workshopsRaw.value.map((w: Workshop) => {
     monthKey,
     day: start ? start.getDate() : null,
     monthShort: start ? start.toLocaleDateString(lang.value === 'en' ? 'en-GB' : 'pl-PL', { month: 'short' }) : '',
-    durLabel: calcDuration(w.start_date, w.end_date),
-    date: fmtRange(w.start_date, w.end_date, false),
-    dateLong: fmtRange(w.start_date, w.end_date, true),
+    durLabel: calcDuration(w.start_date, w.end_date, lang.value),
+    date: fmtRange(w.start_date, w.end_date, lang.value, false),
+    dateLong: fmtRange(w.start_date, w.end_date, lang.value, true),
     hours: fmtHours(w.start_date, w.end_date),
     spots,
     taken: w.spots_taken ?? 0,
@@ -199,7 +172,7 @@ useHead({
   script: [{
     key: 'ld-workshops',
     type: 'application/ld+json',
-    innerHTML: JSON.stringify({
+    innerHTML: jsonLd({
       '@context': 'https://schema.org',
       '@type': 'ItemList',
       name: 'Warsztaty — Dolina Harmonii',

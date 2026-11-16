@@ -1,17 +1,30 @@
 // nuxt.config.ts
 declare const process: { env: Record<string, string | undefined> }
 
+// A production build without DIRECTUS_URL would silently point the site at localhost.
+if (process.env.npm_lifecycle_event === 'build' && !process.env.DIRECTUS_URL) {
+  throw new Error('DIRECTUS_URL is not set — refusing to build a production bundle against localhost.')
+}
+
 const directusUrl = (process.env.DIRECTUS_URL ?? 'http://localhost:8055').replace(/\/$/, '')
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-01-01',
   devtools: { enabled: true },
 
-  modules: [
-    '@nuxt/image',
-    '@nuxt/icon',
-    '@nuxtjs/sitemap',
-  ],
+  modules: ['@nuxtjs/sitemap'],
+
+  // Cache rendered pages for a minute so a traffic spike does not hit Directus on every view.
+  routeRules: {
+    '/': { swr: 60 },
+    '/warsztaty': { swr: 60 },
+    '/warsztaty/**': { swr: 60 },
+    '/kalendarz': { swr: 60 },
+    '/noclegi/**': { swr: 300 },
+  },
+
+  // Deploy builds into a separate folder and swaps it in, so the running site is not wiped mid-build.
+  nitro: process.env.BUILD_OUTPUT_DIR ? { output: { dir: process.env.BUILD_OUTPUT_DIR } } : {},
 
   sitemap: {
     sources: ['/api/_sitemap-urls'],
@@ -33,14 +46,9 @@ export default defineNuxtConfig({
     },
   },
 
-  image: {
-    directus: {
-      baseURL: `${directusUrl}/assets/`,
-    },
-  },
-
   runtimeConfig: {
-    // Server-only — never exposed to the browser.
+    // Server-only — never exposed to the browser. Defaults come from the build-time env;
+    // NUXT_RESEND_API_KEY / NUXT_RESEND_FROM / NUXT_RESEND_TO override them at runtime.
     resend: {
       apiKey: process.env.RESEND_API_KEY ?? '',
       from: process.env.RESEND_FROM ?? '', // set later; must be a Resend-verified domain

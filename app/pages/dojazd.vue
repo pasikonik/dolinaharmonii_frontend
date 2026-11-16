@@ -15,7 +15,7 @@ useHead({
   script: [{
     key: 'ld-directions',
     type: 'application/ld+json',
-    innerHTML: JSON.stringify({
+    innerHTML: jsonLd({
       '@context': 'https://schema.org',
       '@type': 'LodgingBusiness',
       name: 'Dolina Harmonii',

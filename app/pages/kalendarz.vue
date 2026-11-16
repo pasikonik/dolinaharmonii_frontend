@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { RoomAvailability } from '~~/types/directus'
+import type { CalendarMonth } from '~/utils/dates'
 
 const { lang, t } = useLang()
 const { getRoomAvailability } = useDirectus()
@@ -7,9 +8,9 @@ const origin = useRequestURL().origin
 
 useSeoMeta({
   title: 'Kalendarz dostępności — Dolina Harmonii',
-  description: 'Sprawdź dostępność pokoi w Dużym Domu i okna wolne pod wynajem całej doliny w sezonie 2026.',
+  description: 'Sprawdź dostępność pokoi w Dużym Domu i okna wolne pod wynajem całej doliny w nadchodzących miesiącach.',
   ogTitle: 'Kalendarz dostępności — Dolina Harmonii',
-  ogDescription: 'Sprawdź dostępność pokoi w Dużym Domu i okna wolne pod wynajem całej doliny w sezonie 2026.',
+  ogDescription: 'Sprawdź dostępność pokoi w Dużym Domu i okna wolne pod wynajem całej doliny w nadchodzących miesiącach.',
   ogUrl: `${origin}/kalendarz`,
   ogImage: `${origin}/miejsce/kopaniec.avif`,
   twitterCard: 'summary_large_image',
@@ -25,12 +26,9 @@ function parseISO(s: string) {
   return new Date(y, m - 1, d)
 }
 
-const { data: availabilityData } = await useAsyncData(
+const { data: availabilityData, error: availabilityError } = await useAsyncData(
   'room-availability',
-  async () => {
-    try { return await getRoomAvailability() }
-    catch { return null }
-  },
+  () => getRoomAvailability(),
 )
 const availability = computed<RoomAvailability[]>(() => availabilityData.value?.data ?? [])
 
@@ -48,7 +46,7 @@ useHead({
   script: [{
     key: 'ld-calendar',
     type: 'application/ld+json',
-    innerHTML: JSON.stringify({
+    innerHTML: jsonLd({
       '@context': 'https://schema.org',
       '@type': 'LodgingBusiness',
       name: 'Dolina Harmonii — Duży Dom',
@@ -72,39 +70,17 @@ useHead({
   }],
 })
 
-const MONTHS_PL_GEN = ['stycznia','lutego','marca','kwietnia','maja','czerwca','lipca','sierpnia','września','października','listopada','grudnia']
-const MONTHS_EN = ['January','February','March','April','May','June','July','August','September','October','November','December']
 const WEEKDAYS_FULL_PL = ['poniedziałek','wtorek','środa','czwartek','piątek','sobota','niedziela']
 const WEEKDAYS_FULL_EN = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
 const WEEKDAYS_SHORT_PL = ['Pn','Wt','Śr','Cz','Pt','So','Nd']
 const WEEKDAYS_SHORT_EN = ['Mo','Tu','We','Th','Fr','Sa','Su']
 
-const SEASON_MONTHS = [
-  { year: 2026, month: 3,  label_pl: 'Kwiecień',    label_en: 'April',     short_pl: 'Kwi', short_en: 'Apr' },
-  { year: 2026, month: 4,  label_pl: 'Maj',         label_en: 'May',       short_pl: 'Maj', short_en: 'May' },
-  { year: 2026, month: 5,  label_pl: 'Czerwiec',    label_en: 'June',      short_pl: 'Cze', short_en: 'Jun' },
-  { year: 2026, month: 6,  label_pl: 'Lipiec',      label_en: 'July',      short_pl: 'Lip', short_en: 'Jul' },
-  { year: 2026, month: 7,  label_pl: 'Sierpień',    label_en: 'August',    short_pl: 'Sie', short_en: 'Aug' },
-  { year: 2026, month: 8,  label_pl: 'Wrzesień',    label_en: 'September', short_pl: 'Wrz', short_en: 'Sep' },
-  { year: 2026, month: 9,  label_pl: 'Październik', label_en: 'October',   short_pl: 'Paź', short_en: 'Oct' },
-  { year: 2026, month: 10, label_pl: 'Listopad',    label_en: 'November',  short_pl: 'Lis', short_en: 'Nov' },
-  { year: 2026, month: 11, label_pl: 'Grudzień',    label_en: 'December',  short_pl: 'Gru', short_en: 'Dec' },
-]
-
-// Anchor inside the season (Apr–Dec 2026) so the calendar always has live cells.
-function makeToday() {
-  const real = new Date()
-  real.setHours(0, 0, 0, 0)
-  const seasonStart = new Date(2026, 3, 1)
-  return real < seasonStart ? seasonStart : real
-}
-const TODAY = makeToday()
+const TODAY = new Date()
+TODAY.setHours(0, 0, 0, 0)
 const TODAY_ISO = iso(TODAY)
 
-// Only show current month and forward within the season.
-const VISIBLE_MONTHS = SEASON_MONTHS.filter(
-  m => m.year > TODAY.getFullYear() || (m.year === TODAY.getFullYear() && m.month >= TODAY.getMonth()),
-)
+// Current month plus the next 11.
+const VISIBLE_MONTHS = buildCalendarMonths(TODAY)
 
 // Monday = 0 .. Sunday = 6
 function getWeekdayIdx(d: Date) {
@@ -140,7 +116,7 @@ interface DayInfo {
 
 function getDayStatus(d: Date): DayInfo {
   const blocked = blockedByDay.value.get(iso(d)) ?? new Set<string>()
-  const free = Math.max(0, ROOM_COUNT - blocked.size)
+  const free = ROOMS.filter(r => !blocked.has(r.id)).length
   const total = ROOM_COUNT
   if (d < TODAY) return { status: 'past', free, total, blocked }
   if (free === 0) return { status: 'full', free, total, blocked }
@@ -152,7 +128,7 @@ function getDayStatus(d: Date): DayInfo {
 function weekdayShortList() {
   return lang.value === 'en' ? WEEKDAYS_SHORT_EN : WEEKDAYS_SHORT_PL
 }
-function pickMonth(m: typeof SEASON_MONTHS[number], field: 'label' | 'short'): string {
+function pickMonth(m: CalendarMonth, field: 'label' | 'short'): string {
   return (m as unknown as Record<string, string>)[`${field}_${lang.value}`]!
 }
 
@@ -258,7 +234,7 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [monthIdx] })
       <div class="container">
         <div class="row">
           <div>
-            <span class="eyebrow">{{ t('Dostępność · Sezon 2026', 'Availability · Season 2026') }}</span>
+            <span class="eyebrow">{{ t('Dostępność', 'Availability') }}</span>
             <h1>{{ t('Kalendarz', 'Calendar of') }} <em>{{ t('dostępności', 'availability') }}</em>.</h1>
           </div>
           <p class="lede">{{ t(
@@ -272,6 +248,14 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [monthIdx] })
     <section class="tight">
       <div class="container">
 
+        <div v-if="availabilityError" class="cal-error" role="alert">
+          {{ t(
+            'Nie udało się wczytać kalendarza dostępności. Odśwież stronę lub zadzwoń: +48 789 447 941.',
+            'We could not load the availability calendar. Please refresh the page or call +48 789 447 941.'
+          ) }}
+        </div>
+
+        <template v-else>
         <!-- ─── MONTH NAV ───────────────────────────────────────── -->
         <div class="month-nav reveal">
           <div class="pager">
@@ -431,6 +415,8 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [monthIdx] })
 
           </div>
         </div>
+
+        </template>
 
         <!-- ─── CTA BAR ──────────────────────────────────────────── -->
         <div class="cta-bar">
@@ -793,6 +779,15 @@ useScrollReveal({ threshold: 0.05, retriggerOn: [monthIdx] })
 .stat-row.last { border-bottom: none; }
 .stat-row span { color: var(--text-muted); }
 .stat-row strong.hl { color: var(--brand-primary); }
+
+.cal-error {
+  padding: 20px 24px;
+  margin-bottom: 32px;
+  border-radius: var(--r-md);
+  background: var(--bg-section);
+  border: 1px solid var(--accent-earth);
+  color: var(--text-main);
+}
 
 /* ─── CTA BAR ───────────────────────────────────────────────── */
 .cta-bar {

@@ -8,14 +8,18 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "typecheck": "nuxt typecheck",
+    "test": "vitest run",
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@nuxt/icon": "^2.6.2",
-    "@nuxt/image": "^2.2.1",
     "@nuxtjs/sitemap": "^9.1.0",
     "nuxt": "^4.6.4",
-    "vue": "^3.5.45",
-    "zod": "^4.6.7"
-  }
+    "vue": "^3.5.45"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.3",
+    "vitest": "^5.1.0",
+    "vue-tsc": "^3.3.14"
+  },
+  "packageManager": "pnpm@12.21.0"
 }

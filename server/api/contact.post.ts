@@ -1,25 +1,6 @@
 // Contact form → Resend. Delivers submissions from ContactForm.vue by email.
 // Config (server-only) lives in runtimeConfig.resend — see nuxt.config.ts.
 
-interface ContactBody {
-  name?: string
-  email?: string
-  topic?: string
-  message?: string
-  company?: string // honeypot — must stay empty
-}
-
-const TOPIC_LABELS: Record<string, string> = {
-  'indywidualny': 'Pobyt indywidualny',
-  'grupowy': 'Wynajem dla grupy / warsztat',
-  'duzy-dom': 'Duży Dom',
-  'lesny-domek': 'Leśny Domek',
-  'studio': 'Studio z oranżerią',
-  'inne': 'Inne',
-}
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
 function escapeHtml(s: string): string {
   return s
     .replace(/&/g, '&amp;')
@@ -30,29 +11,24 @@ function escapeHtml(s: string): string {
 }
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody<ContactBody>(event)
-
-  const name = (body?.name ?? '').trim()
-  const email = (body?.email ?? '').trim()
-  const topic = (body?.topic ?? '').trim()
-  const message = (body?.message ?? '').trim()
-  const honeypot = (body?.company ?? '').trim()
+  const body = await readBody<Record<string, unknown>>(event)
 
   // Bot filled the hidden field — pretend success, send nothing.
-  if (honeypot) {
+  if (typeof body?.company === 'string' && body.company.trim()) {
     return { ok: true }
   }
 
-  // Validation
-  const valid =
-    name.length >= 1 && name.length <= 200 &&
-    EMAIL_RE.test(email) && email.length <= 320 &&
-    topic.length >= 1 && topic.length <= 100 &&
-    message.length >= 1 && message.length <= 5000
+  // 5 messages per hour per visitor (counted before validation, so junk requests count too).
+  const ip = getRequestIP(event, { xForwardedFor: true }) ?? 'unknown'
+  if (isRateLimited(ip, 5, 60 * 60 * 1000)) {
+    throw createError({ statusCode: 429, statusMessage: 'rate', data: { ok: false, error: 'rate' } })
+  }
 
-  if (!valid) {
+  const input = parseContact(body)
+  if (!input) {
     throw createError({ statusCode: 400, statusMessage: 'invalid', data: { ok: false, error: 'invalid' } })
   }
+  const { name, email, topic, message } = input
 
   const { resend } = useRuntimeConfig(event)
 
@@ -61,7 +37,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 500, statusMessage: 'config', data: { ok: false, error: 'config' } })
   }
 
-  const topicLabel = TOPIC_LABELS[topic] ?? topic
+  const topicLabel = TOPIC_LABELS[topic]!
 
   const text =
     `Nowa wiadomość z formularza kontaktowego\n\n` +

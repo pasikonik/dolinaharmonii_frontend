@@ -14,7 +14,7 @@ useSeoMeta({
 useHead({
   script: [{
     type: 'application/ld+json',
-    innerHTML: JSON.stringify({
+    innerHTML: jsonLd({
       '@context': 'https://schema.org',
       '@type': 'NGO',
       name: 'Fundacja Harmonia Kultury',

@@ -4,23 +4,23 @@ import type { Workshop } from '~~/types/directus'
 const route = useRoute()
 const slug = computed(() => route.params.slug as string)
 const { getWorkshop, getWorkshops, getImageUrl } = useDirectus()
+const { lang, t } = useLang()
 
-const { data, pending } = useAsyncData(
+const { data } = await useAsyncData(
   `workshop-${slug.value}`,
   () => getWorkshop(slug.value),
 )
 
 const workshop = computed(() => data.value?.data?.[0] ?? null)
 
-watch(pending, (isPending) => {
-  if (!isPending && !workshop.value) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: 'Nie znaleziono takiego warsztatu',
-      fatal: true,
-    })
-  }
-})
+// Checked after the fetch so the server answers with a real 404 for unknown or unpublished slugs.
+if (!workshop.value) {
+  throw createError({
+    statusCode: 404,
+    statusMessage: 'Nie znaleziono takiego warsztatu',
+    fatal: true,
+  })
+}
 
 const { data: relatedData } = useAsyncData(
   `related-${slug.value}`,
@@ -68,7 +68,7 @@ useHead(computed(() => ({
   script: workshop.value ? [{
     key: 'ld-event',
     type: 'application/ld+json' as const,
-    innerHTML: JSON.stringify({
+    innerHTML: jsonLd({
       '@context': 'https://schema.org',
       '@type': 'Event',
       name: workshop.value.title,
@@ -91,7 +91,7 @@ useHead(computed(() => ({
           '@type': 'Offer',
           price: String(workshop.value.price),
           priceCurrency: 'PLN',
-          availability: 'https://schema.org/InStock',
+          availability: spotsInfo.value?.free === 0 ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock',
           url: `${origin}/warsztaty/${slug.value}#zapis`,
         },
       } : {}),
@@ -127,7 +127,7 @@ const lightboxImages = computed(() =>
   galleryImages.value.map(src => ({ src })),
 )
 
-useScrollReveal({ retriggerOn: pending })
+useScrollReveal()
 
 const category = computed(() => {
   const cat = workshop.value?.category
@@ -143,29 +143,25 @@ const instructor = computed(() => {
 const spotsInfo = computed(() => {
   const w = workshop.value
   if (!w?.capacity) return null
-  const free = w.capacity - (w.spots_taken ?? 0)
-  const pct = ((w.spots_taken ?? 0) / w.capacity) * 100
-  return { total: w.capacity, free, taken: w.spots_taken ?? 0, pct }
+  const taken = w.spots_taken ?? 0
+  const free = Math.max(0, w.capacity - taken)
+  const pct = Math.min(100, (taken / w.capacity) * 100)
+  return { total: w.capacity, free, taken, pct }
 })
 
 const startDate = computed(() =>
   workshop.value?.start_date
-    ? new Date(workshop.value.start_date).toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' })
+    ? new Date(workshop.value.start_date).toLocaleDateString(lang.value === 'en' ? 'en-GB' : 'pl-PL', { day: 'numeric', month: 'long', year: 'numeric' })
     : null
 )
 
-const duration = computed(() => {
-  const { start_date, end_date } = workshop.value ?? {}
-  if (!start_date || !end_date) return null
-  const days = Math.round((new Date(end_date).getTime() - new Date(start_date).getTime()) / 86_400_000) + 1
-  return days === 1 ? '1 dzień' : `${days} dni`
-})
+const duration = computed(() => calcDuration(workshop.value?.start_date, workshop.value?.end_date, lang.value))
 
 const relatedWorkshops = computed(() =>
   relatedData.value?.data?.map((w: Workshop) => ({
     slug: w.slug,
     title: w.title,
-    date: w.start_date ? new Date(w.start_date).toLocaleDateString('pl-PL', { month: 'long', year: 'numeric' }) : '',
+    date: w.start_date ? new Date(w.start_date).toLocaleDateString(lang.value === 'en' ? 'en-GB' : 'pl-PL', { month: 'long', year: 'numeric' }) : '',
     img: w.cover_image ? getImageUrl(w.cover_image, { width: 400, fit: 'cover' }) : '',
   })) ?? []
 )
@@ -174,47 +170,7 @@ const relatedWorkshops = computed(() =>
 <template>
   <div class="workshop-detail-page">
 
-    <!-- ─── SKELETON ────────────────────────────────────────────── -->
-    <template v-if="pending">
-      <header class="w-hero">
-        <div class="container">
-          <div class="w-hero-grid">
-            <div class="w-hero-title-col">
-              <div class="sk sk-pill" />
-              <div class="sk sk-h1" />
-              <div class="sk sk-h1 sk-h1--short" />
-              <div class="sk sk-lede" />
-              <div class="sk sk-lede sk-lede--short" />
-            </div>
-            <div class="book-card">
-              <div class="sk sk-label" />
-              <div class="sk sk-price" />
-              <div class="divide" />
-              <div class="sk sk-row" />
-              <div class="sk sk-row" />
-            </div>
-          </div>
-        </div>
-      </header>
-      <section class="w-body">
-        <div class="container">
-          <div class="w-body-grid">
-            <div>
-              <div class="sk sk-label" />
-              <div class="sk sk-line" />
-              <div class="sk sk-line" />
-              <div class="sk sk-line sk-line--short" />
-              <div class="sk sk-line" />
-              <div class="sk sk-line sk-line--short" />
-            </div>
-            <div class="sk sk-side" />
-          </div>
-        </div>
-      </section>
-    </template>
-
     <!-- ─── HERO ──────────────────────────────────────────────────── -->
-    <template v-else>
     <header class="w-hero">
       <div class="container">
         <div class="w-hero-grid">
@@ -236,35 +192,35 @@ const relatedWorkshops = computed(() =>
           <!-- Right: booking card -->
           <aside class="book-card" id="zapis">
             <template v-if="workshop?.price">
-              <div class="book-label">Cena za osobę</div>
+              <div class="book-label">{{ t('Cena za osobę', 'Price per person') }}</div>
               <div class="book-price">
                 {{ workshop.price }} zł
-                <small>brutto</small>
+                <small>{{ t('brutto', 'gross') }}</small>
               </div>
             </template>
 
             <div v-if="spotsInfo" class="avail-wrap">
               <div class="avail-head">
-                <span class="ah-l">Wolne miejsca</span>
-                <span class="ah-r">{{ spotsInfo.free }} z {{ spotsInfo.total }}</span>
+                <span class="ah-l">{{ t('Wolne miejsca', 'Spots available') }}</span>
+                <span class="ah-r">{{ spotsInfo.free }} {{ t('z', 'of') }} {{ spotsInfo.total }}</span>
               </div>
               <div class="avail-bar">
                 <div class="fill" :style="{ width: `${spotsInfo.pct}%` }" />
               </div>
               <div class="avail-meta">
-                <span>{{ spotsInfo.taken }} zajętych</span>
-                <span>zostało {{ spotsInfo.free }}</span>
+                <span>{{ spotsInfo.taken }} {{ t('zajętych', 'taken') }}</span>
+                <span>{{ t('zostało', 'left') }} {{ spotsInfo.free }}</span>
               </div>
             </div>
 
             <div class="divide" />
 
             <div v-if="startDate" class="book-row">
-              <span class="bk">Termin</span>
+              <span class="bk">{{ t('Termin', 'Date') }}</span>
               <span class="bv">{{ startDate }}</span>
             </div>
             <div v-if="duration" class="book-row">
-              <span class="bk">Czas trwania</span>
+              <span class="bk">{{ t('Czas trwania', 'Duration') }}</span>
               <span class="bv">{{ duration }}</span>
             </div>
           </aside>
@@ -280,7 +236,7 @@ const relatedWorkshops = computed(() =>
           <!-- Main content -->
           <div class="w-content-col">
             <div v-if="workshop?.description" class="w-section reveal">
-              <span class="eyebrow">O warsztacie</span>
+              <span class="eyebrow">{{ t('O warsztacie', 'About the workshop') }}</span>
               <div class="body-p-wrap" v-html="workshop.description" />
             </div>
           </div>
@@ -288,7 +244,7 @@ const relatedWorkshops = computed(() =>
           <!-- Sidebar — only instructor -->
           <aside class="side">
             <div v-if="instructor" class="instructor-card reveal">
-              <span class="inst-label">Prowadzący</span>
+              <span class="inst-label">{{ t('Prowadzący', 'Instructor') }}</span>
               <div class="inst-head">
                 <img
                   v-if="instructor.photo"
@@ -319,7 +275,7 @@ const relatedWorkshops = computed(() =>
             </div>
 
             <div v-if="relatedWorkshops.length" class="related-card reveal">
-              <span class="eyebrow">Z tej samej kategorii</span>
+              <span class="eyebrow">{{ t('Z tej samej kategorii', 'More in this category') }}</span>
               <div class="related-list">
                 <NuxtLink
                   v-for="w in relatedWorkshops"
@@ -360,7 +316,6 @@ const relatedWorkshops = computed(() =>
 
     <!-- ─── LIGHTBOX ──────────────────────────────────────────────── -->
     <DhLightbox v-model="lightboxIndex" :images="lightboxImages" />
-    </template>
   </div>
 </template>
 
@@ -437,45 +392,4 @@ const relatedWorkshops = computed(() =>
 .related-meta { flex: 1; min-width: 0; }
 .related-title { font-family: var(--serif); font-size: 15px; color: var(--brand-primary); line-height: 1.3; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .related-date { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); }
-
-
-/* ─── Skeleton ────────────────────────────────────────────────── */
-@keyframes sk-shimmer {
-  from { background-position: -600px 0 }
-  to   { background-position:  600px 0 }
-}
-.sk {
-  border-radius: 6px;
-  background: linear-gradient(90deg, var(--bg-section) 25%, var(--line) 50%, var(--bg-section) 75%);
-  background-size: 600px 100%;
-  animation: sk-shimmer 1.4s ease-in-out infinite;
-}
-.sk-pill  { height: 32px; width: 130px; margin-bottom: 28px; border-radius: var(--r-pill); }
-.sk-h1    { height: 72px; width: 90%; margin-bottom: 16px; }
-.sk-h1--short { width: 65%; }
-.sk-lede  { height: 20px; width: 88%; margin-bottom: 12px; }
-.sk-lede--short { width: 60%; margin-bottom: 0; }
-.sk-label { height: 12px; width: 80px; margin-bottom: 12px; }
-.sk-price { height: 52px; width: 140px; margin-bottom: 24px; }
-.sk-row   { height: 18px; width: 100%; margin-bottom: 14px; }
-.sk-line  { height: 16px; width: 100%; margin-bottom: 14px; }
-.sk-line--short { width: 70%; }
-.sk-side  { height: 260px; border-radius: var(--r-md); }
-
-/* ─── Responsive ──────────────────────────────────────────────── */
-@media (max-width: 1024px) {
-  .w-hero { padding: 120px 0 0; }
-  .w-hero-grid { grid-template-columns: 1fr; gap: 32px; }
-  .book-card { transform: none; }
-  .w-body-grid { grid-template-columns: 1fr; gap: 48px; }
-  .side { position: static; }
-  .w-gallery-section { padding: 0 0 64px; }
-  .w-gallery-strip { height: 360px; }
-}
-
-@media (max-width: 720px) {
-  .w-gallery-strip { grid-template-columns: 1fr; height: auto; }
-  .w-gallery-strip .right-stack { display: none; }
-  .w-gallery-strip .gallery-main { aspect-ratio: 4/3; }
-}
 </style>

@@ -42,17 +42,6 @@ export function useDirectus() {
     })
   }
 
-  function getRoomAvailabilityInRange(from: string, to: string) {
-    return getRoomAvailability({
-      filter: {
-        _and: [
-          { start_date: { _lte: to } },
-          { end_date: { _gte: from } },
-        ],
-      },
-    })
-  }
-
   function getWorkshop(slug: string) {
     return get<DirectusResponse<Workshop[]>>('/items/workshops', {
       fields: [
@@ -107,7 +96,6 @@ export function useDirectus() {
     getPricing,
     getImageUrl,
     getRoomAvailability,
-    getRoomAvailabilityInRange,
     getMainGallery,
   }
 }

@@ -6,8 +6,8 @@ Strona ośrodka warsztatowego w Kopańcu (Góry Izerskie). Nuxt 4 + Vue 3, treś
 
 - **Nuxt 4** (Vue 3, Vite, TypeScript)
 - **Directus** jako headless CMS (warsztaty, kategorie, prowadzący)
-- **@nuxt/image** z providerem `directus`
-- **@nuxt/icon**, **@nuxt/ui**
+- **@nuxtjs/sitemap**, **Resend** (formularz kontaktowy)
+- **Vitest** (testy)
 
 ## Wymagania
 
@@ -17,7 +17,7 @@ Strona ośrodka warsztatowego w Kopańcu (Góry Izerskie). Nuxt 4 + Vue 3, treś
 ## Setup
 
 ```bash
-cp .env.example .env       # i uzupełnij DIRECTUS_URL, DIRECTUS_TOKEN
+cp .env.example .env       # i uzupełnij DIRECTUS_URL oraz RESEND_*
 pnpm install
 pnpm dev                    # http://localhost:3000
 ```
@@ -31,21 +31,26 @@ pnpm dev                    # http://localhost:3000
 | `pnpm generate`   | static export                              |
 | `pnpm preview`    | podgląd produkcyjnego buildu               |
 | `pnpm typecheck`  | sprawdzenie typów (`nuxt typecheck`)       |
+| `pnpm test`       | testy (Vitest)                             |
 
 ## Struktura
 
 ```
 app/
   components/        # AppNav, AppFooter, ContactForm, DhIcon
-  composables/       # useDirectus, useScrollReveal
+  composables/       # useDirectus, useLang, useScrollReveal
+  utils/             # dates (kalendarz, czas trwania), jsonLd
+server/
+  api/               # contact.post (Resend), _sitemap-urls
+  utils/             # walidacja formularza, rate limit
+tests/               # vitest
   layouts/           # default
   pages/
     index.vue
     warsztaty/
       index.vue      # lista + filtry
       [slug].vue     # szczegóły warsztatu (z Directusa)
-    noclegi/
-      duzy-dom.vue
+    noclegi/           # duzy-dom, lesny-domek, studio-z-oranzeria
   router.options.ts  # scroll behavior dla anchorów
   app.vue
 types/directus.ts    # interfejsy Workshop, Category, Instructor
@@ -82,10 +87,21 @@ Projekt korzysta z systemu designu opisanego w `app/assets/css/main.css`. Oparty
 | Zmienna          | Skąd            | Do czego                                                |
 |------------------|-----------------|---------------------------------------------------------|
 | `DIRECTUS_URL`   | publiczna       | bazowy URL Directusa (`runtimeConfig.public`)           |
-| `DIRECTUS_TOKEN` | server-only     | token do API Directusa (jeśli pobieranie wymaga auth)   |
+| `RESEND_API_KEY` | server-only     | klucz Resend do wysyłki formularza kontaktowego         |
+| `RESEND_FROM`    | server-only     | nadawca (domena zweryfikowana w Resend)                 |
+| `RESEND_TO`      | server-only     | adres, na który trafiają wiadomości                     |
+
+`DIRECTUS_URL` jest wymagany przy `pnpm build` (build się nie uda bez niego). Zmienne `RESEND_*` są wczytywane przy buildzie;
+w runtime można je nadpisać przez `NUXT_RESEND_API_KEY`, `NUXT_RESEND_FROM`, `NUXT_RESEND_TO`.
 
 ## Konwencje
 
 - Aliasy: `~/` → `app/`, `~~/` → root projektu (typy w `types/` importujemy `~~/types/...`).
 - Klasa `.reveal` w szablonach jest aktywowana przez `useScrollReveal()`.
 - Linki anchorowe (`/#noclegi`) działają dzięki `router.options.ts`.
+
+## Deploy
+
+Push do `main` uruchamia GitHub Actions: testy, typecheck i build, a potem SSH na serwer. Serwer buduje do `.output-new`,
+podmienia `.output` i robi `pm2 reload` (bez przestoju). Zalecane: w nginx dodać `limit_req` dla `/api/contact`
+(aplikacja ma też własny limit 5 wiadomości / godzinę / IP, liczony osobno w każdym procesie pm2).

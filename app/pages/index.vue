@@ -57,7 +57,7 @@ useHead({
   script: [{
     key: 'ld-localbusiness',
     type: 'application/ld+json',
-    innerHTML: JSON.stringify({
+    innerHTML: jsonLd({
       '@context': 'https://schema.org',
       '@type': 'LodgingBusiness',
       name: 'Dolina Harmonii',
@@ -128,20 +128,13 @@ const BLESSINGS = [
 
 const FALLBACK_IMG = '/miejsce/duzy-dom.avif'
 
-function calcDuration(start?: string | null, end?: string | null): string {
-  if (!start || !end) return ''
-  const days = Math.round((new Date(end).getTime() - new Date(start).getTime()) / 86_400_000) + 1
-  if (lang.value === 'en') return days === 1 ? '1 day' : `${days} days`
-  return days === 1 ? '1 dzień' : `${days} dni`
-}
-
 const displayWorkshops = computed(() =>
   workshops.value.map(w => ({
     slug: w.slug,
     name: w.title,
     cat: typeof w.category === 'object' ? w.category?.name : w.category,
     img: w.cover_image ? getImageUrl(w.cover_image, { width: 1000, fit: 'cover' }) : FALLBACK_IMG,
-    dur: calcDuration(w.start_date, w.end_date),
+    dur: calcDuration(w.start_date, w.end_date, lang.value),
     date: w.start_date ? new Date(w.start_date).toLocaleDateString(lang.value === 'en' ? 'en-GB' : 'pl-PL', { month: 'long', year: 'numeric' }) : '',
     desc: w.short_description,
   }))

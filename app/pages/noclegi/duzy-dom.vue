@@ -41,7 +41,7 @@ useHead({
   script: [{
     key: 'ld-hotel',
     type: 'application/ld+json',
-    innerHTML: JSON.stringify({
+    innerHTML: jsonLd({
       '@context': 'https://schema.org',
       '@type': 'Hotel',
       name: 'Duży Dom — Dolina Harmonii',
