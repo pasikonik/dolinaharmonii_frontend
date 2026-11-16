@@ -11,10 +11,11 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@nuxt/icon": "^2.2.3",
-    "@nuxt/image": "^2.0.0",
-    "@nuxtjs/sitemap": "^8.1.0",
-    "nuxt": "^4.4.8",
-    "vue": "^3.5.35"
+    "@nuxt/icon": "^2.6.2",
+    "@nuxt/image": "^2.2.1",
+    "@nuxtjs/sitemap": "^9.1.0",
+    "nuxt": "^4.6.4",
+    "vue": "^3.5.45",
+    "zod": "^4.6.7"
   }
 }
