@@ -201,15 +201,6 @@ const ACCOMMODATIONS = computed(() => ACCOM_RAW.map(a => ({
   url: a.url,
 })))
 
-const TEAM_RAW = [
-  { name: 'Danuta', role_pl: 'Założycielka', role_en: 'Founder', img: '/zespol/dana.avif' },
-  { name: 'Filip', role_pl: 'Gospodarz', role_en: 'Host', img: '/zespol/filip.avif' },
-  { name: 'Kulka', role_pl: 'Gospodyni', role_en: 'Host', img: '/zespol/kulka.avif' },
-]
-
-const TEAM = computed(() => TEAM_RAW.map(m => ({ name: m.name, role: t(m.role_pl, m.role_en), img: m.img })))
-
-
 const FAQ_DATA = [
   {
     cat_pl: 'Pobyt i rezerwacja', cat_en: 'Stay & booking',
@@ -580,34 +571,6 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
 
     <!-- ─── GALLERY LIGHTBOX ────────────────────────────────────────── -->
     <DhLightbox v-model="lightboxIndex" :images="lightboxImages" />
-
-    <!-- ─── TEAM ───────────────────────────────────────────────────── -->
-    <section id="zespol" class="cream" :aria-label="t('Zespół i partnerzy', 'Team and partners')">
-      <div class="container">
-        <div class="section-head reveal">
-          <span class="eyebrow">{{ t('Zespół &amp; partnerzy', 'Team &amp; partners') }}</span>
-          <h2>{{ t('Ludzie, którzy budują to miejsce.', 'The people who build this place.') }}</h2>
-          <p class="lede">{{ t(
-            'Trzy dekady obecności w Górach Izerskich — wspólna praca z ziemią, gośćmi i lokalną społecznością, która wciąż trwa.',
-            'Three decades rooted in the Izera Mountains — tending the land, welcoming guests and weaving into the local community, one season at a time.'
-          ) }}</p>
-        </div>
-        <div class="team-grid reveal">
-          <div v-for="(m, i) in TEAM" :key="i" class="team-member">
-            <img class="photo" :src="m.img" :alt="m.name" loading="lazy" />
-            <h3>{{ m.name }}</h3>
-            <span class="role">{{ m.role }}</span>
-          </div>
-        </div>
-        <div class="reveal partners-strip">
-          <span class="eyebrow">{{ t('Współpracujemy z', 'We work with') }}</span>
-          <div class="partners-list">
-            <span>Fundacja Harmonia Kultury</span>
-            <span>Magiczne Izery</span>
-          </div>
-        </div>
-      </div>
-    </section>
 
     <!-- ─── FAQ ─────────────────────────────────────────────────────── -->
     <section class="faq-section" :aria-label="t('Najczęstsze pytania', 'Frequently asked questions')">
@@ -1401,71 +1364,6 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
   margin-left: 2px;
 }
 
-/* ─── Team ──────────────────────────────────────────────────────── */
-.team-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 48px;
-  max-width: 960px;
-  margin: 0 auto;
-}
-
-.team-member {
-  text-align: left;
-}
-
-.team-member .photo {
-  aspect-ratio: 2/3;
-  width: 100%;
-  object-fit: contain;
-  border-radius: var(--r-md);
-  margin-bottom: 16px;
-  filter: saturate(0.85);
-}
-
-.team-member h3 {
-  font-family: var(--serif);
-  margin-bottom: 4px;
-}
-
-.team-member .role {
-  font-size: 13px;
-  color: var(--accent-earth);
-  font-family: var(--mono);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-
-.partners-strip {
-  margin-top: 80px;
-  padding: 24px 0;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 36px;
-  flex-wrap: wrap;
-}
-
-.partners-list {
-  display: flex;
-  gap: 0;
-  align-items: center;
-  flex-wrap: wrap;
-  font-family: var(--serif);
-  font-size: 18px;
-  color: var(--brand-primary);
-  font-style: italic;
-}
-.partners-list span + span::before {
-  content: '·';
-  display: inline-block;
-  margin: 0 24px;
-  opacity: 0.4;
-  font-style: normal;
-}
-
 /* ─── FAQ ───────────────────────────────────────────────────────── */
 .faq-section { background: var(--bg-sage); }
 
@@ -1704,7 +1602,6 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
   .accommodation.reverse .acc-imgs { order: 0; }
   .accommodation.reverse .acc-text { order: 0; }
   .workshop-grid { grid-template-columns: repeat(2, 1fr); }
-  .team-grid { gap: 24px; }
   .gallery-masonry { column-count: 3; }
   .workshops-head { flex-direction: column; align-items: flex-start; gap: 16px; }
   .hero-meta { padding: 0 24px; gap: 12px; flex-wrap: wrap; justify-content: center; }
@@ -1721,7 +1618,6 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
   .blessings-head { flex-direction: column; align-items: flex-start; gap: 16px; }
 
   .workshop-grid { grid-template-columns: 1fr; }
-  .team-grid { grid-template-columns: 1fr; gap: 24px; }
   .gallery-masonry { column-count: 2; column-gap: 8px; }
   .gallery-tile { margin-bottom: 8px; }
 .intro-stats { grid-template-columns: repeat(2, 1fr); gap: 16px 12px; }
@@ -1731,8 +1627,6 @@ const activeFaqItems = computed(() => FAQ_DATA[activeFaqCat.value]?.items ?? [])
   .region-stats { grid-template-columns: 1fr; }
   .hero-content { padding: 0 24px; }
   .hero-ctas { flex-direction: column; align-items: stretch; }
-  .partners-list { gap: 16px; font-size: 15px; justify-content: center; }
-  .partners-strip { flex-direction: column; align-items: flex-start; gap: 16px; }
   .intro-badge { left: 16px; right: 16px; bottom: -16px; max-width: none; }
 }
 </style>
